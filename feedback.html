@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KipMarine - Espace Retours & Testeurs Internes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        marine: {
+                            50: '#f0f4ff',
+                            100: '#e0e9ff',
+                            500: '#4f46e5',
+                            600: '#4338ca',
+                            700: '#3730a3',
+                            800: '#2e2a85',
+                            900: '#1e1b4b',
+                        },
+                        ocean: {
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Background Waves SVG Gradient overlay */
+        .bg-marine-gradient {
+            background: linear-gradient(135deg, #2b2787 0%, #1a1652 50%, #0d0b2b 100%);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.75);
+            border-color: #38bdf8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Subtle Wave Decorative Background */
+        .wave-bg {
+            background-image: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%);
+        }
+    </style>
+</head>
+<body class="min-h-full bg-marine-gradient wave-bg text-slate-100 font-sans antialiased selection:bg-sky-500 selection:text-white flex flex-col justify-between">
+
+    <!-- Toast Notification (Copied Email) -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 ease-out flex items-center gap-3 bg-emerald-500/90 text-white px-5 py-3 rounded-xl shadow-2xl backdrop-blur-md border border-emerald-400/30">
+        <i class="fa-solid fa-check-circle text-xl"></i>
+        <span class="font-medium">Adresse e-mail copiée dans le presse-papier !</span>
+    </div>
+
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl mx-auto px-4 pt-8 pb-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 glass-card p-4 sm:p-6 rounded-2xl">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-white/20">
+                    <i class="fa-solid fa-compass text-3xl text-white animate-spin-slow"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                        KipMarine <span class="text-xs sm:text-sm font-semibold px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">Version Beta</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-0.5">Espace dédié aux testeurs internes de la Console Android</p>
+                </div>
+            </div>
+
+            <!-- Direct Mail Quick Action -->
+            <button onclick="copyEmail()" class="group flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl transition border border-white/15 hover:border-white/30">
+                <i class="fa-solid fa-envelope text-sky-400"></i>
+                <span id="emailText">franckled.biz@gmail.com</span>
+                <i class="fa-regular fa-copy text-slate-400 group-hover:text-white transition ml-1"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-6xl mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- Left Column: Welcome & Guide -->
+        <section class="lg:col-span-5 space-y-6">
+            
+            <!-- Welcome Card -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-4 border border-indigo-400/30">
+                    <i class="fa-solid fa-anchor text-xs"></i>
+                    Merci pour votre soutien !
+                </div>
+
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-3 leading-snug">
+                    Aidez-nous à faire de KipMarine la meilleure application nautique
+                </h2>
+
+                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                    Vos retours en tant que testeur interne sont essentiels pour garantir la fiabilité et la précision des outils de sécurité en mer avant le lancement officiel.
+                </p>
+
+                <!-- Key Testing Modules -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-sky-300 uppercase tracking-wider mb-2">Modules prioritaires à tester :</h3>
+                    
+                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5">
+                        <i class="fa-solid fa-cloud-sun-rain text-sky-400 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-white">Météo & Marées</p>
+                            <p class="text-xs text-slate-400">Vérifiez les prévisions vent/mer et les courbes de marées.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5">
+                        <i class="fa-solid fa-anchor text-amber-400 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-white">Mouillage & Alarme d'évitage</p>
+                            <p class="text-xs text-slate-400">Testez la précision de positionnement GPS au mouillage.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5">
+                        <i class="fa-solid fa-compass text-indigo-400 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-white">Rose des Vents & Cap</p>
+                            <p class="text-xs text-slate-400">Contrôlez la réactivité de la boussole et de la règle Cras.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-900/40 border border-white/5">
+                        <i class="fa-solid fa-life-ring text-rose-400 text-lg mt-0.5"></i>
+                        <div>
+                            <p class="text-xs font-semibold text-white">Sécurité & Bouton MOB</p>
+                            <p class="text-xs text-slate-400">Exécutez des tests du bouton Homme à la Mer et des Check-lists.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Contact Card -->
+            <div class="glass-card p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-white">Besoin d'écrire directement ?</h4>
+                    <p class="text-xs text-slate-300">Un problème urgent ou un extrait de journal à nous envoyer ?</p>
+                </div>
+                <a href="mailto:franckled.biz@gmail.com?subject=Feedback%20KipMarine%20Testeur" 
+                   class="w-full sm:w-auto text-center px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 hover:text-sky-300 text-xs font-semibold border border-sky-500/30 transition shadow-lg">
+                    <i class="fa-solid fa-paper-plane mr-1.5"></i> Écrire un courriel
+                </a>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Feedback Form -->
+        <section class="lg:col-span-7">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl relative">
+                
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Formulaire de Retour</h2>
+                        <p class="text-xs text-slate-300">Complétez ce formulaire pour nous envoyer un rapport pré-formaté.</p>
+                    </div>
+                    <span class="p-2 bg-sky-500/10 text-sky-400 rounded-xl border border-sky-500/20">
+                        <i class="fa-solid fa-comment-dots text-xl"></i>
+                    </span>
+                </div>
+
+                <form id="feedbackForm" onsubmit="sendFeedback(event)" class="space-y-5">
+                    
+                    <!-- Tester Name & App Version -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-200 mb-1.5">Votre Nom / Pseudo</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-regular fa-user text-xs"></i>
+                                </span>
+                                <input type="text" id="testerName" required placeholder="ex: Skipper29" 
+                                       class="glass-input w-full pl-9 pr-3 py-2.5 rounded-xl text-sm transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-200 mb-1.5">Version de l'application</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+                                </span>
+                                <select id="appVersion" required class="glass-input w-full pl-9 pr-3 py-2.5 rounded-xl text-sm transition appearance-none">
+                                    <option value="v1.0 (Android Beta)" class="bg-slate-900 text-white">v1.0 (Android Beta)</option>
+                                    <option value="v1.1 (Android Test)" class="bg-slate-900 text-white">v1.1 (Android Test)</option>
+                                    <option value="Autre / Incertain" class="bg-slate-900 text-white">Autre / Incertain</option>
+                                </select>
+                                <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category selection -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-200 mb-2">Type de retour</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="feedbackType" value="Bug / Anomalie" class="peer sr-only" checked>
+                                <div class="p-2.5 rounded-xl bg-slate-900/50 border border-white/10 peer-checked:border-rose-500 peer-checked:bg-rose-500/10 peer-checked:text-rose-300 text-slate-300 text-center transition flex flex-col items-center gap-1">
+                                    <i class="fa-solid fa-bug text-sm"></i>
+                                    <span class="text-xs font-medium">Bug</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="feedbackType" value="Amélioration" class="peer sr-only">
+                                <div class="p-2.5 rounded-xl bg-slate-900/50 border border-white/10 peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-300 text-slate-300 text-center transition flex flex-col items-center gap-1">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                                    <span class="text-xs font-medium">Amélioration</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="feedbackType" value="Suggestion" class="peer sr-only">
+                                <div class="p-2.5 rounded-xl bg-slate-900/50 border border-white/10 peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 peer-checked:text-indigo-300 text-slate-300 text-center transition flex flex-col items-center gap-1">
+                                    <i class="fa-regular fa-lightbulb text-sm"></i>
+                                    <span class="text-xs font-medium">Suggestion</span>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input type="radio" name="feedbackType" value="Compliment" class="peer sr-only">
+                                <div class="p-2.5 rounded-xl bg-slate-900/50 border border-white/10 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-300 text-slate-300 text-center transition flex flex-col items-center gap-1">
+                                    <i class="fa-regular fa-heart text-sm"></i>
+                                    <span class="text-xs font-medium">Avis / Bravo</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Star Rating System -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-200 mb-1.5">Note globale de l'expérience</label>
+                        <div class="flex items-center gap-2 bg-slate-900/40 p-3 rounded-xl border border-white/10 w-fit">
+                            <div class="flex gap-1 text-2xl text-slate-600" id="starContainer">
+                                <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition" onclick="setRating(1)"></i>
+                                <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition" onclick="setRating(2)"></i>
+                                <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition" onclick="setRating(3)"></i>
+                                <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition" onclick="setRating(4)"></i>
+                                <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition" onclick="setRating(5)"></i>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400 ml-2" id="ratingText">5 / 5</span>
+                        </div>
+                    </div>
+
+                    <!-- Message details -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-200 mb-1.5">Description détaillée de votre retour</label>
+                        <textarea id="feedbackDetails" rows="4" required 
+                                  placeholder="Décrivez précisément l'action réalisée, le comportement observé ou votre suggestion d'amélioration..." 
+                                  class="glass-input w-full p-3 rounded-xl text-sm transition"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-sm shadow-xl shadow-indigo-600/30 border border-white/20 transition transform active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Envoyer mon retour par e-mail</span>
+                    </button>
+                    
+                    <p class="text-[11px] text-slate-400 text-center">
+                        Ce bouton préparera un e-mail pré-rempli adressé à <span class="text-sky-300 font-mono">franckled.biz@gmail.com</span>.
+                    </p>
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="w-full max-w-6xl mx-auto px-4 py-6 text-center border-t border-white/10 mt-6">
+        <p class="text-xs text-slate-400">
+            &copy; 2026 KipMarine — Franck LE DUFF. Tous droits réservés.
+        </p>
+    </footer>
+
+    <!-- JavaScript Interactions -->
+    <script>
+        let currentRating = 5;
+
+        // Initialize Star Rating
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('#starContainer i');
+            const ratingText = document.getElementById('ratingText');
+
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('text-amber-400');
+                    star.classList.remove('text-slate-600');
+                } else {
+                    star.classList.remove('text-amber-400');
+                    star.classList.add('text-slate-600');
+                }
+            });
+
+            ratingText.textContent = `${rating} / 5`;
+        }
+
+        // Run setRating default 5 stars
+        setRating(5);
+
+        // Copy Email to Clipboard
+        function copyEmail() {
+            const email = "franckled.biz@gmail.com";
+            
+            // Clipboard fallback
+            const tempInput = document.createElement("input");
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Show Toast
+            const toast = document.getElementById("toast");
+            toast.classList.remove("translate-y-[-100px]", "opacity-0");
+            toast.classList.add("translate-y-0", "opacity-100");
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-0", "opacity-100");
+                toast.classList.add("translate-y-[-100px]", "opacity-0");
+            }, 3000);
+        }
+
+        // Generate Mailto Link from Form Data
+        function sendFeedback(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('testerName').value;
+            const version = document.getElementById('appVersion').value;
+            const typeRadio = document.querySelector('input[name="feedbackType"]:checked');
+            const type = typeRadio ? typeRadio.value : 'Avis Général';
+            const details = document.getElementById('feedbackDetails').value;
+
+            const recipient = "franckled.biz@gmail.com";
+            const subject = `[KipMarine Testeur] ${type} - ${name} (${version})`;
+
+            const body = 
+`Bonjour Franck,
+
+Voici mon retour sur l'application KipMarine :
+
+--------------------------------------------------
+- Nom / Pseudo : ${name}
+- Version de l'application : ${version}
+- Type de retour : ${type}
+- Note attribuée : ${currentRating}/5
+--------------------------------------------------
+
+Détails & Commentaires :
+${details}
+
+-- 
+Envoyé depuis le formulaire de feedback testeur KipMarine`;
+
+            // Encode parameters for mailto
+            const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            // Open user default mail client
+            window.location.href = mailtoUrl;
+        }
+    </script>
+</body>
+</html>
