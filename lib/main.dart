@@ -12,6 +12,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AnchorWatchProvider()),
+        ChangeNotifierProvider(create: (_) => LogbookProvider()),
       ],
       child: const KipMarineApp(),
     ),
