@@ -61,16 +61,16 @@ class TidesScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('HAUTEUR ACTUELLE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
-                        SizedBox(height: 4),
+                        const Text('HAUTEUR ACTUELLE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                        const SizedBox(height: 4),
                         Row(
-                          crossAxisAlignment: CrossBaseline.alphabetic,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text('0.61', style: TextStyle(fontSize: 42, fontWeight: FontWeight.black, color: AppColors.textDark)),
+                          children: const [
+                            Text('0.61', style: TextStyle(fontSize: 42, fontWeight: FontWeight.w900, color: AppColors.textDark)),
                             SizedBox(width: 4),
                             Text('m', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
                           ],
