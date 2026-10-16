@@ -13,10 +13,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    NavigationDashboardScreen(),
-    AnchorWatchScreen(),
-  ];
+ final List<Widget> _screens = const [
+  NavigationDashboardScreen(),
+  AnchorWatchScreen(),
+  MarineMapScreen(),
+  LogbookScreen(),
+];  
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,12 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.anchor_outlined, color: Colors.white60),
               selectedIcon: Icon(Icons.anchor, color: AppColors.accent),
               label: 'Mouillage',
+            ),
+              NavigationDestination(
+  icon: Icon(Icons.book_outlined, color: Colors.white60),
+  selectedIcon: Icon(Icons.book, color: AppColors.accent),
+  label: 'Journal',
+),
             ),
           ],
         ),
