@@ -9,7 +9,7 @@ class ChecklistScreen extends StatefulWidget {
 }
 
 class _ChecklistScreenState extends State<ChecklistScreen> {
-  int _categoryIndex = 0; // 0 = Côtier, 1 = Semi-hauturier, 2 = Hauturier
+  int _categoryIndex = 0;
   final Map<String, bool> _checkedItems = {};
 
   final List<Map<String, dynamic>> _checklistCategories = [
@@ -71,7 +71,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // Sélecteur de zone
               Container(
                 height: 48,
                 padding: const EdgeInsets.all(4),
@@ -102,7 +101,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
               const SizedBox(height: 20),
 
-              // Barre de progression
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -140,7 +138,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
               const SizedBox(height: 16),
 
-              // Liste d'éléments à cocher
               Expanded(
                 child: ListView.builder(
                   itemCount: items.length,
@@ -204,7 +201,7 @@ class _TabButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? Colors.white : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: isSelected ? [const BoxShadow(color: Colors.black05, blurRadius: 4)] : [],
+            boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : [],
           ),
           alignment: Alignment.center,
           child: Text(
