@@ -8,6 +8,8 @@ import '../../mob/screens/mob_screen.dart';
 import '../../compass/screens/compass_screen.dart';
 import '../../vhf/screens/vhf_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
+import '../../rules/screens/rules_screen.dart';
+import '../../tides/screens/tides_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
@@ -29,7 +31,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
     final now = DateTime.now();
     final days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
     final months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-    return '${days[now.weekday - 1]} ${now.day}${months[now.month - 1]}';
+    return '${days[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
   }
 
   @override
@@ -262,7 +264,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Grille des Modules avec actions de clics
+                  // Grille complète des Modules avec actions Clic
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -278,12 +280,18 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         title: 'Mouillage',
                         subtitle: 'Alarme d\'évitage',
                       ),
-                      const _GridCard(
+                      _GridCard(
                         icon: Icons.waves,
                         iconBg: AppColors.iconBgCyan,
                         iconColor: AppColors.primaryTeal,
                         title: 'Marées',
                         subtitle: 'Hauteurs & étales',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const TidesScreen()),
+                          );
+                        },
                       ),
                       _GridCard(
                         icon: Icons.explore_outlined,
@@ -313,4 +321,118 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                       ),
                       _GridCard(
                         icon: Icons.settings_input_antenna_rounded,
-                        iconBg: AppColors.iconBgCyan
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Canaux VHF',
+                        subtitle: 'Fréquences & secours',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const VhfScreen()),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.menu_book_outlined,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Règles & balisage',
+                        subtitle: 'RIPA, feux, cardinales',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const RulesScreen()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 80),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _GridCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+
+  const _GridCard({
+    required this.icon,
+    required this.iconBg,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceWhite,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.cardBorder, width: 1.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x08000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconBg,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
