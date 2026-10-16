@@ -4,6 +4,7 @@ import 'core/constants/app_colors.dart';
 import 'features/navigation/providers/navigation_provider.dart';
 import 'features/anchor_watch/providers/anchor_watch_provider.dart';
 import 'features/logbook/providers/logbook_provider.dart';
+import 'features/mob/providers/mob_provider.dart';
 import 'features/home/screens/main_screen.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AnchorWatchProvider()),
         ChangeNotifierProvider(create: (_) => LogbookProvider()),
+        ChangeNotifierProvider(create: (_) => MobProvider()),
       ],
       child: const KipMarineApp(),
     ),
