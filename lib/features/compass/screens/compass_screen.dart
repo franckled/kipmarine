@@ -12,7 +12,13 @@ class CompassScreen extends StatefulWidget {
 }
 
 class _CompassScreenState extends State<CompassScreen> {
-  bool _isCrasMode = true; // true = Rose (Cras), false = Boussole
+  bool _isCrasMode = true;
+
+  String _getCardinal(double heading) {
+    const coords = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    final idx = ((heading + 11.25) % 360 / 22.5).floor();
+    return coords[idx];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +55,6 @@ class _CompassScreenState extends State<CompassScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // Basculeur Mode Rose (Cras) / Boussole
               Container(
                 height: 48,
                 padding: const EdgeInsets.all(4),
@@ -67,7 +72,7 @@ class _CompassScreenState extends State<CompassScreen> {
                             color: _isCrasMode ? Colors.white : Colors.transparent,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: _isCrasMode
-                                ? [const BoxShadow(color: Colors.black05, blurRadius: 4)]
+                                ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)]
                                 : [],
                           ),
                           alignment: Alignment.center,
@@ -90,7 +95,7 @@ class _CompassScreenState extends State<CompassScreen> {
                             color: !_isCrasMode ? Colors.white : Colors.transparent,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: !_isCrasMode
-                                ? [const BoxShadow(color: Colors.black05, blurRadius: 4)]
+                                ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)]
                                 : [],
                           ),
                           alignment: Alignment.center,
@@ -111,7 +116,6 @@ class _CompassScreenState extends State<CompassScreen> {
 
               const SizedBox(height: 24),
 
-              // Cadran principal
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -124,7 +128,6 @@ class _CompassScreenState extends State<CompassScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Graphique Rose / Aiguille
                       SizedBox(
                         width: 240,
                         height: 240,
@@ -159,7 +162,6 @@ class _CompassScreenState extends State<CompassScreen> {
 
               const SizedBox(height: 16),
 
-              // Carte explicative
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -168,8 +170,77 @@ class _CompassScreenState extends State<CompassScreen> {
                   border: Border.all(color: AppColors.cardBorder),
                 ),
                 child: const Text(
-                  'Rose graduée tous les 5°, chiffrée tous les 30°. « Rose (Cras) » garde le Nord en haut pour reporter un cap à la règle Cras. « Boussole » fait pivoter la rose pour placer votre cap réel sous l\'index rouge.',
+                  'Rose graduée tous les 5°, chiffrée tous les 30°. « Rose (Cras) » garde le Nord en haut pour reporter un cap à la règle Cras. « Boussole » fait pivoter la rose pour placing votre cap réel sous l\'index rouge.',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                     height: 1.4,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              const Text(
+                'Création Franck LE DUFF — 2026.\nTous droits de reproduction réservés.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CompassPainter extends CustomPainter {
+  final double heading;
+  final bool isCrasMode;
+
+  _CompassPainter({required this.heading, required this.isCrasMode});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    final circlePaint = Paint()
+      ..color = const Color(0xFFEAF6F8)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, circlePaint);
+
+    final borderPaint = Paint()
+      ..color = const Color(0xFFB2DDE2)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawCircle(center, radius, borderPaint);
+
+    final northPaint = Paint()..color = AppColors.mobOrange;
+    final path = Path()
+      ..moveTo(center.dx, center.dy - radius)
+      ..lineTo(center.dx - 8, center.dy - radius + 14)
+      ..lineTo(center.dx + 8, center.dy - radius + 14)
+      ..close();
+    canvas.drawPath(path, northPaint);
+
+    final needleAngle = isCrasMode ? (heading - 90) * pi / 180 : -90 * pi / 180;
+    final needleLen = radius - 25;
+    final endPoint = Offset(
+      center.dx + needleLen * cos(needleAngle),
+      center.dy + needleLen * sin(needleAngle),
+    );
+
+    final needlePaint = Paint()
+      ..color = AppColors.mobOrange
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(center, endPoint, needlePaint);
+
+    canvas.drawCircle(center, 6, Paint()..color = AppColors.textDark);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CompassPainter oldDelegate) =>
+      oldDelegate.heading != heading || oldDelegate.isCrasMode != isCrasMode;
+}
