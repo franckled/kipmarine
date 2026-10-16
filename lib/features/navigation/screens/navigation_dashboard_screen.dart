@@ -16,7 +16,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // Démarre le suivi GPS à l'ouverture de l'écran
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NavigationProvider>().startTracking();
     });
@@ -29,7 +28,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
         title: const Text(
           'KIPMARINE',
           style: TextStyle(
-            fontWeight: FontWeight.black,
+            fontWeight: FontWeight.w900,
             letterSpacing: 2.0,
             color: Colors.white,
           ),
@@ -108,7 +107,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Badge d'état GPS
                   Center(
                     child: GpsSignalBadge(
                       status: data.signalStatus,
@@ -116,8 +114,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Affichage principal de la Vitesse (SOG)
                   Expanded(
                     flex: 4,
                     child: Container(
@@ -163,15 +159,11 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Bloc de bas : Cap (COG) et Position GPS
                   Expanded(
                     flex: 3,
                     child: Row(
                       children: [
-                        // Cap (COG)
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -205,8 +197,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-
-                        // Coordonnées GPS
                         Expanded(
                           flex: 1,
                           child: Container(
