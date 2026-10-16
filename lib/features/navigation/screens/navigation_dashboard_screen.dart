@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
 import '../providers/navigation_provider.dart';
+import '../../mob/providers/mob_provider.dart';
+import '../../mob/screens/mob_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
@@ -75,7 +77,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Bouton MOB (Homme à la mer)
+                          // Bouton MOB (Homme à la mer) - Ouvre l'écran MOB
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.mobOrange,
@@ -95,12 +97,21 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               ),
                             ),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Point Homme à la mer (MOB) enregistré !'),
-                                  backgroundColor: AppColors.mobOrange,
-                                ),
-                              );
+                              final navData = context.read<NavigationProvider>().currentData;
+                              if (navData != null) {
+                                context.read<MobProvider>().triggerMob(navData);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const MobScreen()),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Attente du signal GPS pour enregistrer le point MOB...'),
+                                    backgroundColor: AppColors.mobOrange,
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ],
@@ -226,165 +237,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                       style: TextStyle(fontSize: 10, color: Colors.white60, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      data != null ? '${MarineFormatter.formatLatitude(data.latitude)}' : '42°40.874\'N',
+                                      data != null ? MarineFormatter.formatLatitude(data.latitude) : '42°40.874\'N',
                                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
                                     ),
                                     Text(
-                                      data != null ? '${MarineFormatter.formatLongitude(data.longitude)}' : '9°25.665\'E',
-                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Grille des Modules (2 colonnes)
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 1.35,
-                    children: const [
-                      _GridCard(
-                        icon: Icons.anchor,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
-                        title: 'Mouillage',
-                        subtitle: 'Alarme d\'évitage',
-                      ),
-                      _GridCard(
-                        icon: Icons.waves,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
-                        title: 'Marées',
-                        subtitle: 'Hauteurs & étales',
-                      ),
-                      _GridCard(
-                        icon: Icons.menu_book_rounded,
-                        iconBg: AppColors.iconBgOrange,
-                        iconColor: Colors.orange,
-                        title: 'Journal',
-                        subtitle: 'Position, SOG, COG',
-                      ),
-                      _GridCard(
-                        icon: Icons.assignment_turned_in_rounded,
-                        iconBg: AppColors.iconBgRed,
-                        iconColor: AppColors.mobOrange,
-                        title: 'Check-lists',
-                        subtitle: 'Sécurité & matériel',
-                      ),
-                      _GridCard(
-                        icon: Icons.build_rounded,
-                        iconBg: AppColors.iconBgOrange,
-                        iconColor: Colors.deepOrange,
-                        title: 'Moteur & énergie',
-                        subtitle: 'Heures & batteries',
-                      ),
-                      _GridCard(
-                        icon: Icons.menu_book_outlined,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
-                        title: 'Règles & balisage',
-                        subtitle: 'RIPA, feux, cardinales',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 80), // Espace sous la barre flottante
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  String _getFormattedDate() {
-    final now = DateTime.now();
-    final days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
-    final months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-    return '${days[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
-  }
-}
-
-class _GridCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconBg;
-  final Color iconColor;
-  final String title;
-  final String subtitle;
-
-  const _GridCard({
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceWhite,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardBorder, width: 1.0),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: iconColor, size: 22),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: AppColors.textDark,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.textMuted,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+                                      data != null ? MarineFormatter.formatLongitude(data.longitude) : '9°25.665\'E',
+                                      style: const TextStyle(fontSize: 12, fontWeight:
