@@ -22,6 +22,13 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
     });
   }
 
+  String _getFormattedDate() {
+    final now = DateTime.now();
+    final days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+    final months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    return '${days[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +54,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                             'KipMarine',
                             style: TextStyle(
                               fontSize: 26,
-                              fontWeight: FontWeight.black,
+                              fontWeight: FontWeight.w900,
                               color: AppColors.textDark,
                             ),
                           ),
@@ -77,7 +84,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Bouton MOB (Homme à la mer) - Ouvre l'écran MOB
+                          // Bouton MOB (Homme à la mer)
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.mobOrange,
@@ -92,7 +99,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               'MOB',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontWeight: FontWeight.black,
+                                fontWeight: FontWeight.w900,
                                 fontSize: 15,
                               ),
                             ),
@@ -107,7 +114,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Attente du signal GPS pour enregistrer le point MOB...'),
+                                    content: Text('Attente du signal GPS pour le point MOB...'),
                                     backgroundColor: AppColors.mobOrange,
                                   ),
                                 );
@@ -121,7 +128,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Hero Banner : Carte Vitesse SOG / COG / Position
+                  // Carte Vitesse SOG / COG / Position
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
@@ -142,7 +149,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                     ),
                     child: Stack(
                       children: [
-                        // Filigrane Rose des Vents en fond
                         Positioned(
                           right: -10,
                           top: -10,
@@ -167,7 +173,6 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                     letterSpacing: 1.0,
                                   ),
                                 ),
-                                // Indicateur signal GPS
                                 Container(
                                   width: 10,
                                   height: 10,
@@ -180,14 +185,14 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                             ),
                             const SizedBox(height: 4),
                             Row(
-                              crossAxisAlignment: CrossBaseline.alphabetic,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
                                   data != null ? data.speedInKnots.toStringAsFixed(1) : '0.0',
                                   style: const TextStyle(
                                     fontSize: 56,
-                                    fontWeight: FontWeight.black,
+                                    fontWeight: FontWeight.w900,
                                     color: Colors.white,
                                     height: 1.0,
                                   ),
@@ -242,4 +247,153 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                     ),
                                     Text(
                                       data != null ? MarineFormatter.formatLongitude(data.longitude) : '9°25.665\'E',
-                                      style: const TextStyle(fontSize: 12, fontWeight:
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Grille des Modules
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.35,
+                    children: const [
+                      _GridCard(
+                        icon: Icons.anchor,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Mouillage',
+                        subtitle: 'Alarme d\'évitage',
+                      ),
+                      _GridCard(
+                        icon: Icons.waves,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Marées',
+                        subtitle: 'Hauteurs & étales',
+                      ),
+                      _GridCard(
+                        icon: Icons.menu_book_rounded,
+                        iconBg: AppColors.iconBgOrange,
+                        iconColor: Colors.orange,
+                        title: 'Journal',
+                        subtitle: 'Position, SOG, COG',
+                      ),
+                      _GridCard(
+                        icon: Icons.assignment_turned_in_rounded,
+                        iconBg: AppColors.iconBgRed,
+                        iconColor: AppColors.mobOrange,
+                        title: 'Check-lists',
+                        subtitle: 'Sécurité & matériel',
+                      ),
+                      _GridCard(
+                        icon: Icons.build_rounded,
+                        iconBg: AppColors.iconBgOrange,
+                        iconColor: Colors.deepOrange,
+                        title: 'Moteur & énergie',
+                        subtitle: 'Heures & batteries',
+                      ),
+                      _GridCard(
+                        icon: Icons.menu_book_outlined,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Règles & balisage',
+                        subtitle: 'RIPA, feux, cardinales',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 80),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _GridCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+
+  const _GridCard({
+    required this.icon,
+    required this.iconBg,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceWhite,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.cardBorder, width: 1.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 22),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
