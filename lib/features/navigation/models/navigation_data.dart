@@ -28,7 +28,7 @@ class NavigationData {
   factory NavigationData.fromPosition(Position position) {
     // S'assure que la vitesse n'est pas négative (bruit GPS)
     final rawSpeed = position.speed < 0 ? 0.0 : position.speed;
-    
+
     return NavigationData(
       latitude: position.latitude,
       longitude: position.longitude,
@@ -39,6 +39,7 @@ class NavigationData {
       altitude: position.altitude,
       timestamp: position.timestamp,
     );
+  }
 
   /// Qualité du signal GPS basée sur la précision en mètres
   GpsSignalStatus get signalStatus {
