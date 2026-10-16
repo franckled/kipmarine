@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../navigation/screens/navigation_dashboard_screen.dart';
 import '../../anchor_watch/screens/anchor_watch_screen.dart';
+import '../../map/screens/marine_map_screen.dart';
+import '../../logbook/screens/logbook_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,12 +15,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
- final List<Widget> _screens = const [
-  NavigationDashboardScreen(),
-  AnchorWatchScreen(),
-  MarineMapScreen(),
-  LogbookScreen(),
-];  
+  final List<Widget> _screens = const [
+    NavigationDashboardScreen(),
+    AnchorWatchScreen(),
+    MarineMapScreen(),
+    LogbookScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +65,15 @@ class _MainScreenState extends State<MainScreen> {
               selectedIcon: Icon(Icons.anchor, color: AppColors.accent),
               label: 'Mouillage',
             ),
-              NavigationDestination(
-  icon: Icon(Icons.book_outlined, color: Colors.white60),
-  selectedIcon: Icon(Icons.book, color: AppColors.accent),
-  label: 'Journal',
-),
+            NavigationDestination(
+              icon: Icon(Icons.map_outlined, color: Colors.white60),
+              selectedIcon: Icon(Icons.map, color: AppColors.accent),
+              label: 'Carte',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.book_outlined, color: Colors.white60),
+              selectedIcon: Icon(Icons.book, color: AppColors.accent),
+              label: 'Journal',
             ),
           ],
         ),
