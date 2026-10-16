@@ -135,3 +135,182 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
+                        colors: [AppColors.primaryTeal, AppColors.primaryTealDark],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: -10,
+                          top: -10,
+                          child: Icon(
+                            Icons.explore_outlined,
+                            size: 130,
+                            color: Colors.white.withOpacity(0.08),
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'VITESSE GPS · SOG',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: navProvider.isTracking ? AppColors.okGreen : Colors.orange,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  data != null ? data.speedInKnots.toStringAsFixed(1) : '0.0',
+                                  style: const TextStyle(
+                                    fontSize: 56,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'nds',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data != null ? MarineFormatter.formatHeading(data.heading) : '---°',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Text(
+                                      'COG',
+                                      style: TextStyle(fontSize: 11, color: Colors.white60, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  height: 30,
+                                  width: 1,
+                                  color: Colors.white24,
+                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'POSITION',
+                                      style: TextStyle(fontSize: 10, color: Colors.white60, fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      data != null ? MarineFormatter.formatLatitude(data.latitude) : '42°40.874\'N',
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ),
+                                    Text(
+                                      data != null ? MarineFormatter.formatLongitude(data.longitude) : '9°25.665\'E',
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Grille des Modules avec actions de clics
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.35,
+                    children: [
+                      const _GridCard(
+                        icon: Icons.anchor,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Mouillage',
+                        subtitle: 'Alarme d\'évitage',
+                      ),
+                      const _GridCard(
+                        icon: Icons.waves,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Marées',
+                        subtitle: 'Hauteurs & étales',
+                      ),
+                      _GridCard(
+                        icon: Icons.explore_outlined,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'Rose des vents',
+                        subtitle: 'Règle Cras & Boussole',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const CompassScreen()),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.assignment_turned_in_rounded,
+                        iconBg: AppColors.iconBgRed,
+                        iconColor: AppColors.mobOrange,
+                        title: 'Check-lists',
+                        subtitle: 'Sécurité & matériel',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ChecklistScreen()),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.settings_input_antenna_rounded,
+                        iconBg: AppColors.iconBgCyan
