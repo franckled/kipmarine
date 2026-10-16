@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
 import 'features/navigation/providers/navigation_provider.dart';
-import 'features/navigation/screens/navigation_dashboard_screen.dart';
+import 'features/anchor_watch/providers/anchor_watch_provider.dart';
+import 'features/home/screens/main_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,7 @@ class KipMarineApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: const NavigationDashboardScreen(),
+      home: const MainScreen(),
     );
   }
 }
