@@ -9,7 +9,7 @@ class RulesScreen extends StatefulWidget {
 }
 
 class _RulesScreenState extends State<RulesScreen> {
-  int _tabIndex = 0; // 0 = RIPA, 1 = Cardinales, 2 = Feux
+  int _tabIndex = 0;
 
   final List<Map<String, String>> _ripaRules = const [
     {
@@ -84,7 +84,6 @@ class _RulesScreenState extends State<RulesScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // Sélecteur d'onglet
               Container(
                 height: 48,
                 padding: const EdgeInsets.all(4),
@@ -196,7 +195,7 @@ class _TabButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected ? Colors.white : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            boxShadow: isSelected ? [const BoxShadow(color: Colors.black05, blurRadius: 4)] : [],
+            boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : [],
           ),
           alignment: Alignment.center,
           child: Text(
