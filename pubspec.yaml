@@ -1,5 +1,5 @@
 name: kipmarine
-description: "Carnet de bord et sécurité nautique hors-ligne pour la navigation."
+description: "Application de navigation maritime et alarme de mouillage pour KipMarine."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,7 +9,40 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_map: ^6.0.0
-  latlong2: ^0.9.0
-  geolocator: ^10.1.0
-  provider: ^6.1.1
+
+  # UI & Graphismes
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.1.0
+
+  # Géolocalisation & Arrière-plan
+  geolocator: ^13.0.1
+  flutter_background_service: ^5.0.0
+  wakelock_plus: ^1.2.8
+
+  # Cartographie & Calculs géographiques
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Alertes & Notifications
+  audioplayers: ^6.1.0
+  flutter_local_notifications: ^18.0.0
+  vibration: ^2.0.0
+
+  # Stockage local & Gestion d'état
+  shared_preferences: ^2.3.2
+  provider: ^6.1.2
+
+  # Partage de traces GPX & Fichiers
+  share_plus: ^10.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/sounds/
+    - assets/images/
