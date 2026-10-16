@@ -157,7 +157,7 @@ class _VhfCard extends StatelessWidget {
               children: [
                 Text(
                   item.channel,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.black, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18),
                 ),
                 const Text('CANAL', style: TextStyle(color: Colors.white70, fontSize: 8, fontWeight: FontWeight.bold)),
               ],
