@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
 import 'features/navigation/providers/navigation_provider.dart';
 import 'features/anchor_watch/providers/anchor_watch_provider.dart';
+import 'features/logbook/providers/logbook_provider.dart';
 import 'features/home/screens/main_screen.dart';
 
 void main() {
