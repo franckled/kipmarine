@@ -6,6 +6,8 @@ import '../providers/navigation_provider.dart';
 import '../../mob/providers/mob_provider.dart';
 import '../../mob/screens/mob_screen.dart';
 import '../../compass/screens/compass_screen.dart';
+import '../../vhf/screens/vhf_screen.dart';
+import '../../checklists/screens/checklist_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
