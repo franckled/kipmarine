@@ -1,0 +1,27 @@
+include ':app'
+
+def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+def properties = new Properties()
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        properties.load(stream)
+    }
+}
+
+Cette erreur persiste lorsque Flutter ne trouve pas la déclaration d'embedding v2 au chemin exact attendu par l'outil de build, ou lorsque la structure du dossier `android/` manque de fichiers de configuration clés (comme `settings.gradle`).
+
+Voici les vérifications et corrections à effectuer directement depuis l'éditeur GitHub :
+
+<Steps>
+  <Step title="Vérifier le chemin exact du Manifest" subtitle="1 min">
+    Sur GitHub, assure-toi que ton fichier `AndroidManifest.xml` se trouve au chemin exact :
+    `android/app/src/main/AndroidManifest.xml`
+
+    *(S'il est placé dans `android/AndroidManifest.xml` ou `android/app/AndroidManifest.xml`, supprime-le et récrée-le au bon endroit).*
+
+    *Vérification :* Sur la page de ton dépôt, clique sur `android` > `app` > `src` > `main` : le fichier `AndroidManifest.xml` doit être présent dans ce dossier.
+  </Step>
+
+  <Step title="Créer le fichier android/settings.gradle" subtitle="1 min">
+    À la racine du dossier `android/`, crée le fichier `settings.gradle` avec ce contenu :
