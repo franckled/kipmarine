@@ -96,7 +96,6 @@ class VhfScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
-            // Alerte de rappel Canal 16
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -139,4 +138,45 @@ class _VhfCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surfaceWhite,
-        borderRadius: BorderRadius
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.cardBorder),
+        boxShadow: const [BoxShadow(color: Color(0x06000000), blurRadius: 6, offset: Offset(0, 2))],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: item.color,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  item.channel,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.black, fontSize: 18),
+                ),
+                const Text('CANAL', style: TextStyle(color: Colors.white70, fontSize: 8, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                Text(item.frequency, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryTeal)),
+                const SizedBox(height: 4),
+                Text(item.description, style: const TextStyle(fontSize: 12, color: AppColors.textMuted, height: 1.3)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
