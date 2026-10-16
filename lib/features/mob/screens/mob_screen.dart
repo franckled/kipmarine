@@ -31,7 +31,6 @@ class MobScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Bandeau supérieur
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -50,7 +49,7 @@ class MobScreen extends StatelessWidget {
                         'HOMME À LA MER',
                         style: TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.black,
+                          fontWeight: FontWeight.w900,
                           fontSize: 16,
                           letterSpacing: 1.2,
                         ),
@@ -71,7 +70,6 @@ class MobScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Boussole centrale indiquant la direction de l'Homme à la mer
               Center(
                 child: Container(
                   width: 240,
@@ -95,7 +93,6 @@ class MobScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Distance et Cap
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -105,7 +102,7 @@ class MobScreen extends StatelessWidget {
                         '${distance.round()} m',
                         style: const TextStyle(
                           fontSize: 48,
-                          fontWeight: FontWeight.black,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),
                       ),
@@ -121,13 +118,13 @@ class MobScreen extends StatelessWidget {
                         '${bearing.round()}°',
                         style: const TextStyle(
                           fontSize: 48,
-                          fontWeight: FontWeight.black,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),
                       ),
                       Text(
                         'CAP $cardinal',
-                        style: const TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -136,7 +133,6 @@ class MobScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Position GPS enregistrée
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -167,7 +163,6 @@ class MobScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Bouton Appui Long pour Annuler
               SizedBox(
                 height: 56,
                 child: ElevatedButton(
@@ -183,7 +178,7 @@ class MobScreen extends StatelessWidget {
                     '✕ MAINTENIR POUR ANNULER',
                     style: TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.black,
+                      fontWeight: FontWeight.w900,
                       fontSize: 16,
                       letterSpacing: 1.0,
                     ),
