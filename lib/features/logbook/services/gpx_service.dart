@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:share_plus/share_plus.dart';
 import '../models/log_entry.dart';
 
