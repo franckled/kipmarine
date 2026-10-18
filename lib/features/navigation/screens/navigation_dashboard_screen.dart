@@ -219,7 +219,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      data != null ? MarineFormatter.formatHeading(data.heading) : '---°',
+                                      data != null && data.hasValidCourse ? MarineFormatter.formatHeading(data.heading) : '---°',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -246,11 +246,11 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                       style: TextStyle(fontSize: 10, color: Colors.white60, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      data != null ? MarineFormatter.formatLatitude(data.latitude) : '42°40.874\'N',
+                                      data != null ? MarineFormatter.formatLatitude(data.latitude) : '---',
                                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
                                     ),
                                     Text(
-                                      data != null ? MarineFormatter.formatLongitude(data.longitude) : '9°25.665\'E',
+                                      data != null ? MarineFormatter.formatLongitude(data.longitude) : '---',
                                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
                                     ),
                                   ],

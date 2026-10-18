@@ -1,39 +1,28 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../features/navigation/models/navigation_data.dart';
 
 class LocationService {
   StreamSubscription<Position>? _positionStreamSubscription;
 
-  /// Vérifie et demande les permissions GPS nécessaires
+  /// Vérifie et demande les permissions GPS nécessaires.
   Future<bool> checkAndRequestPermissions() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Les services de localisation sont désactivés sur l'appareil
-      return false;
-    }
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return false;
 
-    LocationPermission permission = await Geolocator.checkPermission();
+    var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return false;
-      }
+      if (permission == LocationPermission.denied) return false;
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Les permissions sont refusées de façon permanente
-      return false;
-    }
-
+    if (permission == LocationPermission.deniedForever) return false;
     return true;
   }
 
-  /// Obtient la position GPS actuelle ponctuelle
+  /// Obtient une position GPS ponctuelle.
   Future<NavigationData?> getCurrentPosition() async {
-    final hasPermission = await checkAndRequestPermissions();
-    if (!hasPermission) return null;
-
+    if (!await checkAndRequestPermissions()) return null;
     try {
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
@@ -42,32 +31,46 @@ class LocationService {
         ),
       );
       return NavigationData.fromPosition(position);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
 
-  /// Fournit un flux continu de positions GPS pour la navigation
-  Stream<NavigationData> getNavigationStream({
-    int distanceFilterMeters = 2, // Mise à jour tous les 2 mètres de déplacement
-  }) {
-    final locationSettings = AndroidSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: distanceFilterMeters,
-      forceLocationManager: false,
-      intervalDuration: const Duration(seconds: 1), // Rafraîchissement 1s
-      foregroundNotificationConfig: const ForegroundNotificationConfig(
-        notificationText: "KipMarine suit votre position et votre vitesse en mer.",
-        notificationTitle: "Navigation KipMarine Active",
-        enableWakeLock: true,
-      ),
-    );
+  /// Flux GPS configuré explicitement selon la plateforme.
+  Stream<NavigationData> getNavigationStream({int distanceFilterMeters = 2}) {
+    late final LocationSettings settings;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: distanceFilterMeters,
+        forceLocationManager: false,
+        intervalDuration: const Duration(seconds: 1),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationText: 'KipMarine suit votre position et votre vitesse en mer.',
+          notificationTitle: 'Navigation KipMarine active',
+          enableWakeLock: true,
+        ),
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: distanceFilterMeters,
+        activityType: ActivityType.otherNavigation,
+        pauseLocationUpdatesAutomatically: false,
+        showBackgroundLocationIndicator: true,
+      );
+    } else {
+      settings = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: distanceFilterMeters,
+      );
+    }
 
-    return Geolocator.getPositionStream(locationSettings: locationSettings)
-        .map((position) => NavigationData.fromPosition(position));
+    return Geolocator.getPositionStream(locationSettings: settings)
+        .map(NavigationData.fromPosition);
   }
 
-  /// Arrête le suivi GPS
   void dispose() {
     _positionStreamSubscription?.cancel();
   }

@@ -39,7 +39,8 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CARTE MARINE', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('CARTE MARINE',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.primaryDark,
         centerTitle: true,
         actions: [
@@ -85,7 +86,8 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
               ),
               // Couche de balisage maritime OpenSeaMap
               TileLayer(
-                urlTemplate: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.kipmarine.app',
               ),
 
@@ -94,13 +96,16 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                 CircleLayer(
                   circles: [
                     CircleMarker(
-                      point: LatLng(anchorConfig.anchorLatitude, anchorConfig.anchorLongitude),
+                      point: LatLng(anchorConfig.anchorLatitude,
+                          anchorConfig.anchorLongitude),
                       radius: anchorConfig.radiusMeters,
                       useRadiusInMeter: true,
                       color: anchorProvider.isAlarmTriggered
                           ? AppColors.alertRed.withOpacity(0.3)
                           : AppColors.okGreen.withOpacity(0.2),
-                      borderColor: anchorProvider.isAlarmTriggered ? AppColors.alertRed : AppColors.okGreen,
+                      borderColor: anchorProvider.isAlarmTriggered
+                          ? AppColors.alertRed
+                          : AppColors.okGreen,
                       borderStrokeWidth: 2.0,
                     ),
                   ],
@@ -112,7 +117,8 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                   // Marqueur de l'Ancre
                   if (anchorConfig != null && anchorConfig.isActive)
                     Marker(
-                      point: LatLng(anchorConfig.anchorLatitude, anchorConfig.anchorLongitude),
+                      point: LatLng(anchorConfig.anchorLatitude,
+                          anchorConfig.anchorLongitude),
                       width: 40,
                       height: 40,
                       child: Container(
@@ -120,7 +126,8 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                           color: AppColors.primaryDark,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.anchor, color: AppColors.accent, size: 24),
+                        child: const Icon(Icons.anchor,
+                            color: AppColors.accent, size: 24),
                       ),
                     ),
 
@@ -131,7 +138,9 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       width: 50,
                       height: 50,
                       child: Transform.rotate(
-                        angle: (currentPosition.heading * pi / 180),
+                        angle: currentPosition.hasValidCourse
+                            ? currentPosition.heading * pi / 180
+                            : 0,
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors.accent.withOpacity(0.9),
@@ -141,8 +150,10 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                               BoxShadow(color: Colors.black38, blurRadius: 6),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.navigation_rounded,
+                          child: Icon(
+                            currentPosition.hasValidCourse
+                                ? Icons.navigation_rounded
+                                : Icons.my_location,
                             color: Colors.white,
                             size: 32,
                           ),

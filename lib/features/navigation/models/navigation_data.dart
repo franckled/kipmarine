@@ -6,11 +6,12 @@ enum GpsSignalStatus { excellent, good, fair, poor, lost }
 class NavigationData {
   final double latitude;
   final double longitude;
-  final double speedInKnots; // SOG (Speed Over Ground) en Nœuds
-  final double speedMs;      // Vitesse brute en m/s
-  final double heading;      // COG (Course Over Ground) en Degrés [0-360]
-  final double accuracy;     // Précision GPS en mètres
-  final double altitude;     // Altitude en mètres
+  final double speedInKnots; // SOG en nœuds
+  final double speedMs; // Vitesse brute en m/s
+  final double heading; // COG en degrés [0-360]
+  final bool headingIsValid;
+  final double accuracy; // Précision GPS en mètres
+  final double altitude; // Altitude en mètres
   final DateTime timestamp;
 
   NavigationData({
@@ -19,29 +20,50 @@ class NavigationData {
     required this.speedInKnots,
     required this.speedMs,
     required this.heading,
+    this.headingIsValid = true,
     required this.accuracy,
     required this.altitude,
     required this.timestamp,
   });
 
-  /// Factory pour convertir une Position issue du package geolocator
   factory NavigationData.fromPosition(Position position) {
-    // S'assure que la vitesse n'est pas négative (bruit GPS)
-    final rawSpeed = position.speed < 0 ? 0.0 : position.speed;
+    final rawSpeed =
+        position.speed.isFinite && position.speed >= 0 ? position.speed : 0.0;
+
+    final validHeading = position.heading.isFinite &&
+        position.heading >= 0 &&
+        position.heading < 360;
 
     return NavigationData(
       latitude: position.latitude,
       longitude: position.longitude,
       speedInKnots: MarineUnits.msToKnots(rawSpeed),
       speedMs: rawSpeed,
-      heading: position.heading < 0 ? 0.0 : position.heading,
+      heading: validHeading ? position.heading : 0.0,
+      headingIsValid: validHeading,
       accuracy: position.accuracy,
       altitude: position.altitude,
       timestamp: position.timestamp,
     );
   }
 
-  /// Qualité du signal GPS basée sur la précision en mètres
+  /// Évite d'utiliser un relevé GPS trop ancien.
+  bool get hasFreshPosition {
+    final age = DateTime.now().difference(timestamp);
+    return age >= const Duration(seconds: -5) &&
+        age <= const Duration(seconds: 15);
+  }
+
+  /// Le COG n'est exploitable que si le bateau avance,
+  /// que le cap est valide et que le relevé GPS est récent.
+  bool get hasValidCourse =>
+      hasFreshPosition &&
+      headingIsValid &&
+      speedInKnots >= 0.5 &&
+      heading.isFinite &&
+      heading >= 0 &&
+      heading < 360;
+
   GpsSignalStatus get signalStatus {
     if (accuracy <= 5) return GpsSignalStatus.excellent;
     if (accuracy <= 10) return GpsSignalStatus.good;

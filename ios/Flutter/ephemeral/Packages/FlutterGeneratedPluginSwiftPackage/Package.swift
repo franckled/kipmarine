@@ -21,6 +21,7 @@ let package = Package(
         .package(name: "package_info_plus", path: "../.packages/package_info_plus-9.0.1"),
         .package(name: "share_plus", path: "../.packages/share_plus-10.1.4"),
         .package(name: "shared_preferences_foundation", path: "../.packages/shared_preferences_foundation-2.5.7"),
+        .package(name: "url_launcher_ios", path: "../.packages/url_launcher_ios-6.4.2"),
         .package(name: "wakelock_plus", path: "../.packages/wakelock_plus-1.5.2"),
         .package(name: "FlutterFramework", path: "../.packages/FlutterFramework")
     ],
@@ -34,6 +35,7 @@ let package = Package(
                 .product(name: "package-info-plus", package: "package_info_plus"),
                 .product(name: "share-plus", package: "share_plus"),
                 .product(name: "shared-preferences-foundation", package: "shared_preferences_foundation"),
+                .product(name: "url-launcher-ios", package: "url_launcher_ios"),
                 .product(name: "wakelock-plus", package: "wakelock_plus"),
                 .product(name: "FlutterFramework", package: "FlutterFramework")
             ]
