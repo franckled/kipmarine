@@ -20,7 +20,7 @@ class AlarmService {
     // Lecture du son en boucle
     await _audioPlayer.setReleaseMode(ReleaseMode.loop);
     // Utilise un son d'alerte système ou un asset local
-    await _audioPlayer.play(AssetSource('sounds/anchor_alarm.mp3'));
+    await _audioPlayer.play(AssetSource('sounds/anchor_alarm.wav'));
   }
 
   /// Arrête l'alarme et les vibrations

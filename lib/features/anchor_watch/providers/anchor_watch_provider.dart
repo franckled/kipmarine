@@ -55,15 +55,17 @@ class AnchorWatchProvider extends ChangeNotifier {
     );
 
     final isOut = distance > _config!.radiusMeters;
+    final wasAlreadyOut = _config!.isAlarmTriggered;
 
     _config = _config!.copyWith(
       currentDistance: distance,
       isAlarmTriggered: isOut,
     );
 
-    if (isOut) {
+    // Déclenche le son uniquement au passage hors du cercle.
+    if (isOut && !wasAlreadyOut) {
       _alarmService.triggerAlarm();
-    } else if (_alarmService.isPlaying) {
+    } else if (!isOut && _alarmService.isPlaying) {
       _alarmService.stopAlarm();
     }
 

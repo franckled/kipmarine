@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/marine_units.dart';
 import '../../navigation/models/navigation_data.dart';
+import '../../../core/services/alarm_service.dart';
 
 class MobProvider extends ChangeNotifier {
   NavigationData? _mobPosition;
@@ -10,6 +11,7 @@ class MobProvider extends ChangeNotifier {
   Timer? _timer;
   Duration _elapsedTime = Duration.zero;
   bool _isActive = false;
+  final AlarmService _alarmService = AlarmService();
 
   NavigationData? get mobPosition => _mobPosition;
   DateTime? get mobTimestamp => _mobTimestamp;
@@ -22,6 +24,7 @@ class MobProvider extends ChangeNotifier {
     _mobTimestamp = DateTime.now();
     _elapsedTime = Duration.zero;
     _isActive = true;
+    _alarmService.triggerAlarm();
 
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -74,12 +77,14 @@ class MobProvider extends ChangeNotifier {
     _mobPosition = null;
     _mobTimestamp = null;
     _timer?.cancel();
+    _alarmService.stopAlarm();
     notifyListeners();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _alarmService.stopAlarm();
     super.dispose();
   }
 }

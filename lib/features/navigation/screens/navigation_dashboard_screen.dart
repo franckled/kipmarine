@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../anchor_watch/screens/anchor_watch_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
@@ -273,12 +274,20 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                     crossAxisSpacing: 16,
                     childAspectRatio: 1.35,
                     children: [
-                      const _GridCard(
+                      _GridCard(
                         icon: Icons.anchor,
                         iconBg: AppColors.iconBgCyan,
                         iconColor: AppColors.primaryTeal,
                         title: 'Mouillage',
                         subtitle: 'Alarme d\'évitage',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AnchorWatchScreen(),
+                            ),
+                          );
+                        },
                       ),
                       _GridCard(
                         icon: Icons.waves,
