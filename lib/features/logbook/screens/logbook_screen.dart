@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../navigation/providers/navigation_provider.dart';
 import '../providers/logbook_provider.dart';
 import '../services/gpx_service.dart';
@@ -172,7 +173,7 @@ class LogbookScreen extends StatelessWidget {
         content: TextField(
           controller: controller,
           style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Nom de la sortie',
             labelStyle: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant),
           ),
