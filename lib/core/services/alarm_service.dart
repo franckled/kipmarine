@@ -114,8 +114,8 @@ class AlarmService {
 
       await _notifications.show(
         _notificationId,
-        'KipMarine — dérive détectée',
-        'Le bateau est sorti du cercle de sécurité du mouillage.',
+        'KipMarine — alarme de mouillage',
+        'Dérive détectée ou GPS indisponible. Vérifiez immédiatement la position du bateau.',
         details,
       );
     } catch (_) {
