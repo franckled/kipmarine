@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../navigation/screens/navigation_dashboard_screen.dart';
 import '../../anchor_watch/screens/anchor_watch_screen.dart';
 import '../../map/screens/marine_map_screen.dart';
