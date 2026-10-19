@@ -570,9 +570,9 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.menu_book_rounded,
-                        iconBg: const Color(0xFFFFF0C2),
-                        iconColor: const Color(0xFFE6A000),
+                        icon: Icons.radio_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
                         title: 'Canaux VHF',
                         subtitle: 'Fréquences & secours',
                         onTap: () {
