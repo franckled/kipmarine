@@ -1,32 +1,71 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
 
+/// Sound and vibration output for the anchor-drift alarm.
+///
+/// Platform failures are handled independently: a vibration failure must not
+/// prevent the sound from starting, and vice versa.
 class AlarmService {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  bool _isPlaying = false;
+  bool _audioActive = false;
+  bool _vibrationActive = false;
+  bool _disposed = false;
 
-  bool get isPlaying => _isPlaying;
+  bool get isPlaying => _audioActive || _vibrationActive;
 
-  /// Déclenche la sirène d'alarme et les vibrations
+  /// Starts the looping alarm. The caller may retry on a later GPS update if
+  /// neither audio nor vibration can be started.
   Future<void> triggerAlarm() async {
-    if (_isPlaying) return;
-    _isPlaying = true;
+    if (_disposed || isPlaying) return;
 
-    // Vibration en boucle
-    if (await Vibration.hasVibrator()) {
-      Vibration.vibrate(pattern: [500, 1000, 500, 1000], repeat: 0);
+    try {
+      final hasVibrator = await Vibration.hasVibrator();
+      if (hasVibrator == true) {
+        await Vibration.vibrate(
+          pattern: [500, 1000, 500, 1000],
+          repeat: 0,
+        );
+        _vibrationActive = true;
+      }
+    } catch (_) {
+      _vibrationActive = false;
     }
 
-    // Lecture du son en boucle
-    await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-    // Utilise un son d'alerte système ou un asset local
-    await _audioPlayer.play(AssetSource('sounds/anchor_alarm.wav'));
+    try {
+      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+      await _audioPlayer.play(AssetSource('sounds/anchor_alarm.wav'));
+      _audioActive = true;
+    } catch (_) {
+      _audioActive = false;
+    }
   }
 
-  /// Arrête l'alarme et les vibrations
+  /// Stops all alarm outputs, even if one platform channel fails.
   Future<void> stopAlarm() async {
-    _isPlaying = false;
-    await Vibration.cancel();
-    await _audioPlayer.stop();
+    _audioActive = false;
+    _vibrationActive = false;
+
+    try {
+      await Vibration.cancel();
+    } catch (_) {
+      // Audio must still be stopped if vibration is unavailable.
+    }
+
+    try {
+      await _audioPlayer.stop();
+    } catch (_) {
+      // The player may not be initialized on this platform.
+    }
+  }
+
+  Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
+    await stopAlarm();
+    try {
+      await _audioPlayer.dispose();
+    } catch (_) {
+      // No further action is possible during teardown.
+    }
   }
 }
