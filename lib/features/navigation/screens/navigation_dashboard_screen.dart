@@ -114,7 +114,7 @@ class _NavigationDashboardScreenState
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
@@ -214,7 +214,7 @@ class _NavigationDashboardScreenState
                           child: Icon(
                             Icons.explore_outlined,
                             size: 130,
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
                         ),
                         Column(
@@ -535,7 +535,7 @@ class _GridCard extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.18)
+                    ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.18)
                     : iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
