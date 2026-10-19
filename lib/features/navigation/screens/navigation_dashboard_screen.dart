@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
+import '../../../core/widgets/mediterranean_sea_painter.dart';
 import '../providers/navigation_provider.dart';
 import '../../mob/providers/mob_provider.dart';
 import '../../mob/screens/mob_screen.dart';
@@ -261,6 +262,27 @@ class _NavigationDashboardScreenState
                     ),
                     child: Stack(
                       children: [
+                        const Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(26)),
+                            child: CustomPaint(painter: MediterraneanSeaPainter()),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(26),
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  const Color(0xFF061C27).withValues(alpha: 0.72),
+                                  const Color(0xFF061C27).withValues(alpha: 0.25),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         Positioned(
                           right: -10,
                           top: -10,
