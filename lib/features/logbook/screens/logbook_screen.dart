@@ -124,7 +124,7 @@ class LogbookScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final log = logProvider.logs[index];
                           return Card(
-                            color: AppColors.surfaceWhite,
+                            color: Theme.of(context).colorScheme.surface,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
