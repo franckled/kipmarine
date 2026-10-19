@@ -8,7 +8,10 @@ import '../../navigation/providers/navigation_provider.dart';
 import '../models/anchor_config.dart';
 
 class AnchorWatchProvider extends ChangeNotifier {
-  final AlarmService _alarmService = AlarmService();
+  final AnchorAlarmController _alarmService;
+
+  AnchorWatchProvider({AnchorAlarmController? alarmService})
+      : _alarmService = alarmService ?? AlarmService();
 
   AnchorConfig? _config;
   NavigationProvider? _navigationProvider;
