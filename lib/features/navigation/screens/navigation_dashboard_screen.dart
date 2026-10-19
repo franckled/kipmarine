@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
+import '../../../core/widgets/mediterranean_sea_painter.dart';
 import '../providers/navigation_provider.dart';
 import '../../mob/providers/mob_provider.dart';
 import '../../mob/screens/mob_screen.dart';
@@ -270,6 +271,9 @@ class _NavigationDashboardScreenState
                               'assets/images/mediterranean_hero.jpg',
                               fit: BoxFit.cover,
                               alignment: Alignment.center,
+                              errorBuilder: (_, __, ___) => const CustomPaint(
+                                painter: MediterraneanSeaPainter(),
+                              ),
                             ),
                           ),
                         ),
