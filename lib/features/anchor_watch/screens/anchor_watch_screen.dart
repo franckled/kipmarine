@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../navigation/providers/navigation_provider.dart';
 import '../providers/anchor_watch_provider.dart';
@@ -138,7 +139,7 @@ class AnchorWatchScreen extends StatelessWidget {
                       if (isMouille) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Le suivi GPS reste actif lorsque tu quittes cet écran, tant que KipMarine continue de recevoir les positions.',
+                          'Pour surveiller en arrière-plan, autorise la localisation « Toujours » dans les réglages iOS/Android. Le système peut limiter le GPS ou le son.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: colors.onSurfaceVariant,
@@ -221,6 +222,34 @@ class AnchorWatchScreen extends StatelessWidget {
                     if (isMouille) {
                       await anchorProvider.raiseAnchor();
                     } else if (currentPosition != null) {
+                      final permission = await Geolocator.checkPermission();
+                      if (!context.mounted) return;
+                      if (permission != LocationPermission.always) {
+                        final continueWithoutBackground = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) => AlertDialog(
+                            title: const Text('Autoriser le suivi en arrière-plan'),
+                            content: const Text(
+                              'La localisation « Toujours » est nécessaire pour que KipMarine puisse continuer à surveiller le mouillage lorsque l’application n’est plus à l’écran. '
+                              'Dans les réglages du téléphone, autorise la localisation en permanence et active les notifications si elles sont proposées. '
+                              'Si tu continues sans cette autorisation, l’alarme en arrière-plan n’est pas garantie.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext, false),
+                                child: const Text('Annuler'),
+                              ),
+                              FilledButton(
+                                onPressed: () => Navigator.pop(dialogContext, true),
+                                child: const Text('Continuer'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (continueWithoutBackground != true || !context.mounted) {
+                          return;
+                        }
+                      }
                       anchorProvider.dropAnchor(currentPosition);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
