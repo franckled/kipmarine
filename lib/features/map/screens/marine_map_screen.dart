@@ -53,14 +53,14 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
           'CARTE MARINE',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.primaryDark,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         centerTitle: true,
         actions: [
           IconButton(
             tooltip: _followBoat ? 'Désactiver le suivi' : 'Suivre le bateau',
             icon: Icon(
               _followBoat ? Icons.my_location : Icons.location_searching,
-              color: _followBoat ? AppColors.accent : Colors.white60,
+              color: _followBoat ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             onPressed: () {
               setState(() {
@@ -135,12 +135,12 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       height: 40,
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: AppColors.primaryDark,
+                          color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.anchor,
-                          color: AppColors.accent,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 24,
                         ),
                       ),
@@ -207,7 +207,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
             right: 20,
             child: FloatingActionButton(
               tooltip: 'Recentrer sur le bateau',
-              backgroundColor: AppColors.primaryDark,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               onPressed: () {
                 setState(() {
                   _followBoat = true;
@@ -218,7 +218,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
               },
               child: const Icon(
                 Icons.gps_fixed,
-                color: AppColors.accent,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
