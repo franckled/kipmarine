@@ -1,11 +1,10 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../../navigation/providers/navigation_provider.dart';
 
 class CompassScreen extends StatefulWidget {
@@ -17,12 +16,40 @@ class CompassScreen extends StatefulWidget {
 
 class _CompassScreenState extends State<CompassScreen> {
   bool _isCrasMode = true;
+  String _appVersion = 'Chargement...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+
+      if (!mounted) return;
+
+      setState(() {
+        _appVersion = '${info.version} (${info.buildNumber})';
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        _appVersion = 'Indisponible';
+      });
+    }
+  }
 
   String _getCardinal(double heading) {
     const directions = [
-      'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-      'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',
+      'N', 'NNE', 'NE', 'ENE',
+      'E', 'ESE', 'SE', 'SSE',
+      'S', 'SSW', 'SW', 'WSW',
+      'W', 'WNW', 'NW', 'NNW',
     ];
+
     final normalized = (heading % 360 + 360) % 360;
     return directions[((normalized + 11.25) / 22.5).floor() % 16];
   }
@@ -33,7 +60,9 @@ class _CompassScreenState extends State<CompassScreen> {
     final gpsData = nav.currentData;
 
     final double? cog =
-        gpsData != null && gpsData.hasValidCourse ? gpsData.heading : null;
+        gpsData != null && gpsData.hasValidCourse
+            ? gpsData.heading
+            : null;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -65,12 +94,14 @@ class _CompassScreenState extends State<CompassScreen> {
                 height: 48,
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
-                    _modeButton('Rose (Cras)', true),
+                    _modeButton('Rose (CRAS)', true),
                     _modeButton('Boussole', false),
                   ],
                 ),
@@ -97,6 +128,7 @@ class _CompassScreenState extends State<CompassScreen> {
                           builder: (context, snapshot) {
                             final magneticHeading =
                                 snapshot.data?.heading;
+
                             final validHeading =
                                 magneticHeading != null &&
                                 magneticHeading.isFinite &&
@@ -104,8 +136,9 @@ class _CompassScreenState extends State<CompassScreen> {
                                 magneticHeading < 360;
 
                             return _buildCompass(
-                              heading:
-                                  validHeading ? magneticHeading : null,
+                              heading: validHeading
+                                  ? magneticHeading
+                                  : null,
                               isCrasMode: false,
                             );
                           },
@@ -133,7 +166,9 @@ class _CompassScreenState extends State<CompassScreen> {
                           'Éloignez le téléphone des sources magnétiques.',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),
@@ -141,7 +176,7 @@ class _CompassScreenState extends State<CompassScreen> {
               const SizedBox(height: 12),
               Text(
                 'Création Franck LE DUFF — 2026\n'
-                'Version ${_appVersionLabel()}',
+                'Version $_appVersion',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 10,
@@ -161,7 +196,11 @@ class _CompassScreenState extends State<CompassScreen> {
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _isCrasMode = cras),
+        onTap: () {
+          setState(() {
+            _isCrasMode = cras;
+          });
+        },
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -198,6 +237,7 @@ class _CompassScreenState extends State<CompassScreen> {
     required bool isCrasMode,
   }) {
     final theme = Theme.of(context);
+
     final validHeading = heading != null &&
         heading.isFinite &&
         heading >= 0 &&
@@ -223,7 +263,7 @@ class _CompassScreenState extends State<CompassScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-  validHeading ? '${heading!.round()}°' : '---°',
+          validHeading ? '${heading.round()}°' : '---°',
           style: TextStyle(
             fontSize: 42,
             fontWeight: FontWeight.w900,
@@ -232,8 +272,8 @@ class _CompassScreenState extends State<CompassScreen> {
         ),
         Text(
           validHeading
-    ? '${_getCardinal(heading!)} · '
-        '${isCrasMode ? 'COG GPS' : 'cap magnétique'}'
+              ? '${_getCardinal(heading)} · '
+                  '${isCrasMode ? 'COG GPS' : 'cap magnétique'}'
               : isCrasMode
                   ? 'COG GPS indisponible'
                   : 'Cap magnétique indisponible',
@@ -247,8 +287,6 @@ class _CompassScreenState extends State<CompassScreen> {
       ],
     );
   }
-
-  String _appVersionLabel() => 'à confirmer';
 }
 
 class _CompassPainter extends CustomPainter {
@@ -266,6 +304,7 @@ class _CompassPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = min(size.width, size.height) / 2;
+
     final valid = heading != null &&
         heading!.isFinite &&
         heading! >= 0 &&
@@ -274,6 +313,7 @@ class _CompassPainter extends CustomPainter {
     final facePaint = Paint()
       ..color = theme.colorScheme.surfaceContainerHighest
       ..style = PaintingStyle.fill;
+
     canvas.drawCircle(center, radius, facePaint);
 
     canvas.drawCircle(
@@ -286,6 +326,8 @@ class _CompassPainter extends CustomPainter {
     );
 
     canvas.save();
+
+    // En mode magnétique, la rose tourne pour suivre le cap du téléphone.
     if (!isCrasMode && valid) {
       canvas.rotate(-heading! * pi / 180);
     }
@@ -294,6 +336,7 @@ class _CompassPainter extends CustomPainter {
       final angle = (degree - 90) * pi / 180;
       final major = degree % 30 == 0;
       final medium = degree % 10 == 0;
+
       final innerRadius =
           radius - (major ? 22 : medium ? 15 : 9);
 
@@ -301,6 +344,7 @@ class _CompassPainter extends CustomPainter {
         center.dx + innerRadius * cos(angle),
         center.dy + innerRadius * sin(angle),
       );
+
       final end = Offset(
         center.dx + (radius - 5) * cos(angle),
         center.dy + (radius - 5) * sin(angle),
@@ -341,12 +385,15 @@ class _CompassPainter extends CustomPainter {
         )..layout();
 
         final textRadius = radius - 39;
+
         textPainter.paint(
           canvas,
           Offset(
-            center.dx + textRadius * cos(angle) -
+            center.dx +
+                textRadius * cos(angle) -
                 textPainter.width / 2,
-            center.dy + textRadius * sin(angle) -
+            center.dy +
+                textRadius * sin(angle) -
                 textPainter.height / 2,
           ),
         );
@@ -355,7 +402,7 @@ class _CompassPainter extends CustomPainter {
 
     canvas.restore();
 
-    // Triangle Nord fixe dans les deux modes.
+    // Le repère Nord reste fixe dans les deux modes.
     final north = Path()
       ..moveTo(center.dx, center.dy - radius + 2)
       ..lineTo(center.dx - 8, center.dy - radius + 16)
@@ -367,11 +414,11 @@ class _CompassPainter extends CustomPainter {
       Paint()..color = Colors.red,
     );
 
-    // En mode CRAS, l'indicateur pointe vers le COG GPS.
-    // En mode boussole, le repère fixe en haut indique le Nord.
+    // En mode CRAS, la flèche pointe vers le COG GPS.
     if (isCrasMode && valid) {
       final angle = (heading! - 90) * pi / 180;
       final length = radius - 29;
+
       final tip = Offset(
         center.dx + length * cos(angle),
         center.dy + length * sin(angle),
@@ -412,8 +459,9 @@ class _CompassPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _CompassPainter oldDelegate) =>
-      oldDelegate.heading != heading ||
-      oldDelegate.isCrasMode != isCrasMode ||
-      oldDelegate.theme.colorScheme != theme.colorScheme;
+  bool shouldRepaint(covariant _CompassPainter oldDelegate) {
+    return oldDelegate.heading != heading ||
+        oldDelegate.isCrasMode != isCrasMode ||
+        oldDelegate.theme.colorScheme != theme.colorScheme;
+  }
 }
