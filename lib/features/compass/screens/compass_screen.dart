@@ -358,7 +358,7 @@ class _CompassPainter extends CustomPainter {
         end,
         Paint()
           ..color = theme.colorScheme.onSurface
-              .withOpacity(major ? 0.9 : 0.4)
+              .withValues(alpha: major ? 0.9 : 0.4)
           ..strokeWidth = major ? 2 : 1,
       );
 
