@@ -56,6 +56,7 @@ class _CompassScreenState extends State<CompassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final nav = context.watch<NavigationProvider>();
     final gpsData = nav.currentData;
 
@@ -112,11 +113,26 @@ class _CompassScreenState extends State<CompassScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: theme.brightness == Brightness.dark
+                          ? const [Color(0xFF0C3442), Color(0xFF061C27)]
+                          : const [Colors.white, Color(0xFFE6F2F6)],
+                    ),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: Theme.of(context).dividerColor,
+                      color: const Color(0xFF12CFE3).withValues(alpha: .34),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF12CFE3).withValues(
+                          alpha: theme.brightness == Brightness.dark ? .08 : .06,
+                        ),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
                   child: _isCrasMode
                       ? _buildCompass(
@@ -342,19 +358,35 @@ class _CompassPainter extends CustomPainter {
         heading! >= 0 &&
         heading! < 360;
 
+    final isDark = theme.brightness == Brightness.dark;
+    const cyan = Color(0xFF12CFE3);
+    const coral = Color(0xFFFF7A4B);
     final facePaint = Paint()
-      ..color = theme.colorScheme.surfaceContainerHighest
+      ..shader = RadialGradient(
+        colors: isDark
+            ? const [Color(0xFF0D3B4B), Color(0xFF041720)]
+            : const [Colors.white, Color(0xFFE6F2F6)],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(center, radius, facePaint);
 
+    // Double nautical bezel: a crisp cyan outer ring and a quieter inner ring.
     canvas.drawCircle(
       center,
-      radius,
+      radius - 1,
       Paint()
-        ..color = theme.dividerColor
+        ..color = cyan.withValues(alpha: isDark ? .92 : .80)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
+        ..strokeWidth = 1.8,
+    );
+    canvas.drawCircle(
+      center,
+      radius * .72,
+      Paint()
+        ..color = cyan.withValues(alpha: isDark ? .28 : .24)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
     );
 
     canvas.save();
@@ -389,9 +421,9 @@ class _CompassPainter extends CustomPainter {
         start,
         end,
         Paint()
-          ..color = theme.colorScheme.onSurface
-              .withValues(alpha: major ? 0.9 : 0.4)
-          ..strokeWidth = major ? 2 : 1,
+          ..color = (isDark ? const Color(0xFFE6F7FA) : const Color(0xFF073042))
+              .withValues(alpha: major ? 0.92 : 0.42)
+          ..strokeWidth = major ? 2.2 : 1,
       );
 
       if (major) {
@@ -410,8 +442,8 @@ class _CompassPainter extends CustomPainter {
             text: label,
             style: TextStyle(
               color: degree == 0
-                  ? Colors.red
-                  : theme.colorScheme.onSurface,
+                  ? coral
+                  : (isDark ? const Color(0xFFE6F7FA) : const Color(0xFF073042)),
               fontSize: degree % 90 == 0 ? 13 : 10,
               fontWeight: FontWeight.bold,
             ),
@@ -443,7 +475,7 @@ class _CompassPainter extends CustomPainter {
       ..lineTo(center.dx + 8, center.dy - radius + 16)
       ..close();
 
-    canvas.drawPath(north, Paint()..color = Colors.red);
+    canvas.drawPath(north, Paint()..color = coral);
     canvas.restore();
 
     // En mode magnétique, ce repère fixe matérialise l'axe du bateau :
@@ -456,7 +488,7 @@ class _CompassPainter extends CustomPainter {
         ..close();
       canvas.drawPath(
         lubberLine,
-        Paint()..color = theme.colorScheme.primary,
+        Paint()..color = cyan,
       );
     }
 
@@ -474,8 +506,8 @@ class _CompassPainter extends CustomPainter {
         center,
         tip,
         Paint()
-          ..color = theme.colorScheme.primary
-          ..strokeWidth = 4
+          ..color = coral
+          ..strokeWidth = 4.2
           ..strokeCap = StrokeCap.round,
       );
 
@@ -493,14 +525,19 @@ class _CompassPainter extends CustomPainter {
 
       canvas.drawPath(
         arrow,
-        Paint()..color = theme.colorScheme.primary,
+        Paint()..color = coral,
       );
     }
 
     canvas.drawCircle(
       center,
-      6,
-      Paint()..color = theme.colorScheme.onSurface,
+      7,
+      Paint()..color = cyan,
+    );
+    canvas.drawCircle(
+      center,
+      3,
+      Paint()..color = Colors.white,
     );
   }
 
