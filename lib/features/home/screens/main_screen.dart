@@ -34,21 +34,23 @@ class _MainScreenState extends State<MainScreen> {
 
           // Barre Pilule Flottante Style Emergent
           Positioned(
-            left: 20,
-            right: 20,
-            bottom: 24,
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).padding.bottom + 10,
             child: Container(
-              height: 64,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 68,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.96),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: Theme.of(context).dividerColor, width: 1.5),
-                boxShadow: const [
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.97),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: Theme.of(context).dividerColor, width: 1),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x15000000),
-                    blurRadius: 16,
-                    offset: Offset(0, 6),
+                    color: Colors.black.withValues(
+                      alpha: Theme.of(context).brightness == Brightness.dark ? 0.22 : 0.09,
+                    ),
+                    blurRadius: 22,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
@@ -114,24 +116,26 @@ class _NavItem extends StatelessWidget {
           color: isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
-              size: 20,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
