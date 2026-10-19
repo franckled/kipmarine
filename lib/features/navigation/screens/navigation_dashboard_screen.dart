@@ -94,18 +94,43 @@ class _NavigationDashboardScreenState
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'KipMarine',
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF12CFE3), Color(0xFF0787A6)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(13),
+                                ),
+                                child: const Icon(
+                                  Icons.sailing_rounded,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'KipMarine',
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
+                                fontWeight: FontWeight.w900,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ],
                           ),
-                          Text(
-                            _getFormattedDate(),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 48, top: 2),
+                            child: Text(
+                              _getFormattedDate(),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
@@ -205,15 +230,14 @@ class _NavigationDashboardScreenState
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.primaryTeal,
-                          AppColors.primaryTealDark,
-                        ],
+                      gradient: LinearGradient(
+                        colors: Theme.of(context).brightness == Brightness.dark
+                            ? const [Color(0xFF0787A6), Color(0xFF061C27)]
+                            : const [Color(0xFF12AFCB), Color(0xFF073B55)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(26),
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
@@ -391,19 +415,27 @@ class _NavigationDashboardScreenState
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 1.35,
+                    childAspectRatio: 1.22,
                     children: [
-                      const _GridCard(
-                        icon: Icons.anchor,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
+                      _GridCard(
+                        icon: Icons.anchor_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
                         title: 'Mouillage',
                         subtitle: 'Alarme d’évitage',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AnchorWatchScreen(),
+                            ),
+                          );
+                        },
                       ),
                       _GridCard(
-                        icon: Icons.waves,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
+                        icon: Icons.waves_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
                         title: 'Marées',
                         subtitle: 'Hauteurs & étales',
                         onTap: () {
@@ -416,9 +448,9 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.explore_outlined,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
+                        icon: Icons.explore_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
                         title: 'Rose des vents',
                         subtitle: 'Règle Cras & Boussole',
                         onTap: () {
@@ -431,9 +463,9 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.assignment_turned_in_rounded,
-                        iconBg: AppColors.iconBgRed,
-                        iconColor: AppColors.mobOrange,
+                        icon: Icons.checklist_rounded,
+                        iconBg: const Color(0xFFFFE6DB),
+                        iconColor: const Color(0xFFFF7043),
                         title: 'Check-lists',
                         subtitle: 'Sécurité & matériel',
                         onTap: () {
@@ -446,9 +478,9 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.settings_input_antenna_rounded,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
+                        icon: Icons.menu_book_rounded,
+                        iconBg: const Color(0xFFFFF0C2),
+                        iconColor: const Color(0xFFE6A000),
                         title: 'Canaux VHF',
                         subtitle: 'Fréquences & secours',
                         onTap: () {
@@ -461,11 +493,11 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.menu_book_outlined,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
-                        title: 'Règles & balisage',
-                        subtitle: 'RIPA, feux, cardinales',
+                        icon: Icons.map_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
+                        title: 'Cartes',
+                        subtitle: 'Navigation & repères',
                         onTap: () {
                           Navigator.push(
                             context,
@@ -477,8 +509,8 @@ class _NavigationDashboardScreenState
                       ),
                       _GridCard(
                         icon: Icons.info_outline_rounded,
-                        iconBg: AppColors.iconBgCyan,
-                        iconColor: AppColors.primaryTeal,
+                        iconBg: const Color(0xFFE7EDF0),
+                        iconColor: const Color(0xFF527985),
                         title: 'À propos',
                         subtitle: 'KipMarine & version',
                         onTap: () {
