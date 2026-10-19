@@ -20,6 +20,16 @@ class LocationService {
     return true;
   }
 
+  /// Vrai uniquement si le système autorise la localisation en arrière-plan.
+  /// Pour l'alarme de mouillage, « pendant l'utilisation » ne suffit pas.
+  Future<bool> hasBackgroundLocationPermission() async {
+    try {
+      return await Geolocator.checkPermission() == LocationPermission.always;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Obtient une position GPS ponctuelle.
   Future<NavigationData?> getCurrentPosition() async {
     if (!await checkAndRequestPermissions()) return null;
