@@ -13,6 +13,7 @@ import '../../vhf/screens/vhf_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
 import '../../rules/screens/rules_screen.dart';
 import '../../tides/screens/tides_screen.dart';
+import '../../weather/screens/weather_screen.dart';
 import '../../about/screens/about_screen.dart';
 import '../../settings/screens/settings_screen.dart';
 
@@ -488,6 +489,21 @@ class _NavigationDashboardScreenState
                             context,
                             MaterialPageRoute(
                               builder: (_) => const TidesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.cloud_rounded,
+                        iconBg: const Color(0xFFE0F2FE),
+                        iconColor: const Color(0xFF0284C7),
+                        title: 'Météo marine',
+                        subtitle: 'Vent & état de la mer',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const WeatherScreen(),
                             ),
                           );
                         },
