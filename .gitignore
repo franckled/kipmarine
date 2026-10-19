@@ -1,0 +1,35 @@
+# Flutter / Dart generated files
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Flutter-generated platform configuration
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Flutter/ephemeral/
+android/local.properties
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+*.iml
+
+# Xcode generated files
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Signing and local build settings
+*.mobileprovision
+*.provisionprofile
+*.p12
+*.p8
+*.cer
+*.certSigningRequest
