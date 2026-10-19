@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>KipMarine utilise le GPS en arrière-plan pour surveiller lévitage au mouillage et vous alerter en cas de dérive de lancre.</string>
+	<string>KipMarine utilise le GPS en arrière-plan pour surveiller la position de l’ancre et vous alerter en cas de dérive.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>KipMarine a besoin du GPS pour afficher votre vitesse (SOG), votre cap (COG) et votre position en mer.</string>
 	<key>UIApplicationSceneManifest</key>
