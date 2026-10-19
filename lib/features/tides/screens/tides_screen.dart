@@ -22,13 +22,15 @@ class _TidesScreenState extends State<TidesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Marées & Courants',
           style: TextStyle(
-            color: AppColors.textDark,
+            color: colors.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -40,7 +42,7 @@ class _TidesScreenState extends State<TidesScreen> {
             padding: const EdgeInsets.only(right: 16),
             child: Icon(
               Icons.waves_rounded,
-              color: AppColors.primaryTeal,
+              color: colors.primary,
               size: 28,
             ),
           ),
@@ -57,7 +59,7 @@ class _TidesScreenState extends State<TidesScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textMuted,
+                  color: colors.onSurfaceVariant,
                   letterSpacing: 1,
                 ),
               ),
@@ -69,9 +71,9 @@ class _TidesScreenState extends State<TidesScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceWhite,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.cardBorder),
+                  border: Border.all(color: theme.dividerColor),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
@@ -82,8 +84,8 @@ class _TidesScreenState extends State<TidesScreen> {
                       Icons.keyboard_arrow_down_rounded,
                       color: AppColors.primaryTeal,
                     ),
-                    style: const TextStyle(
-                      color: AppColors.textDark,
+                    style: TextStyle(
+                      color: colors.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -152,7 +154,7 @@ class _TidesScreenState extends State<TidesScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColors.iconBgCyan,
+                        color: colors.primary.withOpacity(0.10),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
@@ -170,7 +172,7 @@ class _TidesScreenState extends State<TidesScreen> {
                               'coefficients seront affichés après '
                               'l’intégration d’une source de prévisions fiable.',
                               style: TextStyle(
-                                color: AppColors.textDark,
+                                color: colors.onSurface,
                                 fontSize: 13,
                                 height: 1.5,
                               ),
@@ -180,7 +182,7 @@ class _TidesScreenState extends State<TidesScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Divider(color: AppColors.cardBorder),
+                    Divider(color: theme.dividerColor),
                     const SizedBox(height: 12),
                     const Row(
                       children: [
