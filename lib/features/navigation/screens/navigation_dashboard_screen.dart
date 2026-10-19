@@ -12,6 +12,7 @@ import '../../vhf/screens/vhf_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
 import '../../rules/screens/rules_screen.dart';
 import '../../tides/screens/tides_screen.dart';
+import '../../about/screens/about_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
@@ -456,6 +457,21 @@ class _NavigationDashboardScreenState
                             context,
                             MaterialPageRoute(
                               builder: (_) => const RulesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.info_outline_rounded,
+                        iconBg: AppColors.iconBgCyan,
+                        iconColor: AppColors.primaryTeal,
+                        title: 'À propos',
+                        subtitle: 'KipMarine & version',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AboutScreen(),
                             ),
                           );
                         },
