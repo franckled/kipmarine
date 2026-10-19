@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -134,11 +133,11 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       width: 40,
                       height: 40,
                       child: Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.anchor,
                           color: Theme.of(context).colorScheme.primary,
                           size: 24,
@@ -216,7 +215,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                   _mapController.move(boatLatLng, 15.0);
                 }
               },
-              child: const Icon(
+              child: Icon(
                 Icons.gps_fixed,
                 color: Theme.of(context).colorScheme.primary,
               ),
