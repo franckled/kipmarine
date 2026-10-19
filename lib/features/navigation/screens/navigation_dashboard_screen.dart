@@ -17,6 +17,8 @@ import '../../tides/screens/tides_screen.dart';
 import '../../weather/screens/weather_screen.dart';
 import '../../about/screens/about_screen.dart';
 import '../../settings/screens/settings_screen.dart';
+import '../../logbook/screens/logbook_screen.dart';
+import '../../map/screens/marine_map_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
@@ -483,7 +485,7 @@ class _NavigationDashboardScreenState
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 1.22,
+                    childAspectRatio: 1.05,
                     children: [
                       _GridCard(
                         icon: Icons.anchor_rounded,
@@ -591,6 +593,36 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
+                        icon: Icons.menu_book_rounded,
+                        iconBg: const Color(0xFFFFF0C2),
+                        iconColor: const Color(0xFFE6A000),
+                        title: 'Journal de bord',
+                        subtitle: 'Traces & notes',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LogbookScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _GridCard(
+                        icon: Icons.map_rounded,
+                        iconBg: const Color(0xFFDDF7FA),
+                        iconColor: const Color(0xFF008DA7),
+                        title: 'Cartes',
+                        subtitle: 'Navigation & repères',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MarineMapScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _GridCard(
                         icon: Icons.info_outline_rounded,
                         iconBg: const Color(0xFFE7EDF0),
                         iconColor: const Color(0xFF527985),
@@ -638,92 +670,149 @@ class _GridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.7)
-                : Theme.of(context).dividerColor,
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(
-                alpha: Theme.of(context).brightness == Brightness.dark
-                    ? 0.10
-                    : 0.035,
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final tileSurface = isDark ? const Color(0xFF082B38) : Colors.white;
+    final accent = isDark ? Color.lerp(iconColor, Colors.white, .16)! : iconColor;
+
+    return Semantics(
+      button: true,
+      label: '$title. $subtitle',
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: tileSurface,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? accent.withValues(alpha: .30)
+                    : iconColor.withValues(alpha: .13),
               ),
-              blurRadius: 14,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(9),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? iconColor.withValues(alpha: 0.18)
-                        : iconBg,
-                    borderRadius: BorderRadius.circular(14),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [
+                        Color.lerp(tileSurface, iconColor, .17)!,
+                        const Color(0xFF061C27),
+                      ]
+                    : [
+                        Colors.white,
+                        Color.lerp(Colors.white, iconBg, .72)!,
+                      ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (isDark ? Colors.black : iconColor).withValues(
+                    alpha: isDark ? .20 : .10,
                   ),
-                  child: Icon(
-                    icon,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Color.lerp(iconColor, Colors.white, 0.35)
-                        : iconColor,
-                    size: 23,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Icon(
-                    Icons.arrow_outward_rounded,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant
-                        .withValues(alpha: 0.55),
-                  ),
+                  blurRadius: 18,
+                  offset: const Offset(0, 7),
                 ),
               ],
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Theme.of(context).colorScheme.onSurface,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(23),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -24,
+                    top: -28,
+                    child: Container(
+                      width: 98,
+                      height: 98,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: iconColor.withValues(alpha: isDark ? .08 : .07),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: 11,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: Icon(
+                      Icons.arrow_outward_rounded,
+                      size: 16,
+                      color: colors.onSurfaceVariant.withValues(alpha: .50),
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 13, 12, 13),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                isDark
+                                    ? iconColor.withValues(alpha: .32)
+                                    : iconBg,
+                                isDark
+                                    ? iconColor.withValues(alpha: .12)
+                                    : Color.lerp(iconBg, Colors.white, .32)!,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: iconColor.withValues(alpha: .18),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: iconColor.withValues(alpha: .11),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(icon, color: accent, size: 24),
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                letterSpacing: -.25,
+                                color: colors.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontSize: 10.5,
+                                color: colors.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
