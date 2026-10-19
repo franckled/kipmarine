@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/marine_units.dart';
 import '../../../core/services/alarm_service.dart';
@@ -10,11 +12,14 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   AnchorConfig? _config;
   NavigationProvider? _navigationProvider;
+  Timer? _gpsFreshnessTimer;
   double _targetRadiusMeters = 35.0;
+  bool _gpsLost = false;
 
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
+  bool get isGpsLost => _config?.isActive == true && _gpsLost;
 
   /// Se branche directement sur le flux de navigation, indépendamment de l'écran
   /// affiché. Le suivi ne dépend donc plus de la reconstruction de l'écran.
@@ -31,8 +36,36 @@ class AnchorWatchProvider extends ChangeNotifier {
     if (position != null) updatePosition(position);
   }
 
-  /// Demande la permission des notifications au moment où l'utilisateur
-  /// active volontairement la surveillance du mouillage.
+  /// Détecte également l'absence de nouveaux relevés GPS. Ce timer améliore
+  /// l'alerte lorsque l'isolate est actif ; le système peut toutefois suspendre
+  /// les timers en arrière-plan, d'où la nécessité des permissions GPS adaptées.
+  void _startGpsFreshnessMonitor() {
+    _gpsFreshnessTimer?.cancel();
+    _gpsFreshnessTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) {
+        final config = _config;
+        if (config == null || !config.isActive) return;
+        final position = _navigationProvider?.currentData;
+        if (position == null || !position.hasFreshPosition) {
+          _markGpsLost();
+        } else if (_gpsLost) {
+          // La prochaine mise à jour du flux recalcule la distance et l'état
+          // de dérive ; on attend ce point pour acquitter l'alarme.
+        }
+      },
+    );
+  }
+
+  void _markGpsLost() {
+    if (_config?.isActive != true || _gpsLost) return;
+    _gpsLost = true;
+    unawaited(_alarmService.triggerAlarm());
+    notifyListeners();
+  }
+
+  /// Demande la permission des notifications quand l'utilisateur active
+  /// volontairement la surveillance du mouillage.
   Future<bool> prepareForMonitoring() => _alarmService.prepareForMonitoring();
 
   /// Modifie la consigne du rayon de sécurité.
@@ -56,11 +89,16 @@ class AnchorWatchProvider extends ChangeNotifier {
       currentDistance: 0.0,
       isAlarmTriggered: false,
     );
+    _gpsLost = false;
+    _startGpsFreshnessMonitor();
     notifyListeners();
   }
 
   /// Lève l'ancre et désactive la surveillance.
   Future<void> raiseAnchor() async {
+    _gpsFreshnessTimer?.cancel();
+    _gpsFreshnessTimer = null;
+    _gpsLost = false;
     await _alarmService.stopAlarm();
     _config = null;
     notifyListeners();
@@ -69,9 +107,14 @@ class AnchorWatchProvider extends ChangeNotifier {
   /// Calcule la dérive uniquement à partir de positions GPS récentes et valides.
   void updatePosition(NavigationData currentPosition) {
     final config = _config;
-    if (config == null || !config.isActive || !currentPosition.hasFreshPosition) {
+    if (config == null || !config.isActive) return;
+    if (!currentPosition.hasFreshPosition) {
+      _markGpsLost();
       return;
     }
+
+    final gpsWasLost = _gpsLost;
+    _gpsLost = false;
 
     final distance = MarineUnits.haversineDistance(
       config.anchorLatitude,
@@ -79,15 +122,26 @@ class AnchorWatchProvider extends ChangeNotifier {
       currentPosition.latitude,
       currentPosition.longitude,
     );
-    if (!distance.isFinite || distance < 0) return;
+    if (!distance.isFinite || distance < 0) {
+      _markGpsLost();
+      return;
+    }
 
     final isOut = distance > config.radiusMeters;
     final wasAlreadyOut = config.isAlarmTriggered;
 
-    // Évite des notifications et reconstructions répétitives pour un point
-    // GPS inchangé, sans masquer une transition dans/hors du cercle.
+    // Si le bateau est revenu dans le cercle, l'alarme peut être acquittée.
+    if (!isOut && _alarmService.isPlaying) {
+      unawaited(_alarmService.stopAlarm());
+    } else if (isOut && !wasAlreadyOut) {
+      unawaited(_alarmService.triggerAlarm());
+    }
+
+    // Une récupération GPS doit rafraîchir l'écran même si la distance n'a
+    // presque pas changé depuis le dernier relevé valide.
     if ((distance - config.currentDistance).abs() < 0.5 &&
-        isOut == wasAlreadyOut) {
+        isOut == wasAlreadyOut &&
+        !gpsWasLost) {
       return;
     }
 
@@ -95,13 +149,6 @@ class AnchorWatchProvider extends ChangeNotifier {
       currentDistance: distance,
       isAlarmTriggered: isOut,
     );
-
-    if (isOut && !wasAlreadyOut) {
-      _alarmService.triggerAlarm();
-    } else if (!isOut && _alarmService.isPlaying) {
-      _alarmService.stopAlarm();
-    }
-
     notifyListeners();
   }
 
@@ -113,8 +160,9 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _gpsFreshnessTimer?.cancel();
     _navigationProvider?.removeListener(_onNavigationChanged);
-    _alarmService.stopAlarm();
+    unawaited(_alarmService.stopAlarm());
     super.dispose();
   }
 }
