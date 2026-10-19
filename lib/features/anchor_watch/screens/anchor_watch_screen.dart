@@ -180,6 +180,19 @@ class AnchorWatchScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
               ],
+              if (anchorProvider.isLoading) ...[
+                const LinearProgressIndicator(),
+                const SizedBox(height: 8),
+                Text(
+                  'Récupération du dernier point de mouillage enregistré…',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: colors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
               SizedBox(
                 height: 60,
                 child: ElevatedButton.icon(
@@ -202,7 +215,9 @@ class AnchorWatchScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onPressed: () async {
+                  onPressed: anchorProvider.isLoading
+                      ? null
+                      : () async {
                     if (isMouille) {
                       await anchorProvider.raiseAnchor();
                     } else if (currentPosition != null) {
