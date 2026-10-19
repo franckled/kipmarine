@@ -47,7 +47,7 @@ class MobScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         'HOMME À LA MER',
                         style: TextStyle(
                           color: colors.onSurface,
@@ -102,13 +102,13 @@ class MobScreen extends StatelessWidget {
                     children: [
                       Text(
                         '${distance.round()} m',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
                           color: colors.onSurface,
                         ),
                       ),
-                      const Text(
+                      Text(
                         'DISTANCE',
                         style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12, fontWeight: FontWeight.bold),
                       ),
@@ -126,7 +126,7 @@ class MobScreen extends StatelessWidget {
                       ),
                       Text(
                         'CAP $cardinal',
-                        style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -147,7 +147,7 @@ class MobScreen extends StatelessWidget {
                       mobPos != null
                           ? '${MarineFormatter.formatLatitude(mobPos.latitude)}   ${MarineFormatter.formatLongitude(mobPos.longitude)}'
                           : '42°40.877\'N   9°25.655\'E',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: colors.onSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
