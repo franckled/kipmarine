@@ -38,7 +38,6 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.brightness_auto_rounded,
             title: 'Automatique',
             subtitle: 'Suit les réglages de votre téléphone',
-            value: ThemeMode.system,
             selected: controller.themeMode == ThemeMode.system,
             onTap: () => controller.setThemeMode(ThemeMode.system),
           ),
@@ -47,7 +46,6 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.light_mode_rounded,
             title: 'Clair · lagon',
             subtitle: 'Fond lumineux, turquoise et bleu profond',
-            value: ThemeMode.light,
             selected: controller.themeMode == ThemeMode.light,
             onTap: () => controller.setThemeMode(ThemeMode.light),
           ),
@@ -56,7 +54,6 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.dark_mode_rounded,
             title: 'Sombre · Méditerranée',
             subtitle: 'Bleu nuit, mer profonde et accent turquoise',
-            value: ThemeMode.dark,
             selected: controller.themeMode == ThemeMode.dark,
             onTap: () => controller.setThemeMode(ThemeMode.dark),
           ),
@@ -94,7 +91,6 @@ class _ThemeChoice extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final ThemeMode value;
   final bool selected;
   final VoidCallback onTap;
 
@@ -102,7 +98,6 @@ class _ThemeChoice extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.value,
     required this.selected,
     required this.onTap,
   });
