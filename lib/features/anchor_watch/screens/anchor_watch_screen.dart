@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../navigation/providers/navigation_provider.dart';
@@ -13,13 +14,6 @@ class AnchorWatchScreen extends StatelessWidget {
     final anchorProvider = context.watch<AnchorWatchProvider>();
     final currentPosition = navProvider.currentData;
     final config = anchorProvider.config;
-
-    // Met à jour la position de l'ancre chaque fois que le GPS évolue
-    if (currentPosition != null && config != null && config.isActive) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<AnchorWatchProvider>().updatePosition(currentPosition);
-      });
-    }
 
     final isMouille = config != null && config.isActive;
 
@@ -158,17 +152,66 @@ class AnchorWatchScreen extends StatelessWidget {
                     isMouille ? 'LEVER L\'ANCRE' : 'MOUILLER L\'ANCRE',
                     style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (isMouille) {
-                      anchorProvider.raiseAnchor();
-                    } else if (currentPosition != null &&
-                        currentPosition.hasFreshPosition) {
-                      anchorProvider.dropAnchor(currentPosition);
-                    } else {
+                      await anchorProvider.raiseAnchor();
+                      return;
+                    }
+
+                    final position = navProvider.currentData;
+                    if (position == null || !position.hasFreshPosition) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
                             'Position GPS indisponible ou périmée. Attendez un relevé récent avant de mouiller.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // La demande d'autorisation de notification doit se faire
+                    // pendant que l'écran est actif, avant une éventuelle dérive.
+                    final notificationsEnabled =
+                        await anchorProvider.prepareForMonitoring();
+                    if (!context.mounted) return;
+
+                    final latestPosition = navProvider.currentData;
+                    if (latestPosition == null ||
+                        !latestPosition.hasFreshPosition) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Le GPS est devenu indisponible. Attendez un relevé récent avant de mouiller.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    anchorProvider.dropAnchor(latestPosition);
+                    final backgroundLocationEnabled =
+                        await navProvider.hasBackgroundLocationPermission();
+                    if (!context.mounted) return;
+
+                    if (!backgroundLocationEnabled) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: const Duration(seconds: 10),
+                          content: const Text(
+                            'Pour surveiller le mouillage écran verrouillé, autorisez la localisation « Toujours » dans les réglages. Sans cela, la surveillance en arrière-plan n’est pas garantie.',
+                          ),
+                          action: SnackBarAction(
+                            label: 'Réglages',
+                            onPressed: () => Geolocator.openAppSettings(),
+                          ),
+                        ),
+                      );
+                    } else if (!notificationsEnabled) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Les notifications sont désactivées. KipMarine ne pourra pas afficher l’alerte système de secours.',
                           ),
                         ),
                       );
