@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -153,7 +153,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       height: 54,
                       child: Transform.rotate(
                         // Pas de rotation artificielle si le COG est inconnu.
-                        angle: cog == null ? 0.0 : cog * pi / 180,
+                        angle: cog == null ? 0.0 : cog * math.pi / 180,
                         child: Container(
                           decoration: BoxDecoration(
                             color: cog == null
