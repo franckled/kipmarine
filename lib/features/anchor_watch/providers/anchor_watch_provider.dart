@@ -49,9 +49,6 @@ class AnchorWatchProvider extends ChangeNotifier {
         final position = _navigationProvider?.currentData;
         if (position == null || !position.hasFreshPosition) {
           _markGpsLost();
-        } else if (_gpsLost) {
-          // La prochaine mise à jour du flux recalcule la distance et l'état
-          // de dérive ; on attend ce point pour acquitter l'alarme.
         }
       },
     );
