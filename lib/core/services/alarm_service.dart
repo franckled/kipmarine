@@ -3,7 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vibration/vibration.dart';
 
-class AlarmService {
+abstract interface class AnchorAlarmController {
+  bool get isPlaying;
+  Future<bool> prepareForMonitoring();
+  Future<void> triggerAlarm();
+  Future<void> stopAlarm();
+}
+
+class AlarmService implements AnchorAlarmController {
   static const int _notificationId = 1872;
   static const String _channelId = 'kipmarine_anchor_alarm';
 
