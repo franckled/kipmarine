@@ -36,7 +36,7 @@ class AnchorWatchProvider extends ChangeNotifier {
         final decoded = jsonDecode(stored);
         if (decoded is Map<String, dynamic>) {
           final restored = AnchorConfig.fromJson(decoded);
-          if (restored.isActive) {
+          if (_config == null && restored.isActive) {
             _config = restored;
             _targetRadiusMeters = restored.radiusMeters;
           }
