@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../navigation/screens/navigation_dashboard_screen.dart';
-import '../../anchor_watch/screens/anchor_watch_screen.dart';
-import '../../map/screens/marine_map_screen.dart';
+import '../../weather/screens/weather_screen.dart';
+import '../../checklists/screens/checklist_screen.dart';
 import '../../logbook/screens/logbook_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,8 +17,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     NavigationDashboardScreen(),
     LogbookScreen(),
-    AnchorWatchScreen(),
-    MarineMapScreen(),
+    WeatherScreen(),
+    ChecklistScreen(),
   ];
 
   @override
@@ -70,14 +70,14 @@ class _MainScreenState extends State<MainScreen> {
                     onTap: () => setState(() => _currentIndex = 1),
                   ),
                   _NavItem(
-                    icon: Icons.anchor_rounded,
-                    label: 'Mouillage',
+                    icon: Icons.air_rounded,
+                    label: 'Météo',
                     isSelected: _currentIndex == 2,
                     onTap: () => setState(() => _currentIndex = 2),
                   ),
                   _NavItem(
-                    icon: Icons.map_rounded,
-                    label: 'Carte',
+                    icon: Icons.verified_user_rounded,
+                    label: 'Sécurité',
                     isSelected: _currentIndex == 3,
                     onTap: () => setState(() => _currentIndex = 3),
                   ),
