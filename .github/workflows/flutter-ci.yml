@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - repair/ios-xcode-project
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read
