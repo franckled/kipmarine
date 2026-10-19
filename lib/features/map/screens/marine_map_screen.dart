@@ -25,25 +25,39 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
     final currentPosition = navProvider.currentData;
     final anchorConfig = anchorProvider.config;
 
-    // Position du bateau (ou position par défaut si le GPS charge)
+    // Position indicative de départ, uniquement en attendant le GPS.
     final LatLng boatLatLng = currentPosition != null
         ? LatLng(currentPosition.latitude, currentPosition.longitude)
         : const LatLng(42.7000, 9.4500);
 
-    // Déplacement automatique de la carte si le mode suivi est actif
+    // N'utiliser le cap que s'il est déclaré valide.
+    final double? cog = currentPosition != null &&
+            currentPosition.hasValidCourse
+        ? currentPosition.heading
+        : null;
+
     if (_followBoat && currentPosition != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController.move(boatLatLng, _mapController.camera.zoom);
+        if (!mounted || !_followBoat) return;
+        try {
+          _mapController.move(boatLatLng, _mapController.camera.zoom);
+        } catch (_) {
+          // La carte peut ne pas être encore initialisée.
+        }
       });
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CARTE MARINE', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'CARTE MARINE',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: AppColors.primaryDark,
         centerTitle: true,
         actions: [
           IconButton(
+            tooltip: _followBoat ? 'Désactiver le suivi' : 'Suivre le bateau',
             icon: Icon(
               _followBoat ? Icons.my_location : Icons.location_searching,
               color: _followBoat ? AppColors.accent : Colors.white60,
@@ -51,10 +65,10 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
             onPressed: () {
               setState(() {
                 _followBoat = !_followBoat;
-                if (_followBoat && currentPosition != null) {
-                  _mapController.move(boatLatLng, 15.0);
-                }
               });
+              if (_followBoat && currentPosition != null) {
+                _mapController.move(boatLatLng, 15.0);
+              }
             },
           ),
         ],
@@ -69,8 +83,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
               minZoom: 3.0,
               maxZoom: 18.0,
               onPositionChanged: (camera, hasGesture) {
-                if (hasGesture && _followBoat) {
-                  // Désactive le suivi automatique si l'utilisateur déplace la carte manuellement
+                if (hasGesture && _followBoat && mounted) {
                   setState(() {
                     _followBoat = false;
                   });
@@ -78,41 +91,46 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
               },
             ),
             children: [
-              // Couche de fond OpenStreetMap
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.kipmarine.app',
               ),
-              // Couche de balisage maritime OpenSeaMap
               TileLayer(
-                urlTemplate: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.kipmarine.app',
               ),
 
-              // Cercle de sécurité du mouillage
               if (anchorConfig != null && anchorConfig.isActive)
                 CircleLayer(
                   circles: [
                     CircleMarker(
-                      point: LatLng(anchorConfig.anchorLatitude, anchorConfig.anchorLongitude),
+                      point: LatLng(
+                        anchorConfig.anchorLatitude,
+                        anchorConfig.anchorLongitude,
+                      ),
                       radius: anchorConfig.radiusMeters,
                       useRadiusInMeter: true,
                       color: anchorProvider.isAlarmTriggered
                           ? AppColors.alertRed.withOpacity(0.3)
                           : AppColors.okGreen.withOpacity(0.2),
-                      borderColor: anchorProvider.isAlarmTriggered ? AppColors.alertRed : AppColors.okGreen,
+                      borderColor: anchorProvider.isAlarmTriggered
+                          ? AppColors.alertRed
+                          : AppColors.okGreen,
                       borderStrokeWidth: 2.0,
                     ),
                   ],
                 ),
 
-              // Marqueurs : Ancre et Bateau
               MarkerLayer(
                 markers: [
-                  // Marqueur de l'Ancre
                   if (anchorConfig != null && anchorConfig.isActive)
                     Marker(
-                      point: LatLng(anchorConfig.anchorLatitude, anchorConfig.anchorLongitude),
+                      point: LatLng(
+                        anchorConfig.anchorLatitude,
+                        anchorConfig.anchorLongitude,
+                      ),
                       width: 40,
                       height: 40,
                       child: Container(
@@ -120,29 +138,43 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                           color: AppColors.primaryDark,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.anchor, color: AppColors.accent, size: 24),
+                        child: const Icon(
+                          Icons.anchor,
+                          color: AppColors.accent,
+                          size: 24,
+                        ),
                       ),
                     ),
 
-                  // Marqueur du Bateau (orienté selon le COG)
                   if (currentPosition != null)
                     Marker(
                       point: boatLatLng,
-                      width: 50,
-                      height: 50,
+                      width: 54,
+                      height: 54,
                       child: Transform.rotate(
-                        angle: ((currentPosition.heading ?? 0.0) * pi / 180),
+                        // Pas de rotation artificielle si le COG est inconnu.
+                        angle: cog == null ? 0.0 : cog * pi / 180,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withOpacity(0.9),
+                            color: cog == null
+                                ? Colors.blueGrey
+                                : AppColors.accent.withOpacity(0.9),
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
                             boxShadow: const [
-                              BoxShadow(color: Colors.black38, blurRadius: 6),
+                              BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 6,
+                              ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.navigation_rounded,
+                          child: Icon(
+                            cog == null
+                                ? Icons.location_on
+                                : Icons.navigation_rounded,
                             color: Colors.white,
                             size: 32,
                           ),
@@ -154,13 +186,28 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
             ],
           ),
 
-          // Bouton flottant de recentrage rapide sur le bateau
+          if (currentPosition == null)
+            Positioned(
+              top: 12,
+              left: 12,
+              right: 12,
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'En attente du GPS : la position affichée est indicative.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ),
+            ),
+
           Positioned(
             bottom: 20,
             right: 20,
             child: FloatingActionButton(
+              tooltip: 'Recentrer sur le bateau',
               backgroundColor: AppColors.primaryDark,
-              child: const Icon(Icons.gps_fixed, color: AppColors.accent),
               onPressed: () {
                 setState(() {
                   _followBoat = true;
@@ -169,6 +216,10 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                   _mapController.move(boatLatLng, 15.0);
                 }
               },
+              child: const Icon(
+                Icons.gps_fixed,
+                color: AppColors.accent,
+              ),
             ),
           ),
         ],
