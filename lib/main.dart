@@ -13,7 +13,14 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
-        ChangeNotifierProvider(create: (_) => AnchorWatchProvider()),
+        ChangeNotifierProxyProvider<NavigationProvider, AnchorWatchProvider>(
+          create: (_) => AnchorWatchProvider(),
+          update: (_, navigation, anchorWatch) {
+            final provider = anchorWatch ?? AnchorWatchProvider();
+            provider.bindNavigationProvider(navigation);
+            return provider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => LogbookProvider()),
         ChangeNotifierProvider(create: (_) => MobProvider()),
       ],
