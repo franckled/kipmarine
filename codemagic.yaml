@@ -27,3 +27,48 @@ workflows:
       - build/ios/iphoneos/*.app
       - build/ios/iphoneos/*.dSYM
       - flutter_drive.log
+
+  kipmarine-v6-testflight:
+    name: KipMarine V6 - TestFlight signé
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    # Ce workflow est volontairement manuel : il ne publie rien à chaque push.
+    # Configure dans Codemagic une clé App Store Connect nommée exactement
+    # "KipMarineAppStoreConnect", ou remplace ce nom par celui déjà configuré.
+    integrations:
+      app_store_connect: KipMarineAppStoreConnect
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.kipmarine.app
+
+    scripts:
+      - name: Résoudre les dépendances Flutter
+        script: flutter pub get
+      - name: Analyse statique
+        script: flutter analyze
+      - name: Tests unitaires
+        script: flutter test
+      - name: Installer les dépendances CocoaPods
+        script: find . -name "Podfile" -execdir pod install \;
+      - name: Configurer la signature iOS
+        script: xcode-project use-profiles
+      - name: Construire l'IPA signé pour TestFlight
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Upload vers App Store Connect/TestFlight sans soumettre à l'examen
+        # bêta externe. Après traitement Apple, activer ce build pour les
+        # testeurs internes dans App Store Connect si nécessaire.
