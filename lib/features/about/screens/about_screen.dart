@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/mediterranean_sea_painter.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -69,6 +70,9 @@ class _AboutScreenState extends State<AboutScreen> {
                       'assets/images/mediterranean_hero.jpg',
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
+                      errorBuilder: (_, __, ___) => const CustomPaint(
+                        painter: MediterraneanSeaPainter(),
+                      ),
                     ),
                   ),
                   Positioned.fill(
