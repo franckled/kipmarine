@@ -30,14 +30,9 @@ class KipMarineApp extends StatelessWidget {
     return MaterialApp(
       title: 'KipMarine',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.background,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primaryTeal,
-          brightness: Brightness.light,
-        ),
-      ),
+      theme: AppColors.lightTheme,
+      darkTheme: AppColors.darkTheme,
+      themeMode: ThemeMode.system,
       home: const MainScreen(),
     );
   }
