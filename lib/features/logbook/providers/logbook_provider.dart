@@ -41,9 +41,13 @@ class LogbookProvider extends ChangeNotifier {
 
   /// Enregistre un point GPS dans la trace active
   void addPoint(NavigationData data) {
-    if (_activeLog == null) return;
+    if (_activeLog == null) {
+      return;
+    }
     if (_activeLog!.points.isNotEmpty &&
-        _activeLog!.points.last.timestamp.isAtSameMomentAs(data.timestamp)) return;
+        _activeLog!.points.last.timestamp.isAtSameMomentAs(data.timestamp)) {
+      return;
+    }
 
     _activeLog!.points.add(TrackPoint(
       latitude: data.latitude,
