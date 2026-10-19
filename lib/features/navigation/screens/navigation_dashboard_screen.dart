@@ -218,7 +218,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      data != null ? MarineFormatter.formatHeading(data.heading) : '---°',
+                                      data != null && data.hasValidCourse
+    ? MarineFormatter.formatHeading(data.heading!)
+    : '---°'
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
