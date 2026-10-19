@@ -1,178 +1,134 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import 'package:provider/provider.dart';
 
+import '../../navigation/providers/navigation_provider.dart';
+
+/// No fabricated weather values are shown until a live forecast source is
+/// connected. This prevents placeholder values being mistaken for conditions
+/// at sea.
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final position = context.watch<NavigationProvider>().currentData;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Météo marine', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
+        title: const Text(
+          'Météo marine',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.all(20),
           children: [
-            // Carte Fichier GRIB
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppColors.surfaceWhite,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.iconBgOrange,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.sim_card_download, color: Colors.orange),
-                  ),
-                  const SizedBox(width: 14),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Fichier GRIB', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                        Text('Importer vent & mer hors-ligne', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right, color: AppColors.textMuted),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Carte Vent Principal
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primaryTeal, AppColors.primaryTealDark],
+                gradient: LinearGradient(
+                  colors: [
+                    colors.primary,
+                    Color.lerp(colors.primary, colors.surface, 0.35)!,
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('VENT', style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.navigation, color: Colors.white, size: 40),
-                      const SizedBox(width: 12),
-                      const Text('9', style: TextStyle(fontSize: 52, fontWeight: FontWeight.w900, color: Colors.white, height: 1.0)),
-                      const SizedBox(width: 6),
-                      const Text('nds', style: TextStyle(fontSize: 20, color: Colors.white70, fontWeight: FontWeight.bold)),
-                    ],
+                  Icon(Icons.waves_rounded, color: Colors.white, size: 36),
+                  SizedBox(height: 16),
+                  Text(
+                    'Météo marine',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text('Force 3 · E (94°)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                  const Text('Rafales 19 nds', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  SizedBox(height: 8),
+                  Text(
+                    'Prévisions en direct non connectées',
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 16),
-
-            // Triplet : Ciel / Température / Pression
-            Row(
-              children: [
-                _WeatherMiniTile(icon: Icons.wb_sunny_outlined, label: 'Ciel clair', sub: 'CIEL'),
-                const SizedBox(width: 10),
-                _WeatherMiniTile(icon: Icons.thermostat, label: '24°C', sub: 'TEMPÉRATURE'),
-                const SizedBox(width: 10),
-                _WeatherMiniTile(icon: Icons.speed, label: '1001 hPa', sub: 'PRESSION'),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // État de la mer
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppColors.surfaceWhite,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.cardBorder),
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: theme.dividerColor),
               ),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('État de la mer', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                  const SizedBox(height: 12),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Text('0.4 m', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.textDark)),
-                          Text('Hauteur vagues', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        ],
+                  Icon(Icons.cloud_off_rounded, color: colors.primary, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'KipMarine n’est pas encore relié à une source de prévisions météorologiques et de houle. '
+                      'Aucune valeur de vent, de rafales ou de vagues ne sera inventée ici.',
+                      style: TextStyle(
+                        color: colors.onSurface,
+                        height: 1.5,
                       ),
-                      Column(
-                        children: [
-                          Text('3 s', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.textDark)),
-                          Text('Période', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text('ENE', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.textDark)),
-                          Text('Direction', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Center(
-                    child: Text('Houle : 0.3 m · mer du vent 0.0 m', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WeatherMiniTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String sub;
-
-  const _WeatherMiniTile({required this.icon, required this.label, required this.sub});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceWhite,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.cardBorder),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: AppColors.primaryTeal, size: 22),
-            const SizedBox(height: 6),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
-            Text(sub, style: const TextStyle(fontSize: 9, color: AppColors.textMuted, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: theme.dividerColor),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'POSITION GPS',
+                    style: TextStyle(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    position == null
+                        ? 'En attente d’une position GPS.'
+                        : '${position.latitude.toStringAsFixed(5)}°, '
+                            '${position.longitude.toStringAsFixed(5)}°',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colors.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Sécurité : consulte une source météo marine actualisée avant le départ. '
+              'Cet écran ne doit pas être utilisé pour décider de prendre la mer.',
+              style: TextStyle(
+                color: colors.onSurfaceVariant,
+                fontSize: 12,
+                height: 1.5,
+              ),
+            ),
           ],
         ),
       ),
