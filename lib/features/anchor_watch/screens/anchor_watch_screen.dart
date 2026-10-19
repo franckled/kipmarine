@@ -98,7 +98,7 @@ class AnchorWatchScreen extends StatelessWidget {
                       if (isMouille) ...[
                         Text(
                           '${config.currentDistance.toStringAsFixed(1)} m',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 64,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -109,10 +109,10 @@ class AnchorWatchScreen extends StatelessWidget {
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
                         ),
                       ] else ...[
-                        const Text(
+                        Text(
                           'Positionne le bateau au-dessus de l\'ancre et clique sur "Mouiller l\'ancre".',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70, fontSize: 15),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
                         ),
                       ],
                     ],
