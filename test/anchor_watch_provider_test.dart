@@ -68,6 +68,22 @@ void main() {
     expect(alarmService.triggerCount, 0);
   });
 
+  test('triggers the drift alarm outside the radius and stops it on return', () {
+    provider.dropAnchor(_position());
+    provider.updatePosition(_position(latitude: 42.001));
+
+    expect(provider.isAlarmTriggered, isTrue);
+    expect(provider.config!.currentDistance, greaterThan(35));
+    expect(alarmService.isPlaying, isTrue);
+    expect(alarmService.triggerCount, 1);
+
+    provider.updatePosition(_position());
+
+    expect(provider.isAlarmTriggered, isFalse);
+    expect(provider.config!.currentDistance, 0);
+    expect(alarmService.isPlaying, isFalse);
+  });
+
   test('reports GPS loss and clears it after a fresh fix returns', () {
     provider.dropAnchor(_position());
     expect(provider.config?.isActive, isTrue);
