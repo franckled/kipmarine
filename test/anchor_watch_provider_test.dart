@@ -21,6 +21,8 @@ NavigationData _position({
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late AnchorWatchProvider provider;
 
   setUp(() {
