@@ -8,6 +8,10 @@ on:
     branches:
       - repair/v5-ios-recovery
 
+concurrency:
+  group: kipmarine-validation-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
