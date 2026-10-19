@@ -15,6 +15,8 @@ class MobScreen extends StatelessWidget {
     final navProvider = context.watch<NavigationProvider>();
     final currentPos = navProvider.currentData;
     final mobPos = mobProvider.mobPosition;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     final distance = currentPos != null ? mobProvider.getDistanceToMob(currentPos) : 0.0;
     final bearing = currentPos != null ? mobProvider.getBearingToMob(currentPos) : 0.0;
@@ -24,7 +26,7 @@ class MobScreen extends StatelessWidget {
     final timeStr = '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -48,7 +50,7 @@ class MobScreen extends StatelessWidget {
                       const Text(
                         'HOMME À LA MER',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: colors.onSurface,
                           fontWeight: FontWeight.w900,
                           fontSize: 16,
                           letterSpacing: 1.2,
@@ -103,12 +105,12 @@ class MobScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: colors.onSurface,
                         ),
                       ),
                       const Text(
                         'DISTANCE',
-                        style: TextStyle(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -119,7 +121,7 @@ class MobScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: colors.onSurface,
                         ),
                       ),
                       Text(
@@ -136,7 +138,7 @@ class MobScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -146,7 +148,7 @@ class MobScreen extends StatelessWidget {
                           ? '${MarineFormatter.formatLatitude(mobPos.latitude)}   ${MarineFormatter.formatLongitude(mobPos.longitude)}'
                           : '42°40.877\'N   9°25.655\'E',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: colors.onSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         fontFamily: 'monospace',
@@ -154,8 +156,10 @@ class MobScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Position enregistrée à ${mobProvider.mobTimestamp?.hour.toString().padLeft(2, '0')}:${mobProvider.mobTimestamp?.minute.toString().padLeft(2, '0')}',
-                      style: const TextStyle(color: Colors.white54, fontSize: 12),
+                      mobProvider.mobTimestamp != null
+                          ? 'Position enregistrée à ${mobProvider.mobTimestamp!.hour.toString().padLeft(2, '0')}:${mobProvider.mobTimestamp!.minute.toString().padLeft(2, '0')}'
+                          : 'Heure de position indisponible',
+                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
                     ),
                   ],
                 ),
