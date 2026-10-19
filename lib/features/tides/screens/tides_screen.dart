@@ -90,7 +90,31 @@ class _TidesScreenState extends State<TidesScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                decoration: BoxDecoration(
+                  color: colors.errorContainer.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.cloud_off_rounded, size: 18, color: colors.onErrorContainer),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Prévisions non disponibles',
+                        style: TextStyle(
+                          color: colors.onErrorContainer,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -109,9 +133,23 @@ class _TidesScreenState extends State<TidesScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      _selectedPort,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.primary),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: colors.primary.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.location_on_rounded, size: 16, color: colors.primary),
+                          const SizedBox(width: 5),
+                          Text(
+                            _selectedPort,
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.primary),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Container(
