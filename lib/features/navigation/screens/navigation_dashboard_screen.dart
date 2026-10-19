@@ -286,13 +286,46 @@ class _NavigationDashboardScreenState
                                   ),
                                 ),
                                 Container(
-                                  width: 10,
-                                  height: 10,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: navProvider.isTracking
-                                        ? AppColors.okGreen
-                                        : Colors.orange,
-                                    shape: BoxShape.circle,
+                                    color: Colors.white.withValues(alpha: 0.13),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.16),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 7,
+                                        height: 7,
+                                        decoration: BoxDecoration(
+                                          color: data != null
+                                              ? const Color(0xFF64F2C2)
+                                              : navProvider.isTracking
+                                                  ? Colors.amber
+                                                  : Colors.white54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        data != null
+                                            ? 'GPS connecté'
+                                            : navProvider.isTracking
+                                                ? 'Recherche GPS'
+                                                : 'GPS inactif',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -449,7 +482,7 @@ class _NavigationDashboardScreenState
                         iconBg: const Color(0xFFDDF7FA),
                         iconColor: const Color(0xFF008DA7),
                         title: 'Marées',
-                        subtitle: 'Hauteurs & étales',
+                        subtitle: 'Ports & disponibilité',
                         onTap: () {
                           Navigator.push(
                             context,
