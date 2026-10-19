@@ -8,6 +8,7 @@ import '../providers/navigation_provider.dart';
 import '../../mob/providers/mob_provider.dart';
 import '../../mob/screens/mob_screen.dart';
 import '../../compass/screens/compass_screen.dart';
+import '../../anchor_watch/screens/anchor_watch_screen.dart';
 import '../../vhf/screens/vhf_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
 import '../../rules/screens/rules_screen.dart';
@@ -117,9 +118,15 @@ class _NavigationDashboardScreenState
                               const SizedBox(width: 10),
                               Text(
                                 'KipMarine',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
                               ),
                             ],
                           ),
@@ -127,10 +134,15 @@ class _NavigationDashboardScreenState
                             padding: const EdgeInsets.only(left: 48, top: 2),
                             child: Text(
                               _getFormattedDate(),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ),
                         ],
