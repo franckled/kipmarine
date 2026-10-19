@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
-import '../../../core/widgets/mediterranean_sea_painter.dart';
 import '../providers/navigation_provider.dart';
 import '../../mob/providers/mob_provider.dart';
 import '../../mob/screens/mob_screen.dart';
@@ -264,10 +263,14 @@ class _NavigationDashboardScreenState
                     ),
                     child: Stack(
                       children: [
-                        const Positioned.fill(
+                        Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(26)),
-                            child: CustomPaint(painter: MediterraneanSeaPainter()),
+                            borderRadius: BorderRadius.circular(26),
+                            child: Image.asset(
+                              'assets/images/mediterranean_hero.jpg',
+                              fit: BoxFit.cover,
+                              alignment: Alignment.center,
+                            ),
                           ),
                         ),
                         Positioned.fill(
