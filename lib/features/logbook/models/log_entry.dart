@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../../../core/constants/marine_units.dart';
 
 class TrackPoint {
