@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.96),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.96),
                 borderRadius: BorderRadius.circular(32),
                 border: Border.all(color: Theme.of(context).dividerColor, width: 1.5),
                 boxShadow: const [
@@ -111,7 +111,7 @@ class _NavItem extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.12) : Colors.transparent,
+          color: isSelected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
