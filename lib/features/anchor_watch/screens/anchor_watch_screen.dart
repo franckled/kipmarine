@@ -26,7 +26,7 @@ class AnchorWatchScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ALARME DE MOUILLAGE', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: AppColors.primaryDark,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         centerTitle: true,
       ),
       body: SafeArea(
@@ -67,12 +67,12 @@ class AnchorWatchScreen extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceDark,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isMouille
                           ? (anchorProvider.isAlarmTriggered ? AppColors.alertRed : AppColors.okGreen)
-                          : AppColors.primary,
+                           : Theme.of(context).colorScheme.primary,
                       width: 2,
                     ),
                   ),
@@ -82,13 +82,13 @@ class AnchorWatchScreen extends StatelessWidget {
                       Icon(
                         Icons.anchor,
                         size: 80,
-                        color: isMouille ? AppColors.accent : Colors.white24,
+                        color: isMouille ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.35),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         isMouille ? 'MOUILLAGE ACTIF' : 'MOUILLAGE INACTIF',
                         style: TextStyle(
-                          color: isMouille ? AppColors.okGreen : Colors.white54,
+                          color: isMouille ? Colors.green : Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                           letterSpacing: 1.5,
@@ -101,12 +101,12 @@ class AnchorWatchScreen extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 64,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
                           'Distance de l\'ancre (Max : ${config.radiusMeters.round()} m)',
-                          style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
                         ),
                       ] else ...[
                         const Text(
@@ -127,10 +127,10 @@ class AnchorWatchScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Rayon de sécurité :', style: TextStyle(color: Colors.white, fontSize: 16)),
+                    Text('Rayon de sécurité :', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
                     Text(
                       '${anchorProvider.targetRadiusMeters.round()} mètres',
-                      style: const TextStyle(color: AppColors.accent, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -139,7 +139,7 @@ class AnchorWatchScreen extends StatelessWidget {
                   min: 10,
                   max: 150,
                   divisions: 28,
-                  activeColor: AppColors.accent,
+                  activeColor: Theme.of(context).colorScheme.primary,
                   onChanged: (val) => anchorProvider.setTargetRadius(val),
                 ),
                 const SizedBox(height: 10),
