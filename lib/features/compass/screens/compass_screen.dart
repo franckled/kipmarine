@@ -195,36 +195,68 @@ class _CompassScreenState extends State<CompassScreen> {
     final theme = Theme.of(context);
 
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _isCrasMode = cras;
-          });
-        },
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected
-                ? theme.colorScheme.surface
-                : Colors.transparent,
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: cras
+            ? 'Rose CRAS, cap fondé sur le GPS'
+            : 'Boussole magnétique du téléphone',
+        child: Material(
+          color: selected
+              ? theme.colorScheme.surface
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 4,
+            onTap: () {
+              if (_isCrasMode == cras) return;
+              setState(() => _isCrasMode = cras);
+            },
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: selected
+                    ? Border.all(
+                        color: theme.colorScheme.primary
+                            .withValues(alpha: 0.22),
+                      )
+                    : null,
+                boxShadow: selected
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 4,
+                        ),
+                      ]
+                    : [],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    cras ? Icons.gps_fixed_rounded : Icons.explore_rounded,
+                    size: 16,
+                    color: selected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 7),
+                  Flexible(
+                    child: Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: selected
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ]
-                : [],
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: selected
-                  ? theme.colorScheme.onSurface
-                  : theme.colorScheme.onSurfaceVariant,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
