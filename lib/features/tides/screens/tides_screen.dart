@@ -118,7 +118,7 @@ class _TidesScreenState extends State<TidesScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: colors.primary.withOpacity(0.10),
+                        color: colors.primary.withValues(alpha: 0.10),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
