@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Kipmarine</string>
+	<string>KipMarine</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,9 +27,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>KipMarine utilise le GPS en arrière-plan pour surveiller lévitage au mouillage et vous alerter en cas de dérive de lancre.</string>
+	<string>KipMarine utilise le GPS en arrière-plan pour surveiller le mouillage et vous alerter en cas de dérive de l’ancre.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>KipMarine a besoin du GPS pour afficher votre vitesse (SOG), votre cap (COG) et votre position en mer.</string>
+	<string>KipMarine utilise le GPS pour afficher votre vitesse (SOG), votre cap (COG) et votre position en mer.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -56,6 +56,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
+		<string>audio</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
