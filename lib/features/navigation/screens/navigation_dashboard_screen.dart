@@ -69,7 +69,7 @@ class _NavigationDashboardScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Consumer<NavigationProvider>(
           builder: (context, navProvider, child) {
@@ -93,19 +93,17 @@ class _NavigationDashboardScreenState
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'KipMarine',
-                            style: TextStyle(
-                              fontSize: 26,
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w900,
-                              color: AppColors.textDark,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           Text(
                             _getFormattedDate(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textMuted,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -116,7 +114,7 @@ class _NavigationDashboardScreenState
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppColors.iconBgCyan,
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
@@ -515,10 +513,10 @@ class _GridCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.cardBorder,
+            color: Theme.of(context).dividerColor,
             width: 1,
           ),
           boxShadow: const [
@@ -536,12 +534,14 @@ class _GridCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: iconBg,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.18)
+                    : iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: iconColor,
+                color: Theme.of(context).colorScheme.primary,
                 size: 22,
               ),
             ),
@@ -550,10 +550,10 @@ class _GridCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
-                    color: AppColors.textDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -561,9 +561,9 @@ class _GridCard extends StatelessWidget {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 11,
-                    color: AppColors.textMuted,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
