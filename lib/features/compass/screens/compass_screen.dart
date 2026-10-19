@@ -403,19 +403,30 @@ class _CompassPainter extends CustomPainter {
       }
     }
 
-    canvas.restore();
-
-    // Le repère Nord reste fixe dans les deux modes.
+    // Le repère Nord appartient à la rose : il tourne avec elle en
+    // mode boussole magnétique et reste en haut en mode CRAS.
     final north = Path()
       ..moveTo(center.dx, center.dy - radius + 2)
       ..lineTo(center.dx - 8, center.dy - radius + 16)
       ..lineTo(center.dx + 8, center.dy - radius + 16)
       ..close();
 
-    canvas.drawPath(
-      north,
-      Paint()..color = Colors.red,
-    );
+    canvas.drawPath(north, Paint()..color = Colors.red);
+    canvas.restore();
+
+    // En mode magnétique, ce repère fixe matérialise l'axe du bateau :
+    // le Nord de la rose tourne dessous pour donner le cap magnétique.
+    if (!isCrasMode) {
+      final lubberLine = Path()
+        ..moveTo(center.dx, center.dy - radius + 1)
+        ..lineTo(center.dx - 7, center.dy - radius + 13)
+        ..lineTo(center.dx + 7, center.dy - radius + 13)
+        ..close();
+      canvas.drawPath(
+        lubberLine,
+        Paint()..color = theme.colorScheme.primary,
+      );
+    }
 
     // En mode CRAS, la flèche pointe vers le COG GPS.
     if (isCrasMode && valid) {
