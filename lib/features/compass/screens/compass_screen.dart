@@ -223,7 +223,7 @@ class _CompassScreenState extends State<CompassScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          validHeading ? '${heading.round()}°' : '---°',
+  validHeading ? '${heading!.round()}°' : '---°',
           style: TextStyle(
             fontSize: 42,
             fontWeight: FontWeight.w900,
@@ -232,8 +232,8 @@ class _CompassScreenState extends State<CompassScreen> {
         ),
         Text(
           validHeading
-              ? '${_getCardinal(heading)} · '
-                  '${isCrasMode ? 'COG GPS' : 'cap magnétique'}'
+    ? '${_getCardinal(heading!)} · '
+        '${isCrasMode ? 'COG GPS' : 'cap magnétique'}'
               : isCrasMode
                   ? 'COG GPS indisponible'
                   : 'Cap magnétique indisponible',
