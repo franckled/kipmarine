@@ -12,6 +12,7 @@ build/
 **/Flutter/flutter_export_environment.sh
 **/Flutter/ephemeral/
 android/local.properties
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
 
 # IDE and operating-system files
 .idea/
