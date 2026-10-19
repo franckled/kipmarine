@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/mediterranean_sea_painter.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -64,6 +65,25 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
               child: Stack(
                 children: [
+                  const Positioned.fill(
+                    child: CustomPaint(painter: MediterraneanSeaPainter()),
+                  ),
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF061C27).withValues(alpha: 0.10),
+                            const Color(0xFF061C27).withValues(alpha: 0.30),
+                            const Color(0xFF061C27).withValues(alpha: 0.94),
+                          ],
+                          stops: const [0, 0.38, 1],
+                        ),
+                      ),
+                    ),
+                  ),
                   Positioned(
                     right: -34,
                     top: -42,
