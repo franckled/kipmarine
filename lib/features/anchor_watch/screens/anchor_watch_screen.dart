@@ -12,7 +12,6 @@ class AnchorWatchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final navProvider = context.watch<NavigationProvider>();
     final anchorProvider = context.watch<AnchorWatchProvider>();
-    final currentPosition = navProvider.currentData;
     final config = anchorProvider.config;
 
     final isMouille = config != null && config.isActive;
