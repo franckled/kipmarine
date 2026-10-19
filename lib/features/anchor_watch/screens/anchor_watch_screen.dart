@@ -82,7 +82,7 @@ class AnchorWatchScreen extends StatelessWidget {
                       Icon(
                         Icons.anchor,
                         size: 80,
-                        color: isMouille ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.35),
+                        color: isMouille ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.35),
                       ),
                       const SizedBox(height: 20),
                       Text(
