@@ -9,6 +9,7 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   AnchorConfig? _config;
   double _targetRadiusMeters = 35.0; // Rayon par défaut
+  bool _alarmSilencedUntilSafe = false;
 
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
@@ -25,6 +26,7 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   /// Mouille l'ancre à la position actuelle
   void dropAnchor(NavigationData currentPosition) {
+    _alarmSilencedUntilSafe = false;
     _config = AnchorConfig(
       anchorLatitude: currentPosition.latitude,
       anchorLongitude: currentPosition.longitude,
@@ -55,6 +57,7 @@ class AnchorWatchProvider extends ChangeNotifier {
     );
 
     final isOut = distance > _config!.radiusMeters;
+    final wasOut = _config!.isAlarmTriggered;
 
     _config = _config!.copyWith(
       currentDistance: distance,
@@ -62,9 +65,19 @@ class AnchorWatchProvider extends ChangeNotifier {
     );
 
     if (isOut) {
-      _alarmService.triggerAlarm();
-    } else if (_alarmService.isPlaying) {
-      _alarmService.stopAlarm();
+      // Une alarme acquittée reste silencieuse tant que le bateau ne
+      // revient pas dans le cercle de sécurité. Cela évite de la relancer
+      // à chaque nouvelle position GPS.
+      if (!_alarmSilencedUntilSafe && !wasOut) {
+        _alarmService.triggerAlarm();
+      } else if (!_alarmSilencedUntilSafe && !_alarmService.isPlaying) {
+        _alarmService.triggerAlarm();
+      }
+    } else {
+      _alarmSilencedUntilSafe = false;
+      if (_alarmService.isPlaying) {
+        _alarmService.stopAlarm();
+      }
     }
 
     notifyListeners();
@@ -72,6 +85,8 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   /// Coupe l'alarme manuellement
   Future<void> silenceAlarm() async {
+    // L'acquittement est valable jusqu'au retour dans le rayon de sécurité.
+    _alarmSilencedUntilSafe = true;
     await _alarmService.stopAlarm();
     notifyListeners();
   }
