@@ -158,7 +158,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                           decoration: BoxDecoration(
                             color: cog == null
                                 ? Colors.blueGrey
-                                : AppColors.accent.withOpacity(0.9),
+                                : Theme.of(context).colorScheme.primary.withOpacity(0.9),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: Colors.white,
