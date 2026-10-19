@@ -1,6 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kipmarine/core/services/alarm_service.dart';
 import 'package:kipmarine/features/anchor_watch/providers/anchor_watch_provider.dart';
 import 'package:kipmarine/features/navigation/models/navigation_data.dart';
+
+class _FakeAlarmService implements AnchorAlarmController {
+  bool _isPlaying = false;
+  int triggerCount = 0;
+
+  @override
+  bool get isPlaying => _isPlaying;
+
+  @override
+  Future<bool> prepareForMonitoring() async => true;
+
+  @override
+  Future<void> triggerAlarm() async {
+    triggerCount++;
+    _isPlaying = true;
+  }
+
+  @override
+  Future<void> stopAlarm() async {
+    _isPlaying = false;
+  }
+}
 
 NavigationData _position({
   DateTime? timestamp,
@@ -21,12 +44,12 @@ NavigationData _position({
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   late AnchorWatchProvider provider;
+  late _FakeAlarmService alarmService;
 
   setUp(() {
-    provider = AnchorWatchProvider();
+    alarmService = _FakeAlarmService();
+    provider = AnchorWatchProvider(alarmService: alarmService);
   });
 
   tearDown(() {
@@ -42,6 +65,7 @@ void main() {
 
     expect(provider.config, isNull);
     expect(provider.isGpsLost, isFalse);
+    expect(alarmService.triggerCount, 0);
   });
 
   test('reports GPS loss and clears it after a fresh fix returns', () {
@@ -58,10 +82,12 @@ void main() {
 
     expect(provider.isGpsLost, isTrue);
     expect(provider.config?.currentDistance, 0);
+    expect(alarmService.triggerCount, 1);
 
     provider.updatePosition(_position());
 
     expect(provider.isGpsLost, isFalse);
     expect(provider.config?.isActive, isTrue);
+    expect(alarmService.isPlaying, isFalse);
   });
 }
