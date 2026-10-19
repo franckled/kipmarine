@@ -1,10 +1,10 @@
 class AnchorConfig {
   final double anchorLatitude;
   final double anchorLongitude;
-  final double radiusMeters; // Rayon d'évitement toléré (ex: 35 m)
+  final double radiusMeters;
   final bool isActive;
-  final double currentDistance; // Distance actuelle à l'ancre en mètres
-  final bool isAlarmTriggered;  // Vrai si le bateau est hors du cercle
+  final double currentDistance;
+  final bool isAlarmTriggered;
 
   AnchorConfig({
     required this.anchorLatitude,
@@ -32,4 +32,22 @@ class AnchorConfig {
       isAlarmTriggered: isAlarmTriggered ?? this.isAlarmTriggered,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'anchorLatitude': anchorLatitude,
+        'anchorLongitude': anchorLongitude,
+        'radiusMeters': radiusMeters,
+        'isActive': isActive,
+        'currentDistance': currentDistance,
+        'isAlarmTriggered': isAlarmTriggered,
+      };
+
+  factory AnchorConfig.fromJson(Map<String, dynamic> json) => AnchorConfig(
+        anchorLatitude: (json['anchorLatitude'] as num).toDouble(),
+        anchorLongitude: (json['anchorLongitude'] as num).toDouble(),
+        radiusMeters: (json['radiusMeters'] as num).toDouble(),
+        isActive: json['isActive'] as bool? ?? false,
+        currentDistance: (json['currentDistance'] as num?)?.toDouble() ?? 0,
+        isAlarmTriggered: json['isAlarmTriggered'] as bool? ?? false,
+      );
 }
