@@ -78,7 +78,7 @@ class MobScreen extends StatelessWidget {
                   height: 240,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.mobOrange.withOpacity(0.3), width: 2),
+                    border: Border.all(color: AppColors.mobOrange.withValues(alpha: 0.3), width: 2),
                   ),
                   child: Center(
                     child: Transform.rotate(
