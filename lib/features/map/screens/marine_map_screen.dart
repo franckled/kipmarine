@@ -113,8 +113,8 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       radius: anchorConfig.radiusMeters,
                       useRadiusInMeter: true,
                       color: anchorProvider.isAlarmTriggered
-                          ? AppColors.alertRed.withOpacity(0.3)
-                          : AppColors.okGreen.withOpacity(0.2),
+                          ? AppColors.alertRed.withValues(alpha: 0.3)
+                          : AppColors.okGreen.withValues(alpha: 0.2),
                       borderColor: anchorProvider.isAlarmTriggered
                           ? AppColors.alertRed
                           : AppColors.okGreen,
@@ -158,7 +158,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                           decoration: BoxDecoration(
                             color: cog == null
                                 ? Colors.blueGrey
-                                : Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: Colors.white,
