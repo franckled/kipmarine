@@ -63,14 +63,16 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               color: AppColors.textDark,
                             ),
                           ),
-                          Text(
-                            _getFormattedDate(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                         Text(
+  data != null && data.hasValidCourse
+      ? MarineFormatter.formatHeading(data.heading!)
+      : '---°',
+  style: const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  ),
+),
                         ],
                       ),
                       Row(
