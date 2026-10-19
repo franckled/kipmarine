@@ -13,10 +13,12 @@ class LogbookScreen extends StatelessWidget {
     final logProvider = context.watch<LogbookProvider>();
     final navProvider = context.watch<NavigationProvider>();
     final activeLog = logProvider.activeLog;
+    final colors = Theme.of(context).colorScheme;
+    final gps = navProvider.currentData;
 
-    if (logProvider.isRecording && navProvider.currentData != null) {
+    if (logProvider.isRecording && gps != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        logProvider.addPoint(navProvider.currentData!);
+        if (context.mounted) logProvider.addPoint(gps);
       });
     }
 
@@ -29,170 +31,438 @@ class LogbookScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: logProvider.isRecording ? Colors.green : Theme.of(context).dividerColor,
-                    width: 1.5,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.fiber_manual_record,
-                              color: logProvider.isRecording ? Colors.red : Theme.of(context).colorScheme.onSurfaceVariant,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              logProvider.isRecording ? 'ENREGISTREMENT ACTIF' : 'PRÊT À ENREGISTRER',
-                              style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        if (logProvider.isRecording)
-                          Text(
-                            '${activeLog?.points.length ?? 0} pts',
-                            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    if (logProvider.isRecording) ...[
-                      Text(
-                        activeLog?.title ?? '',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Distance : ${activeLog?.totalDistanceNM.toStringAsFixed(2)} NM | Vit. Moy : ${activeLog?.averageSpeedKnots.toStringAsFixed(1)} kn',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.alertRed),
-                          icon: const Icon(Icons.stop, color: Colors.white),
-                          label: const Text('ARRÊTER ET SAUVEGARDER', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          onPressed: () => logProvider.stopTrack(),
-                        ),
-                      ),
-                    ] else ...[
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
-                          icon: const Icon(Icons.play_arrow, color: Colors.white),
-                          label: const Text('DÉMARRER UNE TRACE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          onPressed: () => _showStartDialog(context, logProvider),
-                        ),
-                      ),
-                    ],
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    colors.primary.withValues(alpha: 0.14),
+                    colors.tertiary.withValues(alpha: 0.08),
                   ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: logProvider.isRecording
+                      ? Colors.green.withValues(alpha: 0.65)
+                      : colors.outlineVariant,
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text('TRACES ENREGISTRÉES', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        logProvider.isRecording ? Icons.radio_button_checked : Icons.sailing,
+                        color: logProvider.isRecording ? Colors.green : colors.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          logProvider.isRecording ? 'TRACE GPS EN COURS' : 'VOTRE JOURNAL MARIN',
+                          style: TextStyle(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      if (logProvider.isRecording)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '${activeLog?.points.length ?? 0} pts',
+                            style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    logProvider.isRecording
+                        ? (activeLog?.title ?? 'Navigation en cours')
+                        : 'Gardez une trace de vos observations, escales et événements en mer.',
+                    style: TextStyle(fontSize: 15, color: colors.onSurface),
+                  ),
+                  if (logProvider.isRecording) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'Distance : ${activeLog?.totalDistanceNM.toStringAsFixed(2)} NM  •  Vitesse moyenne : ${activeLog?.averageSpeedKnots.toStringAsFixed(1)} kn',
+                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  if (logProvider.isRecording)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.alertRed,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.stop),
+                        label: const Text('ARRÊTER ET SAUVEGARDER LA TRACE'),
+                        onPressed: () => logProvider.stopTrack(),
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
+                        ),
+                        icon: const Icon(Icons.play_arrow),
+                        label: const Text('DÉMARRER UNE TRACE GPS'),
+                        onPressed: () => _showStartDialog(context, logProvider),
+                      ),
+                    ),
+                ],
               ),
-              const SizedBox(height: 10),
-
-              Expanded(
-                child: logProvider.logs.isEmpty
-                    ? Center(
-                        child: Text('Aucune trace enregistrée pour le moment.', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                      )
-                    : ListView.builder(
-                        itemCount: logProvider.logs.length,
-                        itemBuilder: (context, index) {
-                          final log = logProvider.logs[index];
-                          return Card(
-                            color: Theme.of(context).colorScheme.surface,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              side: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: ListTile(
-                              title: Text(log.title, style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold)),
-                              subtitle: Text(
-                                '${log.totalDistanceNM.toStringAsFixed(2)} NM • ${log.points.length} points • ${log.startTime.day}/${log.startTime.month}/${log.startTime.year}',
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 52,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: colors.tertiary,
+                  foregroundColor: colors.onTertiary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                icon: const Icon(Icons.add_comment_outlined),
+                label: const Text('AJOUTER UNE ENTRÉE', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () => _showJournalEntryDialog(context, logProvider, gps),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _sectionTitle(context, 'NOTES DU JOURNAL', Icons.edit_note),
+            const SizedBox(height: 10),
+            if (logProvider.notes.isEmpty)
+              _emptyState(
+                context,
+                icon: Icons.menu_book_outlined,
+                message: 'Aucune note pour le moment. Ajoutez une observation ou un événement ; l’heure et la position GPS seront enregistrées si disponibles.',
+              )
+            else
+              ...logProvider.notes.map((note) {
+                final hasPosition = note.latitude != null && note.longitude != null;
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  elevation: 0,
+                  color: colors.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: colors.outlineVariant),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: colors.tertiary.withValues(alpha: 0.13),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.notes, color: colors.tertiary),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                note.text,
+                                style: TextStyle(color: colors.onSurface, fontSize: 15),
                               ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
+                              const SizedBox(height: 8),
+                              Text(
+                                _formatDateTime(note.timestamp),
+                                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.share, color: Theme.of(context).colorScheme.primary),
-                                    onPressed: () => GpxService.exportAndShare(log),
+                                  Icon(
+                                    hasPosition ? Icons.location_on_outlined : Icons.location_off_outlined,
+                                    size: 14,
+                                    color: colors.onSurfaceVariant,
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                                    onPressed: () => logProvider.deleteLog(log.id),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      hasPosition
+                                          ? '${note.latitude!.toStringAsFixed(5)}, ${note.longitude!.toStringAsFixed(5)}'
+                                          : 'Position GPS indisponible à cette entrée',
+                                      style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Supprimer la note',
+                          icon: Icon(Icons.delete_outline, color: colors.error),
+                          onPressed: () => _confirmDeleteNote(context, logProvider, note.id),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            const SizedBox(height: 14),
+            _sectionTitle(context, 'TRACES GPS ENREGISTRÉES', Icons.route),
+            const SizedBox(height: 10),
+            if (logProvider.logs.isEmpty)
+              _emptyState(
+                context,
+                icon: Icons.route_outlined,
+                message: 'Aucune trace GPS enregistrée. Démarrez une trace avant votre prochaine navigation.',
+              )
+            else
+              ...logProvider.logs.map((log) => Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    elevation: 0,
+                    color: colors.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: colors.outlineVariant),
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: colors.primary.withValues(alpha: 0.12),
+                        child: Icon(Icons.route, color: colors.primary),
                       ),
-              ),
-            ],
-          ),
+                      title: Text(
+                        log.title,
+                        style: TextStyle(color: colors.onSurface, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        '${log.totalDistanceNM.toStringAsFixed(2)} NM • ${log.points.length} points\n${_formatDateTime(log.startTime)}',
+                        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                      ),
+                      isThreeLine: true,
+                      trailing: Wrap(
+                        spacing: 0,
+                        children: [
+                          IconButton(
+                            tooltip: 'Exporter en GPX',
+                            icon: Icon(Icons.ios_share, color: colors.primary),
+                            onPressed: () => GpxService.exportAndShare(log),
+                          ),
+                          IconButton(
+                            tooltip: 'Supprimer la trace',
+                            icon: Icon(Icons.delete_outline, color: colors.error),
+                            onPressed: () => _confirmDeleteTrack(context, logProvider, log.id),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+          ],
         ),
       ),
     );
   }
 
-  void _showStartDialog(BuildContext context, LogbookProvider provider) {
-    final controller = TextEditingController(text: 'Nav ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Theme.of(ctx).colorScheme.surface,
-        title: const Text('Nouvelle navigation'),
-        content: TextField(
-          controller: controller,
-          style: TextStyle(color: Theme.of(ctx).colorScheme.onSurface),
-          decoration: InputDecoration(
-            labelText: 'Nom de la sortie',
-            labelStyle: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant),
+  static Widget _sectionTitle(BuildContext context, String title, IconData icon) {
+    final colors = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        Icon(icon, color: colors.primary, size: 21),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: TextStyle(
+            color: colors.primary,
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            letterSpacing: 0.4,
           ),
         ),
-        actions: [
-          TextButton(
-            child: const Text('Annuler'),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.primary),
-            child: const Text('Démarrer', style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              provider.startTrack(controller.text);
-              Navigator.pop(ctx);
-            },
+      ],
+    );
+  }
+
+  static Widget _emptyState(BuildContext context, {required IconData icon, required String message}) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 28, color: colors.onSurfaceVariant),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
           ),
         ],
       ),
     );
+  }
+
+  static Future<void> _showJournalEntryDialog(
+    BuildContext context,
+    LogbookProvider provider,
+    dynamic gps,
+  ) async {
+    final controller = TextEditingController();
+    final colors = Theme.of(context).colorScheme;
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Nouvelle entrée'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              minLines: 3,
+              maxLines: 6,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                hintText: 'Ex. : mouillage effectué, météo, observation…',
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(
+                  gps != null ? Icons.location_on_outlined : Icons.location_off_outlined,
+                  color: gps != null ? colors.primary : colors.onSurfaceVariant,
+                  size: 18,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    gps != null ? 'Position GPS jointe à la note' : 'Note enregistrée sans position GPS',
+                    style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Enregistrer'),
+          ),
+        ],
+      ),
+    );
+
+    if (saved == true && controller.text.trim().isNotEmpty) {
+      provider.addJournalNote(controller.text, position: gps);
+    }
+    controller.dispose();
+  }
+
+  static Future<void> _showStartDialog(BuildContext context, LogbookProvider provider) async {
+    final controller = TextEditingController(
+      text: 'Navigation ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+    );
+    final colors = Theme.of(context).colorScheme;
+    final start = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Nouvelle navigation'),
+        content: TextField(
+          controller: controller,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: const InputDecoration(
+            labelText: 'Nom de la sortie',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: colors.primary, foregroundColor: colors.onPrimary),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Démarrer'),
+          ),
+        ],
+      ),
+    );
+    if (start == true) provider.startTrack(controller.text);
+    controller.dispose();
+  }
+
+  static Future<void> _confirmDeleteNote(
+    BuildContext context,
+    LogbookProvider provider,
+    String id,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Supprimer cette note ?'),
+        content: const Text('Cette action est définitive.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Supprimer')),
+        ],
+      ),
+    );
+    if (confirmed == true) await provider.deleteJournalNote(id);
+  }
+
+  static Future<void> _confirmDeleteTrack(
+    BuildContext context,
+    LogbookProvider provider,
+    String id,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Supprimer cette trace ?'),
+        content: const Text('La trace GPS et ses points seront supprimés.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Supprimer')),
+        ],
+      ),
+    );
+    if (confirmed == true) await provider.deleteLog(id);
+  }
+
+  static String _formatDateTime(DateTime value) {
+    String two(int number) => number.toString().padLeft(2, '0');
+    return '${two(value.day)}/${two(value.month)}/${value.year} à ${two(value.hour)}:${two(value.minute)}';
   }
 }
