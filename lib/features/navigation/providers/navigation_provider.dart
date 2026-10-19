@@ -20,6 +20,10 @@ class NavigationProvider extends ChangeNotifier {
   bool get hasPermission => _hasPermission;
   String? get errorMessage => _errorMessage;
 
+  /// Indique si la surveillance du mouillage peut continuer en arrière-plan.
+  Future<bool> hasBackgroundLocationPermission() =>
+      _locationService.hasBackgroundLocationPermission();
+
   /// Démarre l'écoute du flux GPS temps réel.
   Future<void> startTracking() async {
     if (_isTracking || _isStarting || _isDisposed) return;
