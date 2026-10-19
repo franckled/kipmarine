@@ -28,8 +28,8 @@ class AnchorWatchScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Alerte visuelle de dérive
-              if (anchorProvider.isAlarmTriggered)
+              // Distingue la perte GPS de la dérive réelle.
+              if (anchorProvider.isGpsLost || anchorProvider.isAlarmTriggered)
                 Container(
                   padding: const EdgeInsets.all(16),
                   margin: const EdgeInsets.only(bottom: 20),
@@ -39,12 +39,24 @@ class AnchorWatchScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.warning_amber_rounded, size: 40, color: Colors.white),
+                      Icon(
+                        anchorProvider.isGpsLost
+                            ? Icons.gps_off_rounded
+                            : Icons.warning_amber_rounded,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'DÉRIVE DÉTECTÉE !\nBateau hors du cercle de sécurité !',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          anchorProvider.isGpsLost
+                              ? 'GPS PERDU !\nSurveillance de la dérive indisponible !'
+                              : 'DÉRIVE DÉTECTÉE !\nBateau hors du cercle de sécurité !',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                       IconButton(
@@ -64,7 +76,9 @@ class AnchorWatchScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isMouille
-                          ? (anchorProvider.isAlarmTriggered ? AppColors.alertRed : AppColors.okGreen)
+                          ? ((anchorProvider.isAlarmTriggered || anchorProvider.isGpsLost)
+                              ? AppColors.alertRed
+                              : AppColors.okGreen)
                           : AppColors.primary,
                       width: 2,
                     ),
@@ -90,7 +104,7 @@ class AnchorWatchScreen extends StatelessWidget {
                       const SizedBox(height: 10),
                       if (isMouille) ...[
                         Text(
-                          '${config.currentDistance.toStringAsFixed(1)} m',
+                          anchorProvider.isGpsLost ? '---' : '${config.currentDistance.toStringAsFixed(1)} m',
                           style: const TextStyle(
                             fontSize: 64,
                             fontWeight: FontWeight.bold,
@@ -98,7 +112,9 @@ class AnchorWatchScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Distance de l\'ancre (Max : ${config.radiusMeters.round()} m)',
+                          anchorProvider.isGpsLost
+                              ? 'GPS indisponible — distance non actualisée'
+                              : 'Distance de l\'ancre (Max : ${config.radiusMeters.round()} m)',
                           style: const TextStyle(color: Colors.white70, fontSize: 14),
                         ),
                       ] else ...[
