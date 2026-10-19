@@ -5,7 +5,10 @@ class TrackPoint {
   final double latitude;
   final double longitude;
   final double speedKnots;
-  final double heading;
+
+  /// Cap GPS sur le fond, null si indisponible.
+  final double? heading;
+
   final DateTime timestamp;
 
   TrackPoint({
@@ -25,11 +28,13 @@ class TrackPoint {
       };
 
   factory TrackPoint.fromJson(Map<String, dynamic> json) => TrackPoint(
-        latitude: json['lat'],
-        longitude: json['lon'],
-        speedKnots: json['speed'],
-        heading: json['heading'],
-        timestamp: DateTime.parse(json['time']),
+        latitude: (json['lat'] as num).toDouble(),
+        longitude: (json['lon'] as num).toDouble(),
+        speedKnots: (json['speed'] as num).toDouble(),
+        heading: json['heading'] == null
+            ? null
+            : (json['heading'] as num).toDouble(),
+        timestamp: DateTime.parse(json['time'] as String),
       );
 }
 
@@ -50,9 +55,10 @@ class LogEntry {
     this.note = '',
   });
 
-  /// Calcule la distance totale parcourue en Milles Nautiques (NM)
+  /// Distance totale parcourue en milles nautiques.
   double get totalDistanceNM {
     if (points.length < 2) return 0.0;
+
     double meters = 0.0;
     for (int i = 0; i < points.length - 1; i++) {
       meters += MarineUnits.haversineDistance(
@@ -62,13 +68,17 @@ class LogEntry {
         points[i + 1].longitude,
       );
     }
+
     return MarineUnits.metersToNauticalMiles(meters);
   }
 
-  /// Calcule la vitesse moyenne en Nœuds
+  /// Vitesse moyenne en nœuds.
   double get averageSpeedKnots {
     if (points.isEmpty) return 0.0;
-    final totalSpeed = points.fold(0.0, (sum, p) => sum + p.speedKnots);
+
+    final totalSpeed =
+        points.fold<double>(0.0, (sum, point) => sum + point.speedKnots);
+
     return totalSpeed / points.length;
   }
 
@@ -77,16 +87,21 @@ class LogEntry {
         'title': title,
         'startTime': startTime.toIso8601String(),
         'endTime': endTime?.toIso8601String(),
-        'points': points.map((p) => p.toJson()).toList(),
+        'points': points.map((point) => point.toJson()).toList(),
         'note': note,
       };
 
   factory LogEntry.fromJson(Map<String, dynamic> json) => LogEntry(
-        id: json['id'],
-        title: json['title'],
-        startTime: DateTime.parse(json['startTime']),
-        endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
-        points: (json['points'] as List).map((p) => TrackPoint.fromJson(p)).toList(),
-        note: json['note'] ?? '',
+        id: json['id'] as String,
+        title: json['title'] as String,
+        startTime: DateTime.parse(json['startTime'] as String),
+        endTime: json['endTime'] != null
+            ? DateTime.parse(json['endTime'] as String)
+            : null,
+        points: (json['points'] as List)
+            .map((point) =>
+                TrackPoint.fromJson(Map<String, dynamic>.from(point as Map)))
+            .toList(),
+        note: json['note'] as String? ?? '',
       );
 }
