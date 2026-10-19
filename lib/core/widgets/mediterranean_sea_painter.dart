@@ -1,105 +1,270 @@
 import 'package:flutter/material.dart';
 
-/// A lightweight, offline illustration used across KipMarine.
-/// It deliberately contains no labels or navigation data.
+/// Offline decorative illustration for KipMarine's Mediterranean visual theme.
+/// It is purely illustrative: it never displays or implies navigational data.
 class MediterraneanSeaPainter extends CustomPainter {
   const MediterraneanSeaPainter();
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final sky = Paint()
-      ..shader = const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xFF70C7E5), Color(0xFFFFD3A0), Color(0xFF0B789B)],
-        stops: [0, .53, .54],
-      ).createShader(rect);
-    canvas.drawRect(rect, sky);
+    if (size.isEmpty) return;
+    final bounds = Offset.zero & size;
+    final w = size.width;
+    final h = size.height;
+    final horizon = h * .53;
 
-    final sun = Paint()..color = const Color(0xFFFFE7B1).withValues(alpha: .88);
-    canvas.drawCircle(Offset(size.width * .78, size.height * .22), size.height * .095, sun);
+    // Warm sky with a soft late-afternoon glow.
+    canvas.drawRect(
+      bounds,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF75C7E8),
+            Color(0xFFB8DDED),
+            Color(0xFFFFD3A6),
+          ],
+          stops: [0, .48, 1],
+        ).createShader(bounds),
+    );
 
-    final distant = Path()
-      ..moveTo(0, size.height * .53)
-      ..lineTo(size.width * .12, size.height * .43)
-      ..lineTo(size.width * .23, size.height * .48)
-      ..lineTo(size.width * .38, size.height * .32)
-      ..lineTo(size.width * .49, size.height * .45)
-      ..lineTo(size.width * .64, size.height * .27)
-      ..lineTo(size.width * .77, size.height * .44)
-      ..lineTo(size.width * .91, size.height * .34)
-      ..lineTo(size.width, size.height * .42)
-      ..lineTo(size.width, size.height * .62)
-      ..lineTo(0, size.height * .62)
+    _drawCloud(canvas, Offset(w * .19, h * .19), w * .20, h * .065);
+    _drawCloud(canvas, Offset(w * .47, h * .11), w * .16, h * .045);
+    _drawCloud(canvas, Offset(w * .83, h * .28), w * .23, h * .055);
+
+    // Sun halo, kept subtle so the overlaid GPS text stays legible.
+    canvas.drawCircle(
+      Offset(w * .78, h * .28),
+      h * .15,
+      Paint()..color = const Color(0xFFFFE9BF).withValues(alpha: .12),
+    );
+    canvas.drawCircle(
+      Offset(w * .78, h * .28),
+      h * .085,
+      Paint()..color = const Color(0xFFFFE8B5).withValues(alpha: .76),
+    );
+
+    // Distant Corsican-style mountain silhouettes.
+    final farMountains = Path()
+      ..moveTo(0, horizon + h * .01)
+      ..lineTo(w * .08, h * .43)
+      ..lineTo(w * .16, h * .40)
+      ..lineTo(w * .24, h * .45)
+      ..lineTo(w * .37, h * .30)
+      ..lineTo(w * .46, h * .39)
+      ..lineTo(w * .58, h * .35)
+      ..lineTo(w * .69, h * .22)
+      ..lineTo(w * .80, h * .39)
+      ..lineTo(w * .89, h * .31)
+      ..lineTo(w, h * .40)
+      ..lineTo(w, horizon + h * .06)
       ..close();
-    canvas.drawPath(distant, Paint()..color = const Color(0xFF446B7A));
+    canvas.drawPath(
+      farMountains,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF6F8A94), Color(0xFF557C8A)],
+        ).createShader(Rect.fromLTWH(0, h * .22, w, h * .40)),
+    );
 
-    final coast = Path()
-      ..moveTo(0, size.height * .57)
-      ..lineTo(size.width * .12, size.height * .51)
-      ..lineTo(size.width * .22, size.height * .57)
-      ..lineTo(size.width * .33, size.height * .47)
-      ..lineTo(size.width * .43, size.height * .58)
-      ..lineTo(size.width * .57, size.height * .49)
-      ..lineTo(size.width * .70, size.height * .60)
-      ..lineTo(size.width * .83, size.height * .48)
-      ..lineTo(size.width, size.height * .55)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
+    // Sunlit coastal headland, in two overlapping planes for depth.
+    final headland = Path()
+      ..moveTo(0, h * .54)
+      ..lineTo(w * .08, h * .50)
+      ..lineTo(w * .17, h * .52)
+      ..lineTo(w * .25, h * .47)
+      ..lineTo(w * .34, h * .54)
+      ..lineTo(w * .43, h * .49)
+      ..lineTo(w * .51, h * .55)
+      ..lineTo(w * .65, h * .50)
+      ..lineTo(w * .76, h * .55)
+      ..lineTo(w * .85, h * .47)
+      ..lineTo(w, h * .52)
+      ..lineTo(w, h * .62)
+      ..lineTo(0, h * .62)
       ..close();
-    canvas.drawPath(coast, Paint()..color = const Color(0xFF087E9A));
+    canvas.drawPath(
+      headland,
+      Paint()..color = const Color(0xFF315D65).withValues(alpha: .94),
+    );
 
+    // The sea begins at an irregular, natural horizon.
+    final sea = Path()
+      ..moveTo(0, horizon)
+      ..quadraticBezierTo(w * .22, h * .51, w * .43, h * .535)
+      ..quadraticBezierTo(w * .72, h * .56, w, h * .525)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(
+      sea,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF39B6CF),
+            Color(0xFF087FA4),
+            Color(0xFF03445F),
+          ],
+          stops: [0, .45, 1],
+        ).createShader(Rect.fromLTWH(0, horizon, w, h - horizon)),
+    );
+
+    // Turquoise shallows and long, fine sunlit reflections.
     final shallows = Path()
-      ..moveTo(0, size.height * .76)
-      ..quadraticBezierTo(size.width * .28, size.height * .66, size.width * .52, size.height * .78)
-      ..quadraticBezierTo(size.width * .78, size.height * .91, size.width, size.height * .73)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
+      ..moveTo(0, h * .78)
+      ..quadraticBezierTo(w * .25, h * .66, w * .49, h * .79)
+      ..quadraticBezierTo(w * .76, h * .91, w, h * .72)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
       ..close();
-    canvas.drawPath(shallows, Paint()..color = const Color(0xFF18B9C3).withValues(alpha: .72));
+    canvas.drawPath(
+      shallows,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF21C4C8), Color(0xFF087B99)],
+        ).createShader(Rect.fromLTWH(0, h * .65, w, h * .35)),
+    );
 
-    final glint = Paint()
-      ..color = Colors.white.withValues(alpha: .36)
-      ..strokeWidth = 1.2
-      ..strokeCap = StrokeCap.round;
-    for (var i = 0; i < 9; i++) {
-      final y = size.height * (.68 + i * .032);
-      canvas.drawLine(Offset(size.width * (.08 + (i % 3) * .12), y),
-          Offset(size.width * (.22 + (i % 3) * .12), y), glint);
-      canvas.drawLine(Offset(size.width * (.68 + (i % 2) * .08), y + 3),
-          Offset(size.width * (.81 + (i % 2) * .08), y + 3), glint);
+    for (var i = 0; i < 12; i++) {
+      final y = h * (.63 + i * .028);
+      final startX = w * (.04 + (i % 4) * .11);
+      final lineWidth = w * (.08 + (i % 3) * .035);
+      final glint = Paint()
+        ..color = Colors.white.withValues(alpha: i % 3 == 0 ? .32 : .18)
+        ..strokeWidth = i % 3 == 0 ? 1.5 : .8
+        ..strokeCap = StrokeCap.round;
+      final wave = Path()
+        ..moveTo(startX, y)
+        ..quadraticBezierTo(startX + lineWidth * .48, y - h * .009,
+            startX + lineWidth, y + h * .002);
+      canvas.drawPath(wave, glint);
     }
 
-    _drawSailboat(canvas, Offset(size.width * .69, size.height * .67), size.height * .25);
-    _drawSailboat(canvas, Offset(size.width * .37, size.height * .78), size.height * .15);
+    // Rocks in the near foreground frame the water without obscuring it.
+    final rocks = Path()
+      ..moveTo(w * .70, h)
+      ..lineTo(w * .76, h * .91)
+      ..lineTo(w * .81, h * .88)
+      ..lineTo(w * .85, h * .92)
+      ..lineTo(w * .90, h * .84)
+      ..lineTo(w * .96, h * .89)
+      ..lineTo(w, h * .86)
+      ..lineTo(w, h)
+      ..close();
+    canvas.drawPath(
+      rocks,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFC39B78), Color(0xFF72594C)],
+        ).createShader(Rect.fromLTWH(w * .70, h * .84, w * .30, h * .16)),
+    );
+    final rockEdge = Paint()
+      ..color = const Color(0xFFFFD1A0).withValues(alpha: .68)
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final rockLine = Path()
+      ..moveTo(w * .80, h * .94)
+      ..lineTo(w * .84, h * .90)
+      ..lineTo(w * .89, h * .94)
+      ..moveTo(w * .92, h * .96)
+      ..lineTo(w * .96, h * .92);
+    canvas.drawPath(rockLine, rockEdge);
+
+    _drawSailboat(canvas, Offset(w * .68, h * .66), h * .22);
+    _drawSailboat(canvas, Offset(w * .35, h * .77), h * .14);
+  }
+
+  void _drawCloud(Canvas canvas, Offset center, double width, double height) {
+    final cloudPaint = Paint()
+      ..color = Colors.white.withValues(alpha: .34)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+    canvas.drawOval(
+      Rect.fromCenter(center: center, width: width, height: height),
+      cloudPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx - width * .20, center.dy + height * .08),
+        width: width * .40,
+        height: height * .80,
+      ),
+      cloudPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(center.dx + width * .20, center.dy - height * .05),
+        width: width * .48,
+        height: height,
+      ),
+      cloudPaint,
+    );
   }
 
   void _drawSailboat(Canvas canvas, Offset center, double height) {
-    final mast = Paint()..color = const Color(0xFF073042)..strokeWidth = 1.7;
-    canvas.drawLine(Offset(center.dx, center.dy - height), Offset(center.dx, center.dy + height * .38), mast);
-    final sail = Paint()..color = const Color(0xFFF7FBF9);
-    final left = Path()
-      ..moveTo(center.dx - height * .05, center.dy - height * .87)
-      ..lineTo(center.dx - height * .52, center.dy + height * .25)
-      ..lineTo(center.dx - height * .05, center.dy + height * .25)
+    final mast = Paint()
+      ..color = const Color(0xFF073042).withValues(alpha: .90)
+      ..strokeWidth = 1.4;
+    canvas.drawLine(
+      Offset(center.dx, center.dy - height),
+      Offset(center.dx, center.dy + height * .38),
+      mast,
+    );
+
+    final sails = Paint()..color = const Color(0xFFFFFCF5);
+    final mainsail = Path()
+      ..moveTo(center.dx - height * .04, center.dy - height * .88)
+      ..lineTo(center.dx - height * .49, center.dy + height * .23)
+      ..lineTo(center.dx - height * .04, center.dy + height * .23)
       ..close();
-    final right = Path()
-      ..moveTo(center.dx + height * .04, center.dy - height * .68)
-      ..lineTo(center.dx + height * .43, center.dy + height * .25)
-      ..lineTo(center.dx + height * .04, center.dy + height * .25)
+    final jib = Path()
+      ..moveTo(center.dx + height * .04, center.dy - height * .69)
+      ..lineTo(center.dx + height * .39, center.dy + height * .23)
+      ..lineTo(center.dx + height * .04, center.dy + height * .23)
       ..close();
-    canvas.drawPath(left, sail);
-    canvas.drawPath(right, Paint()..color = const Color(0xFFD9F4F5));
+    canvas.drawPath(mainsail, sails);
+    canvas.drawPath(jib, Paint()..color = const Color(0xFFD9F5F3));
+
     final hull = Path()
-      ..moveTo(center.dx - height * .56, center.dy + height * .34)
-      ..lineTo(center.dx + height * .56, center.dy + height * .34)
-      ..lineTo(center.dx + height * .35, center.dy + height * .48)
-      ..lineTo(center.dx - height * .38, center.dy + height * .48)
+      ..moveTo(center.dx - height * .54, center.dy + height * .31)
+      ..quadraticBezierTo(
+        center.dx,
+        center.dy + height * .40,
+        center.dx + height * .54,
+        center.dy + height * .31,
+      )
+      ..lineTo(center.dx + height * .36, center.dy + height * .46)
+      ..lineTo(center.dx - height * .36, center.dy + height * .46)
       ..close();
-    canvas.drawPath(hull, Paint()..color = const Color(0xFF073042));
+    canvas.drawPath(
+      hull,
+      Paint()..color = const Color(0xFF073042).withValues(alpha: .96),
+    );
+
+    final wake = Paint()
+      ..color = Colors.white.withValues(alpha: .36)
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(center.dx - height * .72, center.dy + height * .48),
+      Offset(center.dx - height * .44, center.dy + height * .48),
+      wake,
+    );
+    canvas.drawLine(
+      Offset(center.dx + height * .50, center.dy + height * .48),
+      Offset(center.dx + height * .78, center.dy + height * .48),
+      wake,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant MediterraneanSeaPainter oldDelegate) => false;
 }
