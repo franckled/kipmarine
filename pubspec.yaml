@@ -35,7 +35,7 @@ dependencies:
   # Partage de traces GPX & Fichiers
   share_plus: ^10.0.1
 
-  package_info_plus: ^10.2.2
+  package_info_plus: ^9.0.1
 
 dev_dependencies:
   flutter_test:
