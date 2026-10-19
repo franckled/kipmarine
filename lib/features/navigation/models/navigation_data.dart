@@ -1,6 +1,16 @@
 import 'package:geolocator/geolocator.dart';
 import '../../../core/constants/marine_units.dart';
 
+/// Le COG n'est exploitable que si le bateau se déplace
+/// suffisamment et si la précision GPS est acceptable.
+bool get hasValidCourse =>
+    speedMs >= 0.5 &&
+    accuracy > 0 &&
+    accuracy <= 25 &&
+    heading.isFinite &&
+    heading >= 0 &&
+    heading < 360;
+
 enum GpsSignalStatus { excellent, good, fair, poor, lost }
 
 class NavigationData {
@@ -34,7 +44,11 @@ class NavigationData {
       longitude: position.longitude,
       speedInKnots: MarineUnits.msToKnots(rawSpeed),
       speedMs: rawSpeed,
-      heading: position.heading < 0 ? 0.0 : position.heading,
+      heading: position.heading.isFinite &&
+        position.heading >= 0 &&
+        position.heading < 360
+    ? position.heading
+    : 0.0,
       accuracy: position.accuracy,
       altitude: position.altitude,
       timestamp: position.timestamp,
