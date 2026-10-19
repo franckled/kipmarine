@@ -40,7 +40,7 @@ class LogbookProvider extends ChangeNotifier {
       latitude: data.latitude,
       longitude: data.longitude,
       speedKnots: data.speedInKnots,
-      heading: data.heading,
+      heading: data.heading ?? 0.0,
       timestamp: data.timestamp,
     ));
 
