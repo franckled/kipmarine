@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:geolocator/geolocator.dart';
 
@@ -15,7 +16,6 @@ class LocationService {
       }
 
       var permission = await Geolocator.checkPermission();
-
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
@@ -30,15 +30,9 @@ class LocationService {
   /// Récupère rapidement une position connue, si disponible.
   Future<NavigationData?> getLastKnownPosition() async {
     try {
-      final hasPermission = await checkAndRequestPermissions();
-      if (!hasPermission) return null;
-
+      if (!await checkAndRequestPermissions()) return null;
       final position = await Geolocator.getLastKnownPosition();
-
-      if (position == null || position.accuracy <= 0) {
-        return null;
-      }
-
+      if (position == null || position.accuracy <= 0) return null;
       return NavigationData.fromPosition(position);
     } catch (_) {
       return null;
@@ -47,8 +41,7 @@ class LocationService {
 
   /// Obtient une nouvelle position GPS.
   Future<NavigationData?> getCurrentPosition() async {
-    final hasPermission = await checkAndRequestPermissions();
-    if (!hasPermission) return null;
+    if (!await checkAndRequestPermissions()) return null;
 
     try {
       final position = await Geolocator.getCurrentPosition(
@@ -57,26 +50,51 @@ class LocationService {
           timeLimit: Duration(seconds: 15),
         ),
       );
-
       return NavigationData.fromPosition(position);
     } catch (_) {
-      // La position précédente peut être utilisée en attendant
-      // une nouvelle mesure, mais elle peut être ancienne.
+      // Une position mémorisée peut être ancienne : l'interface doit afficher
+      // son horodatage et ne pas la présenter comme une mesure en temps réel.
       return getLastKnownPosition();
     }
   }
 
-  /// Flux continu de positions pour la navigation.
+  /// Flux GPS pour la navigation. iOS et Android nécessitent des réglages
+  /// différents, en particulier pour le suivi lorsque l'application passe
+  /// en arrière-plan.
   Stream<NavigationData> getNavigationStream({
     int distanceFilterMeters = 2,
   }) {
-   final settings = AppleSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
-      activityType: ActivityType.otherNavigation,
-      distanceFilter: 2,
-      pauseLocationUpdatesAutomatically: false,
-      showBackgroundLocationIndicator: true,
-    );
+    final distanceFilter = distanceFilterMeters < 0 ? 0 : distanceFilterMeters;
+    late final LocationSettings settings;
+
+    if (Platform.isIOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        activityType: ActivityType.otherNavigation,
+        distanceFilter: distanceFilter,
+        pauseLocationUpdatesAutomatically: false,
+        showBackgroundLocationIndicator: true,
+        allowBackgroundLocationUpdates: true,
+      );
+    } else if (Platform.isAndroid) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: distanceFilter,
+        intervalDuration: const Duration(seconds: 1),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationTitle: 'KipMarine — surveillance GPS active',
+          notificationText:
+              'Le GPS reste actif pour la navigation et l’alarme de mouillage.',
+          enableWakeLock: true,
+          setOngoing: true,
+        ),
+      );
+    } else {
+      settings = LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: distanceFilter,
+      );
+    }
 
     return Geolocator.getPositionStream(
       locationSettings: settings,
