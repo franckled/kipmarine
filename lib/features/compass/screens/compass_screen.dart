@@ -327,9 +327,12 @@ class _CompassPainter extends CustomPainter {
 
     canvas.save();
 
-    // En mode magnétique, la rose tourne pour suivre le cap du téléphone.
+    // La rotation doit se faire autour du centre de la rose, pas de l'origine
+    // du canevas, sinon les graduations se décalent hors du cadran.
     if (!isCrasMode && valid) {
+      canvas.translate(center.dx, center.dy);
       canvas.rotate(-heading! * pi / 180);
+      canvas.translate(-center.dx, -center.dy);
     }
 
     for (int degree = 0; degree < 360; degree += 5) {
