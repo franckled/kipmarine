@@ -1,30 +1,80 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../core/constants/marine_units.dart';
 import '../../../core/services/alarm_service.dart';
 import '../../navigation/models/navigation_data.dart';
 import '../models/anchor_config.dart';
 
 class AnchorWatchProvider extends ChangeNotifier {
+  static const _storageKey = 'kipmarine_anchor_watch_config';
+
   final AlarmService _alarmService = AlarmService();
 
   AnchorConfig? _config;
-  double _targetRadiusMeters = 35.0; // Rayon par défaut
+  double _targetRadiusMeters = 35.0;
   bool _alarmSilencedUntilSafe = false;
+  bool _isLoading = true;
 
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
+  bool get isLoading => _isLoading;
 
-  /// Modifie la consigne du rayon de sécurité
+  AnchorWatchProvider() {
+    _restoreConfig();
+  }
+
+  Future<void> _restoreConfig() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      final stored = preferences.getString(_storageKey);
+      if (stored != null) {
+        final decoded = jsonDecode(stored);
+        if (decoded is Map<String, dynamic>) {
+          final restored = AnchorConfig.fromJson(decoded);
+          if (restored.isActive) {
+            _config = restored;
+            _targetRadiusMeters = restored.radiusMeters;
+          }
+        }
+      }
+    } catch (_) {
+      // Une configuration corrompue ne doit pas empêcher l'ouverture de l'app.
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _persistConfig() async {
+    try {
+      final preferences = await SharedPreferences.getInstance();
+      if (_config == null || !_config!.isActive) {
+        await preferences.remove(_storageKey);
+      } else {
+        await preferences.setString(_storageKey, jsonEncode(_config!.toJson()));
+      }
+    } catch (_) {
+      // Le suivi reste utilisable en mémoire si le stockage échoue.
+    }
+  }
+
+  /// Modifie le rayon de sécurité.
   void setTargetRadius(double radius) {
+    if (!radius.isFinite || radius < 10 || radius > 150) return;
     _targetRadiusMeters = radius;
     if (_config != null && _config!.isActive) {
       _config = _config!.copyWith(radiusMeters: radius);
+      unawaited(_persistConfig());
     }
     notifyListeners();
   }
 
-  /// Mouille l'ancre à la position actuelle
+  /// Enregistre la position actuelle comme point de mouillage.
   void dropAnchor(NavigationData currentPosition) {
     _alarmSilencedUntilSafe = false;
     _config = AnchorConfig(
@@ -32,60 +82,62 @@ class AnchorWatchProvider extends ChangeNotifier {
       anchorLongitude: currentPosition.longitude,
       radiusMeters: _targetRadiusMeters,
       isActive: true,
-      currentDistance: 0.0,
+      currentDistance: 0,
       isAlarmTriggered: false,
     );
+    unawaited(_persistConfig());
     notifyListeners();
   }
 
-  /// Lève l'ancre et désactive la surveillance
+  /// Lève l'ancre et désactive la surveillance.
   Future<void> raiseAnchor() async {
+    _alarmSilencedUntilSafe = false;
     await _alarmService.stopAlarm();
     _config = null;
+    await _persistConfig();
     notifyListeners();
   }
 
-  /// Reçoit la position GPS mise à jour et calcule la dérive
+  /// Met à jour la distance depuis le point de mouillage.
   void updatePosition(NavigationData currentPosition) {
-    if (_config == null || !_config!.isActive) return;
+    final config = _config;
+    if (config == null || !config.isActive) return;
 
     final distance = MarineUnits.haversineDistance(
-      _config!.anchorLatitude,
-      _config!.anchorLongitude,
+      config.anchorLatitude,
+      config.anchorLongitude,
       currentPosition.latitude,
       currentPosition.longitude,
     );
+    if (!distance.isFinite) return;
 
-    final isOut = distance > _config!.radiusMeters;
-    final wasOut = _config!.isAlarmTriggered;
-
-    _config = _config!.copyWith(
+    final isOut = distance > config.radiusMeters;
+    final wasOut = config.isAlarmTriggered;
+    _config = config.copyWith(
       currentDistance: distance,
       isAlarmTriggered: isOut,
     );
 
     if (isOut) {
-      // Une alarme acquittée reste silencieuse tant que le bateau ne
-      // revient pas dans le cercle de sécurité. Cela évite de la relancer
-      // à chaque nouvelle position GPS.
-      if (!_alarmSilencedUntilSafe && !wasOut) {
-        _alarmService.triggerAlarm();
-      } else if (!_alarmSilencedUntilSafe && !_alarmService.isPlaying) {
-        _alarmService.triggerAlarm();
+      // Un acquittement reste valable jusqu'au retour dans le cercle.
+      if (!_alarmSilencedUntilSafe &&
+          (!wasOut || !_alarmService.isPlaying)) {
+        unawaited(_alarmService.triggerAlarm());
       }
     } else {
       _alarmSilencedUntilSafe = false;
       if (_alarmService.isPlaying) {
-        _alarmService.stopAlarm();
+        unawaited(_alarmService.stopAlarm());
       }
     }
 
+    // Écrit seulement lors d'un changement d'état, pas à chaque point GPS.
+    if (wasOut != isOut) unawaited(_persistConfig());
     notifyListeners();
   }
 
-  /// Coupe l'alarme manuellement
+  /// Coupe l'alarme jusqu'au retour dans le rayon de sécurité.
   Future<void> silenceAlarm() async {
-    // L'acquittement est valable jusqu'au retour dans le rayon de sécurité.
     _alarmSilencedUntilSafe = true;
     await _alarmService.stopAlarm();
     notifyListeners();
@@ -93,7 +145,7 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _alarmService.stopAlarm();
+    unawaited(_alarmService.dispose());
     super.dispose();
   }
 }
