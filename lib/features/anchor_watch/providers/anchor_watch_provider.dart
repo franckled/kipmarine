@@ -14,8 +14,9 @@ class AnchorWatchProvider extends ChangeNotifier {
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
 
-  /// Modifie la consigne du rayon de sécurité
+  /// Modifie la consigne du rayon de sécurité.
   void setTargetRadius(double radius) {
+    if (!radius.isFinite || radius < 10 || radius > 150) return;
     _targetRadiusMeters = radius;
     if (_config != null && _config!.isActive) {
       _config = _config!.copyWith(radiusMeters: radius);
@@ -23,8 +24,9 @@ class AnchorWatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Mouille l'ancre à la position actuelle
+  /// Mouille l'ancre uniquement à partir d'une position GPS récente et valide.
   void dropAnchor(NavigationData currentPosition) {
+    if (!currentPosition.hasFreshPosition) return;
     _config = AnchorConfig(
       anchorLatitude: currentPosition.latitude,
       anchorLongitude: currentPosition.longitude,
@@ -36,28 +38,39 @@ class AnchorWatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Lève l'ancre et désactive la surveillance
+  /// Lève l'ancre et désactive la surveillance.
   Future<void> raiseAnchor() async {
     await _alarmService.stopAlarm();
     _config = null;
     notifyListeners();
   }
 
-  /// Reçoit la position GPS mise à jour et calcule la dérive
+  /// Calcule la dérive seulement à partir de positions GPS récentes et valides.
   void updatePosition(NavigationData currentPosition) {
-    if (_config == null || !_config!.isActive) return;
+    final config = _config;
+    if (config == null || !config.isActive || !currentPosition.hasFreshPosition) {
+      return;
+    }
 
     final distance = MarineUnits.haversineDistance(
-      _config!.anchorLatitude,
-      _config!.anchorLongitude,
+      config.anchorLatitude,
+      config.anchorLongitude,
       currentPosition.latitude,
       currentPosition.longitude,
     );
+    if (!distance.isFinite || distance < 0) return;
 
-    final isOut = distance > _config!.radiusMeters;
-    final wasAlreadyOut = _config!.isAlarmTriggered;
+    final isOut = distance > config.radiusMeters;
+    final wasAlreadyOut = config.isAlarmTriggered;
 
-    _config = _config!.copyWith(
+    // Évite une boucle de reconstructions lorsque la même position GPS
+    // est retraitée à chaque build de l'écran.
+    if ((distance - config.currentDistance).abs() < 0.5 &&
+        isOut == wasAlreadyOut) {
+      return;
+    }
+
+    _config = config.copyWith(
       currentDistance: distance,
       isAlarmTriggered: isOut,
     );
@@ -72,7 +85,7 @@ class AnchorWatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Coupe l'alarme manuellement
+  /// Coupe l'alarme manuellement.
   Future<void> silenceAlarm() async {
     await _alarmService.stopAlarm();
     notifyListeners();
