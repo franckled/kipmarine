@@ -2,17 +2,38 @@ import 'package:flutter/foundation.dart';
 import '../../../core/constants/marine_units.dart';
 import '../../../core/services/alarm_service.dart';
 import '../../navigation/models/navigation_data.dart';
+import '../../navigation/providers/navigation_provider.dart';
 import '../models/anchor_config.dart';
 
 class AnchorWatchProvider extends ChangeNotifier {
   final AlarmService _alarmService = AlarmService();
 
   AnchorConfig? _config;
-  double _targetRadiusMeters = 35.0; // Rayon par défaut
+  NavigationProvider? _navigationProvider;
+  double _targetRadiusMeters = 35.0;
 
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
+
+  /// Se branche directement sur le flux de navigation, indépendamment de l'écran
+  /// affiché. Le suivi ne dépend donc plus de la reconstruction de l'écran.
+  void bindNavigationProvider(NavigationProvider navigationProvider) {
+    if (identical(_navigationProvider, navigationProvider)) return;
+    _navigationProvider?.removeListener(_onNavigationChanged);
+    _navigationProvider = navigationProvider;
+    _navigationProvider!.addListener(_onNavigationChanged);
+    _onNavigationChanged();
+  }
+
+  void _onNavigationChanged() {
+    final position = _navigationProvider?.currentData;
+    if (position != null) updatePosition(position);
+  }
+
+  /// Demande la permission des notifications au moment où l'utilisateur
+  /// active volontairement la surveillance du mouillage.
+  Future<bool> prepareForMonitoring() => _alarmService.prepareForMonitoring();
 
   /// Modifie la consigne du rayon de sécurité.
   void setTargetRadius(double radius) {
@@ -45,7 +66,7 @@ class AnchorWatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Calcule la dérive seulement à partir de positions GPS récentes et valides.
+  /// Calcule la dérive uniquement à partir de positions GPS récentes et valides.
   void updatePosition(NavigationData currentPosition) {
     final config = _config;
     if (config == null || !config.isActive || !currentPosition.hasFreshPosition) {
@@ -63,8 +84,8 @@ class AnchorWatchProvider extends ChangeNotifier {
     final isOut = distance > config.radiusMeters;
     final wasAlreadyOut = config.isAlarmTriggered;
 
-    // Évite une boucle de reconstructions lorsque la même position GPS
-    // est retraitée à chaque build de l'écran.
+    // Évite des notifications et reconstructions répétitives pour un point
+    // GPS inchangé, sans masquer une transition dans/hors du cercle.
     if ((distance - config.currentDistance).abs() < 0.5 &&
         isOut == wasAlreadyOut) {
       return;
@@ -75,7 +96,6 @@ class AnchorWatchProvider extends ChangeNotifier {
       isAlarmTriggered: isOut,
     );
 
-    // Déclenche le son uniquement au passage hors du cercle.
     if (isOut && !wasAlreadyOut) {
       _alarmService.triggerAlarm();
     } else if (!isOut && _alarmService.isPlaying) {
@@ -93,6 +113,7 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _navigationProvider?.removeListener(_onNavigationChanged);
     _alarmService.stopAlarm();
     super.dispose();
   }
