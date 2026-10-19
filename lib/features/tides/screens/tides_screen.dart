@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
 
 class TidesScreen extends StatefulWidget {
   const TidesScreen({super.key});
@@ -24,27 +23,17 @@ class _TidesScreenState extends State<TidesScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Marées & Courants',
-          style: TextStyle(
-            color: colors.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textDark),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Icon(
-              Icons.waves_rounded,
-              color: colors.primary,
-              size: 28,
-            ),
+            child: Icon(Icons.waves_rounded, color: colors.primary, size: 28),
           ),
         ],
       ),
@@ -54,7 +43,7 @@ class _TidesScreenState extends State<TidesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'PORT DE RÉFÉRENCE',
                 style: TextStyle(
                   fontSize: 12,
@@ -64,12 +53,8 @@ class _TidesScreenState extends State<TidesScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
                   color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
@@ -80,10 +65,7 @@ class _TidesScreenState extends State<TidesScreen> {
                     value: _selectedPort,
                     isExpanded: true,
                     borderRadius: BorderRadius.circular(12),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.primaryTeal,
-                    ),
+                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.primary),
                     style: TextStyle(
                       color: colors.onSurface,
                       fontSize: 16,
@@ -94,11 +76,7 @@ class _TidesScreenState extends State<TidesScreen> {
                         value: port,
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.location_on_outlined,
-                              color: AppColors.primaryTeal,
-                              size: 20,
-                            ),
+                            Icon(Icons.location_on_outlined, color: colors.primary, size: 20),
                             const SizedBox(width: 10),
                             Text(port),
                           ],
@@ -112,42 +90,28 @@ class _TidesScreenState extends State<TidesScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 24),
-
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceWhite,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.cardBorder),
+                  border: Border.all(color: theme.dividerColor),
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.waves_rounded,
-                      size: 48,
-                      color: AppColors.primaryTeal,
-                    ),
+                    Icon(Icons.waves_rounded, size: 48, color: colors.primary),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Prévisions de marée',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
-                      ),
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _selectedPort,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryTeal,
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.primary),
                     ),
                     const SizedBox(height: 20),
                     Container(
@@ -157,25 +121,17 @@ class _TidesScreenState extends State<TidesScreen> {
                         color: colors.primary.withOpacity(0.10),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Row(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            color: AppColors.primaryTeal,
-                          ),
-                          SizedBox(width: 10),
+                          Icon(Icons.info_outline_rounded, color: colors.primary),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Les données de marée ne sont pas encore '
-                              'connectées. Les horaires, hauteurs et '
-                              'coefficients seront affichés après '
-                              'l’intégration d’une source de prévisions fiable.',
-                              style: TextStyle(
-                                color: colors.onSurface,
-                                fontSize: 13,
-                                height: 1.5,
-                              ),
+                              'Les données de marée ne sont pas encore connectées. '
+                              'Les horaires, hauteurs et coefficients ne seront affichés '
+                              'qu’après intégration d’une source de prévisions fiable.',
+                              style: TextStyle(color: colors.onSurface, fontSize: 13, height: 1.5),
                             ),
                           ),
                         ],
@@ -184,39 +140,27 @@ class _TidesScreenState extends State<TidesScreen> {
                     const SizedBox(height: 20),
                     Divider(color: theme.dividerColor),
                     const SizedBox(height: 12),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(
-                          Icons.schedule_rounded,
-                          color: AppColors.textMuted,
-                        ),
-                        SizedBox(width: 10),
+                        Icon(Icons.schedule_rounded, color: colors.onSurfaceVariant),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             'Prochaines pleines et basses mers',
-                            style: TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(
-                          Icons.height_rounded,
-                          color: AppColors.textMuted,
-                        ),
-                        SizedBox(width: 10),
+                        Icon(Icons.height_rounded, color: colors.onSurfaceVariant),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             'Hauteur et coefficient de marée',
-                            style: TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
                           ),
                         ),
                       ],
@@ -224,18 +168,12 @@ class _TidesScreenState extends State<TidesScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 20),
-              const Text(
-                'Important : cette sélection change le port affiché, '
-                'mais ne fournit pas encore de prévisions locales. '
-                'Ne pas utiliser cet écran pour préparer une navigation '
-                'tant que les données officielles ne sont pas intégrées.',
-                style: TextStyle(
-                  color: AppColors.textMuted,
-                  fontSize: 12,
-                  height: 1.5,
-                ),
+              Text(
+                'Important : la sélection change le port affiché, mais ne fournit pas encore '
+                'de prévisions locales. Ne pas utiliser cet écran pour préparer une navigation '
+                'tant que des données officielles ne sont pas intégrées.',
+                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12, height: 1.5),
               ),
             ],
           ),
