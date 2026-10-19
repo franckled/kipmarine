@@ -25,10 +25,12 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
     final currentPosition = navProvider.currentData;
     final anchorConfig = anchorProvider.config;
 
-    // Position du bateau (ou position par défaut si le GPS charge)
-    final LatLng boatLatLng = currentPosition != null
+    // La position réelle n'est affichée qu'après réception d'un relevé GPS.
+    // En attente, afficher une vue mondiale neutre plutôt qu'une fausse position en Corse.
+    final hasGpsPosition = currentPosition != null;
+    final LatLng boatLatLng = hasGpsPosition
         ? LatLng(currentPosition.latitude, currentPosition.longitude)
-        : const LatLng(42.7000, 9.4500);
+        : const LatLng(20.0, 0.0);
 
     // Déplacement automatique de la carte si le mode suivi est actif
     if (_followBoat && currentPosition != null) {
@@ -66,7 +68,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
             mapController: _mapController,
             options: MapOptions(
               initialCenter: boatLatLng,
-              initialZoom: 14.0,
+              initialZoom: hasGpsPosition ? 14.0 : 2.5,
               minZoom: 3.0,
               maxZoom: 18.0,
               onPositionChanged: (camera, hasGesture) {
@@ -164,6 +166,31 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
               ),
             ],
           ),
+
+          if (!hasGpsPosition)
+            Positioned(
+              top: 16,
+              left: 16,
+              right: 16,
+              child: Card(
+                color: AppColors.primaryDark,
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Icon(Icons.gps_not_fixed, color: AppColors.accent),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'En attente du GPS : la carte affiche une vue mondiale, pas la position du bateau.',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
           // Bouton flottant de recentrage rapide sur le bateau
           Positioned(
