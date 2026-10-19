@@ -13,29 +13,25 @@ class AnchorWatchScreen extends StatelessWidget {
     final anchorProvider = context.watch<AnchorWatchProvider>();
     final currentPosition = navProvider.currentData;
     final config = anchorProvider.config;
-
-    // Met à jour la position de l'ancre chaque fois que le GPS évolue
-    if (currentPosition != null && config != null && config.isActive) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<AnchorWatchProvider>().updatePosition(currentPosition);
-      });
-    }
-
     final isMouille = config != null && config.isActive;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ALARME DE MOUILLAGE', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: const Text(
+          'ALARME DE MOUILLAGE',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: colors.surface,
         centerTitle: true,
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Alerte visuelle de dérive
               if (anchorProvider.isAlarmTriggered)
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -46,33 +42,46 @@ class AnchorWatchScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.warning_amber_rounded, size: 40, color: Colors.white),
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 12),
                       const Expanded(
                         child: Text(
                           'DÉRIVE DÉTECTÉE !\nBateau hors du cercle de sécurité !',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.volume_off, color: Colors.white, size: 30),
-                        onPressed: () => anchorProvider.silenceAlarm(),
+                        tooltip: 'Acquitter l’alarme jusqu’au retour dans le cercle',
+                        icon: const Icon(
+                          Icons.volume_off,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onPressed: anchorProvider.silenceAlarm,
                       ),
                     ],
                   ),
                 ),
-
-              // Carte / Indicateur de distance
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isMouille
-                          ? (anchorProvider.isAlarmTriggered ? AppColors.alertRed : AppColors.okGreen)
-                           : Theme.of(context).colorScheme.primary,
+                          ? (anchorProvider.isAlarmTriggered
+                              ? AppColors.alertRed
+                              : AppColors.okGreen)
+                          : colors.primary,
                       width: 2,
                     ),
                   ),
@@ -82,13 +91,17 @@ class AnchorWatchScreen extends StatelessWidget {
                       Icon(
                         Icons.anchor,
                         size: 80,
-                        color: isMouille ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.35),
+                        color: isMouille
+                            ? colors.primary
+                            : colors.onSurfaceVariant.withValues(alpha: 0.35),
                       ),
                       const SizedBox(height: 20),
                       Text(
                         isMouille ? 'MOUILLAGE ACTIF' : 'MOUILLAGE INACTIF',
                         style: TextStyle(
-                          color: isMouille ? Colors.green : Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: isMouille
+                              ? AppColors.okGreen
+                              : colors.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                           letterSpacing: 1.5,
@@ -101,36 +114,59 @@ class AnchorWatchScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 64,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface,
+                            color: colors.onSurface,
                           ),
                         ),
                         Text(
-                          'Distance de l\'ancre (Max : ${config.radiusMeters.round()} m)',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
+                          'Distance de l’ancre (max. : ${config.radiusMeters.round()} m)',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
                         ),
                       ] else ...[
                         Text(
-                          'Positionne le bateau au-dessus de l\'ancre et clique sur "Mouiller l\'ancre".',
+                          'Positionne le bateau au-dessus de l’ancre et clique sur « Mouiller l’ancre ».',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                      if (isMouille) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          'Le suivi GPS reste actif lorsque tu quittes cet écran, tant que KipMarine continue de recevoir les positions.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
+                            fontSize: 12,
+                            height: 1.4,
+                          ),
                         ),
                       ],
                     ],
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Réglage du rayon de sécurité
               if (!isMouille) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Rayon de sécurité :', style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16)),
                     Text(
-                      '${anchorProvider.targetRadiusMeters.round()} mètres',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold),
+                      'Rayon de sécurité',
+                      style: TextStyle(color: colors.onSurface, fontSize: 16),
+                    ),
+                    Text(
+                      '${anchorProvider.targetRadiusMeters.round()} m',
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -139,33 +175,45 @@ class AnchorWatchScreen extends StatelessWidget {
                   min: 10,
                   max: 150,
                   divisions: 28,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  onChanged: (val) => anchorProvider.setTargetRadius(val),
+                  activeColor: colors.primary,
+                  onChanged: anchorProvider.setTargetRadius,
                 ),
                 const SizedBox(height: 10),
               ],
-
-              // Boutons d'action principal
               SizedBox(
                 height: 60,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isMouille ? AppColors.alertRed : AppColors.okGreen,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    backgroundColor:
+                        isMouille ? AppColors.alertRed : AppColors.okGreen,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                  icon: Icon(isMouille ? Icons.eject : Icons.anchor, color: Colors.white, size: 28),
+                  icon: Icon(
+                    isMouille ? Icons.eject : Icons.anchor,
+                    size: 28,
+                  ),
                   label: Text(
-                    isMouille ? 'LEVER L\'ANCRE' : 'MOUILLER L\'ANCRE',
-                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    isMouille ? 'LEVER L’ANCRE' : 'MOUILLER L’ANCRE',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (isMouille) {
-                      anchorProvider.raiseAnchor();
+                      await anchorProvider.raiseAnchor();
                     } else if (currentPosition != null) {
                       anchorProvider.dropAnchor(currentPosition);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Attente du signal GPS pour mouiller...')),
+                        const SnackBar(
+                          content: Text(
+                            'Attente d’une position GPS valide pour mouiller.',
+                          ),
+                        ),
                       );
                     }
                   },
