@@ -118,7 +118,7 @@ class MobScreen extends StatelessWidget {
                     children: [
                       Text(
                         '${bearing.round()}°',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
                           color: colors.onSurface,
@@ -146,7 +146,7 @@ class MobScreen extends StatelessWidget {
                     Text(
                       mobPos != null
                           ? '${MarineFormatter.formatLatitude(mobPos.latitude)}   ${MarineFormatter.formatLongitude(mobPos.longitude)}'
-                          : '42°40.877\'N   9°25.655\'E',
+                          : 'Position non disponible',
                       style: TextStyle(
                         color: colors.onSurface,
                         fontWeight: FontWeight.bold,
