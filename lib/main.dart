@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/app_colors.dart';
 import 'core/theme/theme_controller.dart';
-import 'core/services/location_service.dart';
 import 'features/navigation/providers/navigation_provider.dart';
 import 'features/anchor_watch/providers/anchor_watch_provider.dart';
 import 'features/logbook/providers/logbook_provider.dart';
