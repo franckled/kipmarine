@@ -70,7 +70,7 @@ class LocationService {
   Stream<NavigationData> getNavigationStream({
     int distanceFilterMeters = 2,
   }) {
-    const settings = AppleSettings(
+   final settings = AppleSettings(
       accuracy: LocationAccuracy.bestForNavigation,
       activityType: ActivityType.otherNavigation,
       distanceFilter: 2,
