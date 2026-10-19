@@ -101,7 +101,7 @@ class VhfScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.iconBgCyan,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.accentTeal.withOpacity(0.3)),
+                border: Border.all(color: AppColors.accentTeal.withValues(alpha: 0.3)),
               ),
               child: const Row(
                 children: [
