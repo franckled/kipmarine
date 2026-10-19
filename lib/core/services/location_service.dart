@@ -53,7 +53,7 @@ class LocationService {
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
-     final settings = AppleSettings(
+      settings = AppleSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: distanceFilterMeters,
         activityType: ActivityType.otherNavigation,
