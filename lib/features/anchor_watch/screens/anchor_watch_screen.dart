@@ -161,11 +161,16 @@ class AnchorWatchScreen extends StatelessWidget {
                   onPressed: () {
                     if (isMouille) {
                       anchorProvider.raiseAnchor();
-                    } else if (currentPosition != null) {
+                    } else if (currentPosition != null &&
+                        currentPosition.hasFreshPosition) {
                       anchorProvider.dropAnchor(currentPosition);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Attente du signal GPS pour mouiller...')),
+                        const SnackBar(
+                          content: Text(
+                            'Position GPS indisponible ou périmée. Attendez un relevé récent avant de mouiller.',
+                          ),
+                        ),
                       );
                     }
                   },
