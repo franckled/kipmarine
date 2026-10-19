@@ -493,11 +493,11 @@ class _NavigationDashboardScreenState
                         },
                       ),
                       _GridCard(
-                        icon: Icons.map_rounded,
-                        iconBg: const Color(0xFFDDF7FA),
-                        iconColor: const Color(0xFF008DA7),
-                        title: 'Cartes',
-                        subtitle: 'Navigation & repères',
+                        icon: Icons.rule_rounded,
+                        iconBg: const Color(0xFFE7EDF0),
+                        iconColor: const Color(0xFF527985),
+                        title: 'Règles & balisage',
+                        subtitle: 'RIPA, feux, cardinales',
                         onTap: () {
                           Navigator.push(
                             context,
