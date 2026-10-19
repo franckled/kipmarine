@@ -1,150 +1,238 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
-class TidesScreen extends StatelessWidget {
+class TidesScreen extends StatefulWidget {
   const TidesScreen({super.key});
+
+  @override
+  State<TidesScreen> createState() => _TidesScreenState();
+}
+
+class _TidesScreenState extends State<TidesScreen> {
+  final List<String> _ports = const [
+    'Saint-Florent',
+    'Bastia',
+    'Calvi',
+    'Ajaccio',
+    'Bonifacio',
+    'Brest',
+  ];
+
+  String _selectedPort = 'Saint-Florent';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Marées & Courants', style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Marées & Courants',
+          style: TextStyle(
+            color: AppColors.textDark,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textDark),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.iconBgCyan,
-              borderRadius: BorderRadius.circular(12),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Icon(
+              Icons.waves_rounded,
+              color: AppColors.primaryTeal,
+              size: 28,
             ),
-            child: const Icon(Icons.waves, color: AppColors.primaryTeal, size: 22),
           ),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryTeal,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Row(
-                      children: [
-                        Text('Brest', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                        SizedBox(width: 6),
-                        Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 18),
-                      ],
-                    ),
-                  ),
-                ],
+              const Text(
+                'PORT DE RÉFÉRENCE',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textMuted,
+                  letterSpacing: 1,
+                ),
               ),
-
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceWhite,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('HAUTEUR ACTUELLE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
-                        const SizedBox(height: 4),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: const [
-                            Text('0.61', style: TextStyle(fontSize: 42, fontWeight: FontWeight.w900, color: AppColors.textDark)),
-                            SizedBox(width: 4),
-                            Text('m', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMuted)),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedPort,
+                    isExpanded: true,
+                    borderRadius: BorderRadius.circular(12),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.primaryTeal,
+                    ),
+                    style: const TextStyle(
+                      color: AppColors.textDark,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    items: _ports.map((port) {
+                      return DropdownMenuItem<String>(
+                        value: port,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: AppColors.primaryTeal,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(port),
                           ],
                         ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.iconBgCyan,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.arrow_upward_rounded, color: AppColors.primaryTeal, size: 16),
-                          SizedBox(width: 4),
-                          Text('Montante (flot)', style: TextStyle(color: AppColors.primaryTeal, fontWeight: FontWeight.bold, fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                  ],
+                      );
+                    }).toList(),
+                    onChanged: (port) {
+                      if (port == null) return;
+                      setState(() => _selectedPort = port);
+                    },
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
               Container(
-                padding: const EdgeInsets.all(20),
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceWhite,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppColors.cardBorder),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Prochaines pleines / basses mers (étales)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
-                        Text('Coef. 82', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.primaryTeal)),
-                      ],
+                    Icon(
+                      Icons.waves_rounded,
+                      size: 48,
+                      color: AppColors.primaryTeal,
                     ),
-                    const Divider(height: 24, color: AppColors.cardBorder),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Prévisions de marée',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _selectedPort,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryTeal,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.iconBgCyan,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: AppColors.primaryTeal,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Les données de marée ne sont pas encore '
+                              'connectées. Les horaires, hauteurs et '
+                              'coefficients seront affichés après '
+                              'l’intégration d’une source de prévisions fiable.',
+                              style: TextStyle(
+                                color: AppColors.textDark,
+                                fontSize: 13,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(color: AppColors.cardBorder),
+                    const SizedBox(height: 12),
                     const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.arrow_upward_rounded, color: AppColors.primaryTeal, size: 18),
-                            SizedBox(width: 6),
-                            Text('Pleine Mer (PM)', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                          ],
+                        Icon(
+                          Icons.schedule_rounded,
+                          color: AppColors.textMuted,
                         ),
-                        Text('21:52', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textDark)),
-                        Text('6.44 m', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryTeal)),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Prochaines pleines et basses mers',
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.arrow_downward_rounded, color: AppColors.alertRed, size: 18),
-                            SizedBox(width: 6),
-                            Text('Basse Mer (BM)', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                          ],
+                        Icon(
+                          Icons.height_rounded,
+                          color: AppColors.textMuted,
                         ),
-                        Text('04:04', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textDark)),
-                        Text('0.40 m', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.alertRed)),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Hauteur et coefficient de marée',
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+              const Text(
+                'Important : cette sélection change le port affiché, '
+                'mais ne fournit pas encore de prévisions locales. '
+                'Ne pas utiliser cet écran pour préparer une navigation '
+                'tant que les données officielles ne sont pas intégrées.',
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 12,
+                  height: 1.5,
                 ),
               ),
             ],
