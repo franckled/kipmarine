@@ -131,7 +131,7 @@ class _MarineMapScreenState extends State<MarineMapScreen> {
                       width: 50,
                       height: 50,
                       child: Transform.rotate(
-                        angle: (currentPosition.heading * pi / 180),
+                        angle: ((currentPosition.heading ?? 0.0) * pi / 180),
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors.accent.withOpacity(0.9),
