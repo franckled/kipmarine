@@ -13,6 +13,7 @@ import '../../checklists/screens/checklist_screen.dart';
 import '../../rules/screens/rules_screen.dart';
 import '../../tides/screens/tides_screen.dart';
 import '../../about/screens/about_screen.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
@@ -111,6 +112,21 @@ class _NavigationDashboardScreenState
                       ),
                       Row(
                         children: [
+                          IconButton(
+                            tooltip: 'Personnaliser KipMarine',
+                            style: IconButton.styleFrom(
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              foregroundColor: Theme.of(context).colorScheme.primary,
+                            ),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SettingsScreen(),
+                              ),
+                            ),
+                            icon: const Icon(Icons.tune_rounded),
+                          ),
+                          const SizedBox(width: 4),
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
@@ -541,7 +557,7 @@ class _GridCard extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: Theme.of(context).colorScheme.primary,
+                color: iconColor,
                 size: 22,
               ),
             ),
