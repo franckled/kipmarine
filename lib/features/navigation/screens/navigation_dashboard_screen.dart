@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/marine_formatter.dart';
 import '../providers/navigation_provider.dart';
@@ -15,22 +17,51 @@ class NavigationDashboardScreen extends StatefulWidget {
   const NavigationDashboardScreen({super.key});
 
   @override
-  State<NavigationDashboardScreen> createState() => _NavigationDashboardScreenState();
+  State<NavigationDashboardScreen> createState() =>
+      _NavigationDashboardScreenState();
 }
 
-class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
+class _NavigationDashboardScreenState
+    extends State<NavigationDashboardScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NavigationProvider>().startTracking();
+      if (mounted) {
+        context.read<NavigationProvider>().startTracking();
+      }
     });
   }
 
   String _getFormattedDate() {
     final now = DateTime.now();
-    final days = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
-    final months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+
+    const days = [
+      'lundi',
+      'mardi',
+      'mercredi',
+      'jeudi',
+      'vendredi',
+      'samedi',
+      'dimanche',
+    ];
+
+    const months = [
+      'janvier',
+      'février',
+      'mars',
+      'avril',
+      'mai',
+      'juin',
+      'juillet',
+      'août',
+      'septembre',
+      'octobre',
+      'novembre',
+      'décembre',
+    ];
+
     return '${days[now.weekday - 1]} ${now.day} ${months[now.month - 1]}';
   }
 
@@ -43,12 +74,18 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
           builder: (context, navProvider, child) {
             final data = navProvider.currentData;
 
+            final hasValidCourse =
+                data != null && data.hasValidCourse;
+
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // En-tête : Titre + Date + Boutons d'action (Bateau + MOB)
+                  // En-tête : titre, date et actions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -63,16 +100,14 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               color: AppColors.textDark,
                             ),
                           ),
-                         Text(
-  data != null && data.hasValidCourse
-      ? MarineFormatter.formatHeading(data.heading!)
-      : '---°',
-  style: const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  ),
-),
+                          Text(
+                            _getFormattedDate(),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textMuted,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ],
                       ),
                       Row(
@@ -94,12 +129,19 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.mobOrange,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            icon: const Icon(Icons.person_pin_circle, color: Colors.white, size: 20),
+                            icon: const Icon(
+                              Icons.person_pin_circle,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                             label: const Text(
                               'MOB',
                               style: TextStyle(
@@ -109,17 +151,27 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                               ),
                             ),
                             onPressed: () {
-                              final navData = context.read<NavigationProvider>().currentData;
+                              final navData = context
+                                  .read<NavigationProvider>()
+                                  .currentData;
+
                               if (navData != null) {
-                                context.read<MobProvider>().triggerMob(navData);
+                                context
+                                    .read<MobProvider>()
+                                    .triggerMob(navData);
+
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const MobScreen()),
+                                  MaterialPageRoute(
+                                    builder: (_) => const MobScreen(),
+                                  ),
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Attente du signal GPS pour le point MOB...'),
+                                    content: Text(
+                                      'Attente du signal GPS pour le point MOB...',
+                                    ),
                                     backgroundColor: AppColors.mobOrange,
                                   ),
                                 );
@@ -133,13 +185,16 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Carte Vitesse SOG / COG / Position
+                  // Carte vitesse SOG, COG et position GPS
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [AppColors.primaryTeal, AppColors.primaryTealDark],
+                        colors: [
+                          AppColors.primaryTeal,
+                          AppColors.primaryTealDark,
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -167,7 +222,8 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text(
                                   'VITESSE GPS · SOG',
@@ -175,31 +231,37 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                     color: Colors.white70,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.0,
+                                    letterSpacing: 1,
                                   ),
                                 ),
                                 Container(
                                   width: 10,
                                   height: 10,
                                   decoration: BoxDecoration(
-                                    color: navProvider.isTracking ? AppColors.okGreen : Colors.orange,
+                                    color: navProvider.isTracking
+                                        ? AppColors.okGreen
+                                        : Colors.orange,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
+
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.baseline,
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  data != null ? data.speedInKnots.toStringAsFixed(1) : '0.0',
+                                  data != null
+                                      ? data.speedInKnots.toStringAsFixed(1)
+                                      : '--',
                                   style: const TextStyle(
                                     fontSize: 56,
                                     fontWeight: FontWeight.w900,
                                     color: Colors.white,
-                                    height: 1.0,
+                                    height: 1,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -213,16 +275,23 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                 ),
                               ],
                             ),
+
                             const SizedBox(height: 16),
+
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // COG : cap fondé sur le déplacement GPS
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      data != null && data.hasValidCourse
-    ? MarineFormatter.formatHeading(data.heading!)
-    : '---°'
+                                      hasValidCourse
+                                          ? MarineFormatter.formatHeading(
+                                              data.heading!,
+                                            )
+                                          : '---°',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -231,32 +300,64 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                                     ),
                                     const Text(
                                       'COG',
-                                      style: TextStyle(fontSize: 11, color: Colors.white60, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white60,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
+
                                 Container(
-                                  height: 30,
+                                  height: 36,
                                   width: 1,
                                   color: Colors.white24,
-                                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'POSITION',
-                                      style: TextStyle(fontSize: 10, color: Colors.white60, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      data != null ? MarineFormatter.formatLatitude(data.latitude) : '42°40.874\'N',
-                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ),
-                                    Text(
-                                      data != null ? MarineFormatter.formatLongitude(data.longitude) : '9°25.665\'E',
-                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                                    ),
-                                  ],
+
+                                // Position GPS réelle, sans coordonnées fictives
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'POSITION GPS',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white60,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        data != null
+                                            ? MarineFormatter.formatLatitude(
+                                                data.latitude,
+                                              )
+                                            : '--',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        data != null
+                                            ? MarineFormatter.formatLongitude(
+                                                data.longitude,
+                                              )
+                                            : '--',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -268,7 +369,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Grille complète des Modules avec actions Clic
+                  // Grille des modules
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -282,7 +383,7 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         iconBg: AppColors.iconBgCyan,
                         iconColor: AppColors.primaryTeal,
                         title: 'Mouillage',
-                        subtitle: 'Alarme d\'évitage',
+                        subtitle: 'Alarme d’évitage',
                       ),
                       _GridCard(
                         icon: Icons.waves,
@@ -293,7 +394,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const TidesScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const TidesScreen(),
+                            ),
                           );
                         },
                       ),
@@ -306,7 +409,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const CompassScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const CompassScreen(),
+                            ),
                           );
                         },
                       ),
@@ -319,7 +424,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const ChecklistScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const ChecklistScreen(),
+                            ),
                           );
                         },
                       ),
@@ -332,7 +439,9 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const VhfScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const VhfScreen(),
+                            ),
                           );
                         },
                       ),
@@ -345,12 +454,15 @@ class _NavigationDashboardScreenState extends State<NavigationDashboardScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const RulesScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const RulesScreen(),
+                            ),
                           );
                         },
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 80),
                 ],
               ),
@@ -389,7 +501,10 @@ class _GridCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surfaceWhite,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.cardBorder, width: 1.0),
+          border: Border.all(
+            color: AppColors.cardBorder,
+            width: 1,
+          ),
           boxShadow: const [
             BoxShadow(
               color: Color(0x08000000),
@@ -408,7 +523,11 @@ class _GridCard extends StatelessWidget {
                 color: iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: iconColor, size: 22),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 22,
+              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
