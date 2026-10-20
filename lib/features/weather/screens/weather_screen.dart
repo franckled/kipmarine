@@ -44,7 +44,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
       setState(() => _error = 'Coordonnées invalides : latitude −90 à 90°, longitude −180 à 180°.'); return;
     }
-    setState(() { _loading = true; _error = null; _latitude = lat; _longitude = lon; _locationLabel = label; _places = []; });
+    setState(() { _loading = true; _error = null; _weather = null; _marine = null; _latitude = lat; _longitude = lon; _locationLabel = label; _places = []; });
     try {
       final values = await Future.wait([
         _service.fetchWeather(latitude: lat, longitude: lon),
