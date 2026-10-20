@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import 'core/constants/app_colors.dart';
 import 'core/theme/theme_controller.dart';
+import 'core/theme/locale_controller.dart';
 import 'features/navigation/providers/navigation_provider.dart';
 import 'features/anchor_watch/providers/anchor_watch_provider.dart';
 import 'features/logbook/providers/logbook_provider.dart';
@@ -14,6 +16,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => LocaleController()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AnchorWatchProvider()),
         ChangeNotifierProvider(create: (_) => LogbookProvider()),
@@ -30,10 +33,14 @@ class KipMarineApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = context.watch<ThemeController>();
+    final localeController = context.watch<LocaleController>();
     return _AnchorWatchCoordinator(
       child: MaterialApp(
         title: 'KipMarine',
         debugShowCheckedModeBanner: false,
+        locale: localeController.locale,
+        supportedLocales: LocaleController.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         theme: AppColors.lightTheme,
         darkTheme: AppColors.darkTheme,
         themeMode: themeController.themeMode,
