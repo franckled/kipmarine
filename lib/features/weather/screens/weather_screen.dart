@@ -18,7 +18,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Map<String, dynamic>? _weather, _marine;
   List<Map<String, dynamic>> _places = [];
   Object? _error;
-  bool _loading = false, _searching = false, _manual = false;
+  bool _loading = false, _searching = false, _manual = false, _gpsAutoLoaded = false;
   double? _latitude, _longitude;
   String _locationLabel = 'Position GPS';
 
@@ -65,6 +65,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final gps = context.watch<NavigationProvider>().currentData;
+    if (gps != null && _latitude == null && !_gpsAutoLoaded) {
+      _gpsAutoLoaded = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, 'Position GPS');
+      });
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Météo marine', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location_rounded))]),
