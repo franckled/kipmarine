@@ -5,12 +5,8 @@ on:
     branches:
       - work/v6-live-marine-weather-tides
       - feature/v6-mediterranean-ui
-  pull_request:
-    branches:
-      - feature/v6-mediterranean-ui
-
 concurrency:
-  group: kipmarine-validation-${{ github.event.pull_request.head.ref || github.ref }}
+  group: kipmarine-validation-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions:
