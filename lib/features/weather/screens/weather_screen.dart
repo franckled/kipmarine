@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/services/marine_forecast_service.dart';
@@ -101,6 +102,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
     final gps = context.watch<NavigationProvider>().currentData;
     if (gps != null && _latitude == null && !_gpsAutoLoaded) {
@@ -110,7 +112,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       });
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Météo marine', style: TextStyle(fontWeight: FontWeight.bold)),
+      appBar: AppBar(title: Text(l10n.weatherScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.primary, Color.lerp(colors.primary, colors.surface, .35)!]), borderRadius: BorderRadius.circular(24)),
