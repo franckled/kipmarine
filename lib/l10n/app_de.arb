@@ -23,5 +23,9 @@
   "languageEnglish": "Englisch",
   "languageSpanish": "Spanisch",
   "languageItalian": "Italienisch",
-  "languageGerman": "Deutsch"
+  "languageGerman": "Deutsch",
+  "weatherScreenTitle": "Marinewetter",
+  "tidesScreenTitle": "Gezeiten & Meeresspiegel",
+  "vhfScreenTitle": "UKW-Kanäle",
+  "logbookScreenTitle": "Logbuch"
 }
