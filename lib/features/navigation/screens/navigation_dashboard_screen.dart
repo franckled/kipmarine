@@ -241,10 +241,9 @@ class _NavigationDashboardScreenState
 
                   const SizedBox(height: 20),
 
-                  // Carte vitesse SOG, COG et position GPS
+                  // Carte vitesse SOG, COG et position GPS — image à bord perdu
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: Theme.of(context).brightness == Brightness.dark
@@ -301,9 +300,11 @@ class _NavigationDashboardScreenState
                             color: Colors.white.withValues(alpha: 0.08),
                           ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                             Row(
                               mainAxisAlignment:
                                   MainAxisAlignment.spaceBetween,
@@ -479,9 +480,10 @@ class _NavigationDashboardScreenState
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
                   const SizedBox(height: 24),
 
