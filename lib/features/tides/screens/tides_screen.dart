@@ -1,222 +1,111 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/services/marine_forecast_service.dart';
+import '../../navigation/providers/navigation_provider.dart';
 
-class TidesScreen extends StatefulWidget {
-  const TidesScreen({super.key});
-
-  @override
-  State<TidesScreen> createState() => _TidesScreenState();
-}
-
+class TidesScreen extends StatefulWidget { const TidesScreen({super.key}); @override State<TidesScreen> createState() => _TidesScreenState(); }
 class _TidesScreenState extends State<TidesScreen> {
-  final List<String> _ports = const [
-    'Saint-Florent',
-    'Bastia',
-    'Calvi',
-    'Ajaccio',
-    'Bonifacio',
-    'Brest',
-  ];
-
-  String _selectedPort = 'Saint-Florent';
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Marées & Courants',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Icon(Icons.waves_rounded, color: colors.primary, size: 28),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'PORT DE RÉFÉRENCE',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: colors.onSurfaceVariant,
-                  letterSpacing: 1,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedPort,
-                    isExpanded: true,
-                    borderRadius: BorderRadius.circular(12),
-                    icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.primary),
-                    style: TextStyle(
-                      color: colors.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    items: _ports.map((port) {
-                      return DropdownMenuItem<String>(
-                        value: port,
-                        child: Row(
-                          children: [
-                            Icon(Icons.location_on_outlined, color: colors.primary, size: 20),
-                            const SizedBox(width: 10),
-                            Text(port),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (port) {
-                      if (port == null) return;
-                      setState(() => _selectedPort = port);
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                decoration: BoxDecoration(
-                  color: colors.errorContainer.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.cloud_off_rounded, size: 18, color: colors.onErrorContainer),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Prévisions non disponibles',
-                        style: TextStyle(
-                          color: colors.onErrorContainer,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: Column(
-                  children: [
-                    Icon(Icons.waves_rounded, size: 48, color: colors.primary),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Prévisions de marée',
-                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.location_on_rounded, size: 16, color: colors.primary),
-                          const SizedBox(width: 5),
-                          Text(
-                            _selectedPort,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.primary),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: colors.primary.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.info_outline_rounded, color: colors.primary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Les données de marée ne sont pas encore connectées. '
-                              'Les horaires, hauteurs et coefficients ne seront affichés '
-                              'qu’après intégration d’une source de prévisions fiable.',
-                              style: TextStyle(color: colors.onSurface, fontSize: 13, height: 1.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Divider(color: theme.dividerColor),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Icon(Icons.schedule_rounded, color: colors.onSurfaceVariant),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Prochaines pleines et basses mers',
-                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Icon(Icons.height_rounded, color: colors.onSurfaceVariant),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Hauteur et coefficient de marée',
-                            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Important : la sélection change le port affiché, mais ne fournit pas encore '
-                'de prévisions locales. Ne pas utiliser cet écran pour préparer une navigation '
-                'tant que des données officielles ne sont pas intégrées.',
-                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12, height: 1.5),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  final _service = MarineForecastService();
+  final _search = TextEditingController();
+  List<Map<String, dynamic>> _places = [];
+  Map<String, dynamic>? _marine;
+  Object? _error;
+  bool _loading = false, _searching = false, _initialised = false;
+  double? _lat, _lon;
+  String _place = 'Position GPS';
+  @override void dispose() { _service.dispose(); _search.dispose(); super.dispose(); }
+  @override void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialised) { _initialised = true; final gps = context.read<NavigationProvider>().currentData; if (gps != null) { _lat = gps.latitude; _lon = gps.longitude; _load(gps.latitude, gps.longitude, 'Position GPS'); } }
   }
+  Future<void> _searchPlaces() async {
+    if (_search.text.trim().length < 2) return;
+    setState(() { _searching = true; _error = null; });
+    try { final results = await _service.searchPlaces(_search.text.trim()); if (!mounted) return; setState(() { _places = results; _searching = false; }); if (results.isEmpty) setState(() => _error = 'Aucun lieu trouvé.'); }
+    catch (e) { if (mounted) setState(() { _error = e; _searching = false; }); }
+  }
+  Future<void> _load(double lat, double lon, String label) async {
+    setState(() { _loading = true; _error = null; _lat = lat; _lon = lon; _place = label; _places = []; });
+    try { final result = await _service.fetchMarine(latitude: lat, longitude: lon); if (!mounted) return; setState(() { _marine = result; _loading = false; }); }
+    catch (e) { if (mounted) setState(() { _error = e; _loading = false; }); }
+  }
+  List<_SeaPoint> _seaPoints() {
+    final hourly = _marine?['hourly']; if (hourly is! Map) return [];
+    final times = hourly['time']; final levels = hourly['sea_level_height_msl'];
+    if (times is! List || levels is! List) return [];
+    final result = <_SeaPoint>[];
+    for (var i = 0; i < times.length && i < levels.length; i++) {
+      final level = levels[i]; final time = DateTime.tryParse(times[i].toString());
+      if (level is num && time != null) result.add(_SeaPoint(time, level.toDouble()));
+    }
+    return result;
+  }
+  List<_SeaPoint> _turningPoints(List<_SeaPoint> points) {
+    final result = <_SeaPoint>[];
+    for (var i = 1; i < points.length - 1; i++) {
+      final before = points[i - 1].level, current = points[i].level, after = points[i + 1].level;
+      if ((current >= before && current > after) || (current <= before && current < after)) result.add(points[i]);
+    }
+    return result;
+  }
+  String _time(DateTime value) => value.toLocal().hour.toString().padLeft(2, '0') + ':' + value.toLocal().minute.toString().padLeft(2, '0');
+  @override Widget build(BuildContext context) {
+    final theme = Theme.of(context); final colors = theme.colorScheme;
+    final gps = context.watch<NavigationProvider>().currentData;
+    final points = _seaPoints(); final extrema = _turningPoints(points);
+    return Scaffold(appBar: AppBar(title: const Text('Marées & niveau de mer', style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location_rounded))]),
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        Text('CHOISIR UNE ZONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colors.onSurfaceVariant, letterSpacing: 1)), const SizedBox(height: 10),
+        TextField(controller: _search, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: 'Ville, port ou lieu dans le monde', hintText: 'Ex. Bastia, Rotterdam, Auckland', prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
+        if (_searching) const LinearProgressIndicator(),
+        if (_places.isNotEmpty) ..._places.map((p) { final name = (p['name'] ?? 'Lieu').toString(); final admin = [p['admin1'], p['country']].where((v) => v != null && v.toString().isNotEmpty).join(', '); final lat = (p['latitude'] as num?)?.toDouble(); final lon = (p['longitude'] as num?)?.toDouble(); return ListTile(leading: const Icon(Icons.location_on_outlined), title: Text(name), subtitle: Text(admin), onTap: lat == null || lon == null ? null : () => _load(lat, lon, admin.isEmpty ? name : name + ', ' + admin)); }),
+        if (gps != null) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location), label: const Text('Utiliser ma position GPS'))),
+        const SizedBox(height: 10),
+        Container(padding: const EdgeInsets.all(18), decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [Icon(Icons.waves_rounded, color: colors.primary, size: 28), const SizedBox(width: 10), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Niveau de mer modélisé', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)), Text(_place, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12))]))]),
+          const SizedBox(height: 18),
+          if (_loading) const Center(child: Padding(padding: EdgeInsets.all(28), child: CircularProgressIndicator()))
+          else if (_error != null) Text('Erreur : ' + _error.toString(), style: TextStyle(color: colors.error))
+          else if (points.length < 3) Text(_lat == null ? 'Choisis un lieu pour charger le modèle marin.' : 'Le modèle ne fournit pas de série de niveau de mer exploitable pour ce point.', style: TextStyle(color: colors.onSurfaceVariant))
+          else ...[
+            SizedBox(height: 230, width: double.infinity, child: CustomPaint(painter: _SeaLevelPainter(points: points, extrema: extrema, lineColor: colors.primary, gridColor: theme.dividerColor, textColor: colors.onSurfaceVariant))),
+            const SizedBox(height: 10),
+            Wrap(spacing: 12, runSpacing: 8, children: [
+              _Legend(color: colors.primary, text: 'Niveau de mer du modèle'),
+              _Legend(color: colors.tertiary, text: 'Maximum local du modèle'),
+              _Legend(color: colors.secondary, text: 'Minimum local du modèle'),
+            ]),
+            const SizedBox(height: 12),
+            Text('Extrema locaux détectés', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            ...extrema.take(8).map((p) { final isHigh = p.level >= points.first.level && p.level >= points.last.level ? true : _isMaximum(points, p); return ListTile(dense: true, contentPadding: EdgeInsets.zero, leading: Icon(isHigh ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, color: isHigh ? colors.tertiary : colors.secondary), title: Text((isHigh ? 'Maximum local' : 'Minimum local') + ' · ' + _time(p.time)), trailing: Text(p.level.toStringAsFixed(2) + ' m')); }),
+          ],
+        ])),
+        const SizedBox(height: 16),
+        Container(padding: const EdgeInsets.all(14), decoration: BoxDecoration(color: colors.errorContainer.withValues(alpha: .45), borderRadius: BorderRadius.circular(14)), child: Text('Limite importante : cette courbe utilise sea_level_height_msl, une sortie de modèle marin Open-Meteo, et non une prédiction hydrographique officielle des pleines/basses mers. Les extrema sont donc seulement des maxima/minima du modèle ; aucun horaire, coefficient ou hauteur officielle de marée n’est revendiqué. Ne pas utiliser pour calculer un tirant d’eau, un échouage ou une entrée de port.', style: TextStyle(color: colors.onErrorContainer, height: 1.45, fontSize: 12))),
+        const SizedBox(height: 8), const Text('Modèle marin Open-Meteo · open-meteo.com', textAlign: TextAlign.center, style: TextStyle(fontSize: 11)),
+      ]));
+  }
+  bool _isMaximum(List<_SeaPoint> points, _SeaPoint point) { final i = points.indexOf(point); return i > 0 && i < points.length - 1 && points[i].level >= points[i - 1].level && points[i].level > points[i + 1].level; }
+}
+class _SeaPoint { const _SeaPoint(this.time, this.level); final DateTime time; final double level; }
+class _Legend extends StatelessWidget { const _Legend({required this.color, required this.text}); final Color color; final String text; @override Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [Container(width: 9, height: 9, decoration: BoxDecoration(color: color, shape: BoxShape.circle)), const SizedBox(width: 5), Text(text, style: const TextStyle(fontSize: 10))]); }
+class _SeaLevelPainter extends CustomPainter {
+  const _SeaLevelPainter({required this.points, required this.extrema, required this.lineColor, required this.gridColor, required this.textColor});
+  final List<_SeaPoint> points, extrema; final Color lineColor, gridColor, textColor;
+  @override void paint(Canvas canvas, Size size) {
+    if (points.length < 2) return;
+    const left = 36.0, right = 10.0, top = 16.0, bottom = 28.0;
+    final plot = Rect.fromLTRB(left, top, size.width - right, size.height - bottom);
+    final minY = points.map((p) => p.level).reduce((a,b) => a < b ? a : b); final maxY = points.map((p) => p.level).reduce((a,b) => a > b ? a : b); final range = (maxY - minY).abs() < .01 ? 1.0 : maxY - minY;
+    double x(int i) => plot.left + plot.width * i / (points.length - 1); double y(double v) => plot.bottom - (v - minY) / range * plot.height;
+    final grid = Paint()..color = gridColor..strokeWidth = 1; final line = Paint()..color = lineColor..strokeWidth = 2.5..style = PaintingStyle.stroke..strokeCap = StrokeCap.round..strokeJoin = StrokeJoin.round;
+    final fill = Paint()..color = lineColor.withValues(alpha: .10)..style = PaintingStyle.fill;
+    for (var i = 0; i < 4; i++) { final gy = plot.top + plot.height * i / 3; canvas.drawLine(Offset(plot.left, gy), Offset(plot.right, gy), grid); final value = (maxY - range * i / 3).toStringAsFixed(2); _drawText(canvas, value, Offset(0, gy - 6), textColor, 9); }
+    final path = Path()..moveTo(x(0), y(points[0].level)); for (var i = 1; i < points.length; i++) path.lineTo(x(i), y(points[i].level));
+    final area = Path.from(path)..lineTo(x(points.length - 1), plot.bottom)..lineTo(x(0), plot.bottom)..close(); canvas.drawPath(area, fill); canvas.drawPath(path, line);
+    for (final p in extrema.take(6)) { final i = points.indexOf(p); if (i < 0) continue; final high = i > 0 && i < points.length - 1 && p.level >= points[i-1].level && p.level > points[i+1].level; final c = Paint()..color = high ? Colors.deepOrange : Colors.teal; canvas.drawCircle(Offset(x(i), y(p.level)), 4, c); _drawText(canvas, (high ? 'Max ' : 'Min ') + p.time.hour.toString().padLeft(2,'0') + ':' + p.time.minute.toString().padLeft(2,'0'), Offset((x(i)-22).clamp(plot.left, plot.right-48).toDouble(), (y(p.level)-18).clamp(0, size.height-12).toDouble()), textColor, 9); }
+    _drawText(canvas, points.first.time.day.toString() + '/' + points.first.time.month.toString(), Offset(plot.left, plot.bottom + 8), textColor, 9); _drawText(canvas, points.last.time.day.toString() + '/' + points.last.time.month.toString(), Offset(plot.right - 35, plot.bottom + 8), textColor, 9);
+  }
+  void _drawText(Canvas canvas, String text, Offset offset, Color color, double size) { final p = TextPainter(text: TextSpan(text: text, style: TextStyle(color: color, fontSize: size)), textDirection: TextDirection.ltr)..layout(); p.paint(canvas, offset); }
+  @override bool shouldRepaint(covariant _SeaLevelPainter old) => old.points != points || old.extrema != extrema || old.lineColor != lineColor || old.gridColor != gridColor;
 }
