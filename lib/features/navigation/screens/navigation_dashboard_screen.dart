@@ -85,15 +85,14 @@ class _NavigationDashboardScreenState
                 data != null && data.hasValidCourse;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // En-tête : titre, date et actions
-                  Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
@@ -238,6 +237,7 @@ class _NavigationDashboardScreenState
                       ),
                     ],
                   ),
+                  ),
 
                   const SizedBox(height: 20),
 
@@ -253,7 +253,7 @@ class _NavigationDashboardScreenState
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(26),
+                      borderRadius: BorderRadius.zero,
                       boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
@@ -266,7 +266,7 @@ class _NavigationDashboardScreenState
                       children: [
                         Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(26),
+                            borderRadius: BorderRadius.zero,
                             child: Image.asset(
                               'assets/images/mediterranean_hero.jpg',
                               fit: BoxFit.cover,
@@ -280,7 +280,7 @@ class _NavigationDashboardScreenState
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(26),
+                              borderRadius: BorderRadius.zero,
                               gradient: LinearGradient(
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
@@ -486,7 +486,9 @@ class _NavigationDashboardScreenState
                   const SizedBox(height: 24),
 
                   // Grille des modules
-                  GridView.count(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -645,6 +647,7 @@ class _NavigationDashboardScreenState
                         },
                       ),
                     ],
+                  ),
                   ),
 
                   const SizedBox(height: 80),
