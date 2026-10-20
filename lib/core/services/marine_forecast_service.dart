@@ -28,6 +28,72 @@ class MarineForecastService {
     return results.whereType<Map<String, dynamic>>().toList();
   }
 
+  /// Resolves the name of the device's current GPS location.
+  ///
+  /// BigDataCloud's free client-side endpoint is used only for live GPS
+  /// coordinates already supplied by the device, not arbitrary/manual points.
+  /// If the lookup is unavailable (for example, while offshore), callers can
+  /// keep showing the coordinates without blocking the forecast.
+  Future<String?> reverseGeocodeCurrentGps({
+    required double latitude,
+    required double longitude,
+  }) async {
+    try {
+      final uri = Uri.https(
+        'api.bigdatacloud.net',
+        '/data/reverse-geocode-client',
+        {
+          'latitude': '$latitude',
+          'longitude': '$longitude',
+          'localityLanguage': 'fr',
+        },
+      );
+      final response =
+          await _client.get(uri).timeout(const Duration(seconds: 12));
+      if (response.statusCode != 200) return null;
+
+      final decoded = jsonDecode(response.body);
+      if (decoded is! Map<String, dynamic>) return null;
+
+      String? textField(String key) {
+        final value = decoded[key];
+        if (value is! String) return null;
+        final cleaned = value.trim();
+        return cleaned.isEmpty ? null : cleaned;
+      }
+
+      final locality = textField('locality');
+      final city = textField('city');
+      final subdivision = textField('principalSubdivision');
+      final country = textField('countryName');
+
+      final place = locality ?? city;
+      final parts = <String>[];
+      if (place != null) parts.add(place);
+      if (city != null &&
+          !parts.any((part) => part.toLowerCase() == city.toLowerCase())) {
+        parts.add(city);
+      }
+      if (subdivision != null &&
+          !parts.any(
+            (part) => part.toLowerCase() == subdivision.toLowerCase(),
+          )) {
+        parts.add(subdivision);
+      }
+      if (country != null &&
+          !parts.any((part) => part.toLowerCase() == country.toLowerCase())) {
+        parts.add(country);
+      }
+      if (parts.isEmpty) return null;
+
+      if (place != null) return 'À proximité de ${parts.join(', ')}';
+      return 'Zone GPS · ${parts.join(', ')}';
+    } catch (_) {
+      // Place-name lookup is best effort and must never block marine data.
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>> fetchWeather({
     required double latitude,
     required double longitude,
