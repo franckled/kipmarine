@@ -25,7 +25,7 @@ class _TidesScreenState extends State<TidesScreen> {
     catch (e) { if (mounted) setState(() { _error = e; _searching = false; }); }
   }
   Future<void> _load(double lat, double lon, String label) async {
-    setState(() { _loading = true; _error = null; _lat = lat; _lon = lon; _place = label; _places = []; });
+    setState(() { _loading = true; _error = null; _marine = null; _lat = lat; _lon = lon; _place = label; _places = []; });
     try { final result = await _service.fetchMarine(latitude: lat, longitude: lon); if (!mounted) return; setState(() { _marine = result; _loading = false; }); }
     catch (e) { if (mounted) setState(() { _error = e; _loading = false; }); }
   }
