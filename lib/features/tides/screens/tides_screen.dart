@@ -16,7 +16,7 @@ class _TidesScreenState extends State<TidesScreen> {
   @override void dispose() { _service.dispose(); _search.dispose(); super.dispose(); }
   @override void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialised) { _initialised = true; final gps = context.read<NavigationProvider>().currentData; if (gps != null) { _lat = gps.latitude; _lon = gps.longitude; _load(gps.latitude, gps.longitude, 'Position GPS'); } }
+    if (!_initialised) { _initialised = true; final gps = context.read<NavigationProvider>().currentData; if (gps != null) { _lat = gps.latitude; _lon = gps.longitude; _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true); } }
   }
   Future<void> _searchPlaces() async {
     if (_search.text.trim().length < 2) return;
@@ -24,10 +24,46 @@ class _TidesScreenState extends State<TidesScreen> {
     try { final results = await _service.searchPlaces(_search.text.trim()); if (!mounted) return; setState(() { _places = results; _searching = false; }); if (results.isEmpty) setState(() => _error = 'Aucun lieu trouvé.'); }
     catch (e) { if (mounted) setState(() { _error = e; _searching = false; }); }
   }
-  Future<void> _load(double lat, double lon, String label) async {
-    setState(() { _loading = true; _error = null; _marine = null; _lat = lat; _lon = lon; _place = label; _places = []; });
-    try { final result = await _service.fetchMarine(latitude: lat, longitude: lon); if (!mounted) return; setState(() { _marine = result; _loading = false; }); }
-    catch (e) { if (mounted) setState(() { _error = e; _loading = false; }); }
+  Future<void> _load(
+    double lat,
+    double lon,
+    String label, {
+    bool resolveGpsPlace = false,
+  }) async {
+    setState(() {
+      _loading = true;
+      _error = null;
+      _marine = null;
+      _lat = lat;
+      _lon = lon;
+      _place = resolveGpsPlace ? 'Recherche du lieu GPS…' : label;
+      _places = [];
+    });
+    try {
+      final values = await Future.wait<Object?>([
+        _service.fetchMarine(latitude: lat, longitude: lon),
+        resolveGpsPlace
+            ? _service.reverseGeocodeCurrentGps(latitude: lat, longitude: lon)
+            : Future<String?>.value(null),
+      ]);
+      if (!mounted) return;
+      final resolvedLabel = resolveGpsPlace
+          ? (values[1] as String? ?? 'Position GPS · lieu indisponible')
+          : label;
+      setState(() {
+        _marine = values[0] as Map<String, dynamic>;
+        _place = resolvedLabel;
+        _loading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e;
+          _loading = false;
+          if (resolveGpsPlace) _place = 'Position GPS · nom indisponible';
+        });
+      }
+    }
   }
   List<_SeaPoint> _seaPoints() {
     final hourly = _marine?['hourly']; if (hourly is! Map) return [];
@@ -55,17 +91,17 @@ class _TidesScreenState extends State<TidesScreen> {
     if (gps != null && _lat == null && !_gpsAutoLoaded) {
       _gpsAutoLoaded = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _lat == null) _load(gps.latitude, gps.longitude, 'Position GPS');
+        if (mounted && _lat == null) _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true);
       });
     }
     final points = _seaPoints(); final extrema = _turningPoints(points);
-    return Scaffold(appBar: AppBar(title: const Text('Marées & niveau de mer', style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location_rounded))]),
+    return Scaffold(appBar: AppBar(title: const Text('Marées & niveau de mer', style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Text('CHOISIR UNE ZONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colors.onSurfaceVariant, letterSpacing: 1)), const SizedBox(height: 10),
         TextField(controller: _search, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: 'Ville, port ou lieu dans le monde', hintText: 'Ex. Bastia, Rotterdam, Auckland', prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
         if (_searching) const LinearProgressIndicator(),
         if (_places.isNotEmpty) ..._places.map((p) { final name = (p['name'] ?? 'Lieu').toString(); final admin = [p['admin1'], p['country']].where((v) => v != null && v.toString().isNotEmpty).join(', '); final lat = (p['latitude'] as num?)?.toDouble(); final lon = (p['longitude'] as num?)?.toDouble(); return ListTile(leading: const Icon(Icons.location_on_outlined), title: Text(name), subtitle: Text(admin), onTap: lat == null || lon == null ? null : () => _load(lat, lon, admin.isEmpty ? name : name + ', ' + admin)); }),
-        if (gps != null) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location), label: const Text('Utiliser ma position GPS'))),
+        if (gps != null) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text('Utiliser ma position GPS'))),
         const SizedBox(height: 10),
         Container(padding: const EdgeInsets.all(18), decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [Icon(Icons.waves_rounded, color: colors.primary, size: 28), const SizedBox(width: 10), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Niveau de mer modélisé', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)), Text(_place, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12)), if (_lat != null && _lon != null) Text('${_lat!.toStringAsFixed(4)}°, ${_lon!.toStringAsFixed(4)}°', style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11))]))]),
