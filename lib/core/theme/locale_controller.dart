@@ -22,9 +22,15 @@ class LocaleController extends ChangeNotifier {
   Future<void> _load() async {
     final preferences = await SharedPreferences.getInstance();
     final languageCode = preferences.getString(_preferenceKey);
-    final nextLocale = languageCode == null
-        ? null
-        : supportedLocales.where((locale) => locale.languageCode == languageCode).firstOrNull;
+    Locale? nextLocale;
+    if (languageCode != null) {
+      for (final supportedLocale in supportedLocales) {
+        if (supportedLocale.languageCode == languageCode) {
+          nextLocale = supportedLocale;
+          break;
+        }
+      }
+    }
     if (_locale != nextLocale) {
       _locale = nextLocale;
       notifyListeners();
