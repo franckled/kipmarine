@@ -48,6 +48,9 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.kipmarine.app
 
     scripts:
       - name: Résoudre les dépendances Flutter
@@ -60,12 +63,6 @@ workflows:
         script: flutter test
       - name: Installer les dépendances CocoaPods
         script: cd ios && pod install
-      - name: Initialiser le trousseau de signature
-        script: keychain initialize
-      - name: Récupérer ou créer les profils et certificats Apple
-        script: app-store-connect fetch-signing-files "com.kipmarine.app" --type IOS_APP_STORE --create
-      - name: Ajouter les certificats au trousseau
-        script: keychain add-certificates
       - name: Configurer la signature iOS
         script: xcode-project use-profiles
       - name: Construire l'IPA signé pour TestFlight
