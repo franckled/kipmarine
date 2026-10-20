@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/marine_forecast_service.dart';
 import '../../navigation/providers/navigation_provider.dart';
@@ -86,6 +87,7 @@ class _TidesScreenState extends State<TidesScreen> {
   }
   String _time(DateTime value) => value.toLocal().hour.toString().padLeft(2, '0') + ':' + value.toLocal().minute.toString().padLeft(2, '0');
   @override Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context); final colors = theme.colorScheme;
     final gps = context.watch<NavigationProvider>().currentData;
     if (gps != null && _lat == null && !_gpsAutoLoaded) {
@@ -95,7 +97,7 @@ class _TidesScreenState extends State<TidesScreen> {
       });
     }
     final points = _seaPoints(); final extrema = _turningPoints(points);
-    return Scaffold(appBar: AppBar(title: const Text('Marées & niveau de mer', style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
+    return Scaffold(appBar: AppBar(title: Text(l10n.tidesScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Text('CHOISIR UNE ZONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colors.onSurfaceVariant, letterSpacing: 1)), const SizedBox(height: 10),
         TextField(controller: _search, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: 'Ville, port ou lieu dans le monde', hintText: 'Ex. Bastia, Rotterdam, Auckland', prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
