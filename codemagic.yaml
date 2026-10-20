@@ -59,7 +59,7 @@ workflows:
       - name: Tests unitaires
         script: flutter test
       - name: Installer les dépendances CocoaPods
-        script: find . -name "Podfile" -execdir pod install \\;
+        script: cd ios && pod install
       - name: Initialiser le trousseau de signature
         script: keychain initialize
       - name: Récupérer ou créer les profils et certificats Apple
