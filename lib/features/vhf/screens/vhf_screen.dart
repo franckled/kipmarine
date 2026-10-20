@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 
 class VhfChannelItem {
@@ -74,10 +75,11 @@ class VhfScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Canaux VHF', style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
+        title: Text(l10n.vhfScreenTitle, style: TextStyle(color: AppColors.textDark, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
