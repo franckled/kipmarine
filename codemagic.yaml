@@ -71,8 +71,7 @@ workflows:
       - name: Construire l'IPA signé pour TestFlight
         script: |
           set -euo pipefail
-          # App Store Connect a déjà reçu le build 10. Le décalage de 10 garantit
-          # que la séquence 1 commence au build 11, puis progresse à chaque build Codemagic.
+          # App Store Connect a déjà reçu le build 10 : le prochain commence au build 11.
           PROJECT_SEQUENCE="${PROJECT_BUILD_NUMBER:-1}"
           if ! [[ "$PROJECT_SEQUENCE" =~ ^[0-9]+$ ]]; then
             echo "PROJECT_BUILD_NUMBER invalide : $PROJECT_SEQUENCE"
@@ -84,11 +83,7 @@ workflows:
             exit 1
           fi
           echo "Build iOS App Store Connect : $BUILD_NUMBER"
-          flutter build ipa --release \\
-            --build-name=1.0.0 \\
-            --build-number="$BUILD_NUMBER" \\
-            --export-options-plist=/Users/builder/export_options.plist
-
+          flutter build ipa --release --build-name=1.0.0 --build-number="$BUILD_NUMBER" --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - build/ios/archive/*.xcarchive
