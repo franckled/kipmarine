@@ -48,9 +48,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.kipmarine.app
 
     scripts:
       - name: Résoudre les dépendances Flutter
