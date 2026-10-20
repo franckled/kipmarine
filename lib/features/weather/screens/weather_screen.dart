@@ -40,19 +40,57 @@ class _WeatherScreenState extends State<WeatherScreen> {
     } catch (e) { if (mounted) setState(() { _error = e; _searching = false; }); }
   }
 
-  Future<void> _load(double lat, double lon, String label) async {
+  Future<void> _load(
+    double lat,
+    double lon,
+    String label, {
+    bool resolveGpsPlace = false,
+  }) async {
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      setState(() => _error = 'Coordonnées invalides : latitude −90 à 90°, longitude −180 à 180°.'); return;
+      setState(() => _error =
+          'Coordonnées invalides : latitude −90 à 90°, longitude −180 à 180°.');
+      return;
     }
-    setState(() { _loading = true; _error = null; _weather = null; _marine = null; _latitude = lat; _longitude = lon; _locationLabel = label; _places = []; });
+
+    setState(() {
+      _loading = true;
+      _error = null;
+      _weather = null;
+      _marine = null;
+      _latitude = lat;
+      _longitude = lon;
+      _locationLabel = resolveGpsPlace ? 'Recherche du lieu GPS…' : label;
+      _places = [];
+    });
+
     try {
-      final values = await Future.wait([
+      final values = await Future.wait<Object?>([
         _service.fetchWeather(latitude: lat, longitude: lon),
         _service.fetchMarine(latitude: lat, longitude: lon),
+        resolveGpsPlace
+            ? _service.reverseGeocodeCurrentGps(latitude: lat, longitude: lon)
+            : Future<String?>.value(null),
       ]);
       if (!mounted) return;
-      setState(() { _weather = values[0]; _marine = values[1]; _loading = false; });
-    } catch (e) { if (mounted) setState(() { _error = e; _loading = false; }); }
+
+      final resolvedLabel = resolveGpsPlace
+          ? (values[2] as String? ?? 'Position GPS · lieu indisponible')
+          : label;
+      setState(() {
+        _weather = values[0] as Map<String, dynamic>;
+        _marine = values[1] as Map<String, dynamic>;
+        _locationLabel = resolvedLabel;
+        _loading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e;
+          _loading = false;
+          if (resolveGpsPlace) _locationLabel = 'Position GPS · nom indisponible';
+        });
+      }
+    }
   }
 
   String _value(Map<String, dynamic>? data, String group, String key, {String suffix = ''}) {
@@ -68,7 +106,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (gps != null && _latitude == null && !_gpsAutoLoaded) {
       _gpsAutoLoaded = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, 'Position GPS');
+        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true);
       });
     }
     return Scaffold(
