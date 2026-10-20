@@ -10,7 +10,7 @@ class _TidesScreenState extends State<TidesScreen> {
   List<Map<String, dynamic>> _places = [];
   Map<String, dynamic>? _marine;
   Object? _error;
-  bool _loading = false, _searching = false, _initialised = false;
+  bool _loading = false, _searching = false, _initialised = false, _gpsAutoLoaded = false;
   double? _lat, _lon;
   String _place = 'Position GPS';
   @override void dispose() { _service.dispose(); _search.dispose(); super.dispose(); }
@@ -52,6 +52,12 @@ class _TidesScreenState extends State<TidesScreen> {
   @override Widget build(BuildContext context) {
     final theme = Theme.of(context); final colors = theme.colorScheme;
     final gps = context.watch<NavigationProvider>().currentData;
+    if (gps != null && _lat == null && !_gpsAutoLoaded) {
+      _gpsAutoLoaded = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _lat == null) _load(gps.latitude, gps.longitude, 'Position GPS');
+      });
+    }
     final points = _seaPoints(); final extrema = _turningPoints(points);
     return Scaffold(appBar: AppBar(title: const Text('Marées & niveau de mer', style: TextStyle(fontWeight: FontWeight.bold)), actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
