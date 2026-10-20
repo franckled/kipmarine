@@ -65,16 +65,14 @@ workflows:
       - name: Construire l'IPA signé pour TestFlight
         script: |
           set -euo pipefail
-          # App Store Connect a déjà reçu le build 9 : ne jamais redescendre sous 10.
-          # PROJECT_BUILD_NUMBER augmente à chaque build Codemagic pour ce projet.
-          BUILD_NUMBER="${PROJECT_BUILD_NUMBER:-10}"
-          if ! [[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]]; then
-            echo "PROJECT_BUILD_NUMBER invalide : $BUILD_NUMBER"
+          # App Store Connect a déjà reçu le build 9. Décaler le compteur projet de 9
+          # pour démarrer au moins à 10, puis obtenir un numéro différent à chaque build.
+          PROJECT_SEQUENCE="${PROJECT_BUILD_NUMBER:-1}"
+          if ! [[ "$PROJECT_SEQUENCE" =~ ^[0-9]+$ ]]; then
+            echo "PROJECT_BUILD_NUMBER invalide : $PROJECT_SEQUENCE"
             exit 1
           fi
-          if [ "$BUILD_NUMBER" -lt 10 ]; then
-            BUILD_NUMBER=10
-          fi
+          BUILD_NUMBER=$((PROJECT_SEQUENCE + 9))
           echo "Build iOS App Store Connect : $BUILD_NUMBER"
           flutter build ipa --release \
             --build-name=1.0.0 \
