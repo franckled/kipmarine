@@ -63,7 +63,23 @@ workflows:
       - name: Configurer la signature iOS
         script: xcode-project use-profiles
       - name: Construire l'IPA signé pour TestFlight
-        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+        script: |
+          set -euo pipefail
+          # App Store Connect a déjà reçu le build 9 : ne jamais redescendre sous 10.
+          # PROJECT_BUILD_NUMBER augmente à chaque build Codemagic pour ce projet.
+          BUILD_NUMBER="${PROJECT_BUILD_NUMBER:-10}"
+          if ! [[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "PROJECT_BUILD_NUMBER invalide : $BUILD_NUMBER"
+            exit 1
+          fi
+          if [ "$BUILD_NUMBER" -lt 10 ]; then
+            BUILD_NUMBER=10
+          fi
+          echo "Build iOS App Store Connect : $BUILD_NUMBER"
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number="$BUILD_NUMBER" \
+            --export-options-plist=/Users/builder/export_options.plist
 
     artifacts:
       - build/ios/ipa/*.ipa
