@@ -111,7 +111,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Météo marine', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location_rounded))]),
+        actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.primary, Color.lerp(colors.primary, colors.surface, .35)!]), borderRadius: BorderRadius.circular(24)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -135,7 +135,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: 'Latitude', hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: 'Longitude', hintText: '8.738')))]),
           const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = 'Saisis une latitude et une longitude valides.'); return; } _load(lat, lon, 'Coordonnées choisies'); }, child: const Text('Afficher cette zone')),
         ],
-        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS'), icon: const Icon(Icons.my_location), label: const Text('Charger ma position actuelle'))),
+        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text('Charger ma position actuelle'))),
         const SizedBox(height: 12),
         if (_loading) const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator())),
         if (_error != null) _Notice(text: _error.toString(), isError: true),
