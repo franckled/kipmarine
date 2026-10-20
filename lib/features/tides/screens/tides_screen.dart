@@ -77,7 +77,7 @@ class _TidesScreenState extends State<TidesScreen> {
             ]),
             const SizedBox(height: 12),
             Text('Extrema locaux détectés', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-            ...extrema.take(8).map((p) { final isHigh = p.level >= points.first.level && p.level >= points.last.level ? true : _isMaximum(points, p); return ListTile(dense: true, contentPadding: EdgeInsets.zero, leading: Icon(isHigh ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, color: isHigh ? colors.tertiary : colors.secondary), title: Text((isHigh ? 'Maximum local' : 'Minimum local') + ' · ' + _time(p.time)), trailing: Text(p.level.toStringAsFixed(2) + ' m')); }),
+            ...extrema.take(8).map((p) { final isHigh = _isMaximum(points, p); return ListTile(dense: true, contentPadding: EdgeInsets.zero, leading: Icon(isHigh ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, color: isHigh ? colors.tertiary : colors.secondary), title: Text((isHigh ? 'Maximum local' : 'Minimum local') + ' · ' + _time(p.time)), trailing: Text(p.level.toStringAsFixed(2) + ' m')); }),
           ],
         ])),
         const SizedBox(height: 16),
