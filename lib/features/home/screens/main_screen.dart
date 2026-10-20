@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import '../../navigation/screens/navigation_dashboard_screen.dart';
 import '../../weather/screens/weather_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
@@ -23,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
@@ -59,25 +61,25 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   _NavItem(
                     icon: Icons.home_rounded,
-                    label: 'Accueil',
+                    label: l10n.navHome,
                     isSelected: _currentIndex == 0,
                     onTap: () => setState(() => _currentIndex = 0),
                   ),
                   _NavItem(
                     icon: Icons.menu_book_rounded,
-                    label: 'Journal',
+                    label: l10n.navLogbook,
                     isSelected: _currentIndex == 1,
                     onTap: () => setState(() => _currentIndex = 1),
                   ),
                   _NavItem(
                     icon: Icons.air_rounded,
-                    label: 'Météo',
+                    label: l10n.navWeather,
                     isSelected: _currentIndex == 2,
                     onTap: () => setState(() => _currentIndex = 2),
                   ),
                   _NavItem(
                     icon: Icons.verified_user_rounded,
-                    label: 'Sécurité',
+                    label: l10n.navSafety,
                     isSelected: _currentIndex == 3,
                     onTap: () => setState(() => _currentIndex = 3),
                   ),
