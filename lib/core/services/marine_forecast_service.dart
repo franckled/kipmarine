@@ -11,6 +11,23 @@ class MarineForecastService {
 
   final http.Client _client;
 
+  Future<List<Map<String, dynamic>>> searchPlaces(String query) async {
+    final uri = Uri.https('geocoding-api.open-meteo.com', '/v1/search', {
+      'name': query,
+      'count': '8',
+      'language': 'fr',
+      'format': 'json',
+    });
+    final response = await _client.get(uri).timeout(const Duration(seconds: 20));
+    if (response.statusCode != 200) {
+      throw Exception('Recherche de lieu indisponible (${response.statusCode}).');
+    }
+    final decoded = jsonDecode(response.body);
+    final results = decoded is Map<String, dynamic> ? decoded['results'] : null;
+    if (results is! List) return [];
+    return results.whereType<Map<String, dynamic>>().toList();
+  }
+
   Future<Map<String, dynamic>> fetchWeather({
     required double latitude,
     required double longitude,
@@ -45,7 +62,7 @@ class MarineForecastService {
   Future<Map<String, dynamic>> _getJson(Uri uri) async {
     final response = await _client.get(uri).timeout(const Duration(seconds: 20));
     if (response.statusCode != 200) {
-      throw Exception('Service météo indisponible (\${response.statusCode}).');
+      throw Exception('Service météo indisponible (${response.statusCode}).');
     }
     final decoded = jsonDecode(response.body);
     if (decoded is! Map<String, dynamic>) {
