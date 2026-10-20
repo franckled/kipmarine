@@ -63,8 +63,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const Text(
-                      'Votre KipMarine,\nvotre ambiance.',
+                    Text(
+                      l10n.settingsHeroTitle,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 25,
@@ -205,9 +205,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        l10n.identityDescription
-                        'turquoise lagon, bleu marin et touches corail '
-                        'pour les actions importantes.',
+                        l10n.identityDescription,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colors.onSurfaceVariant,
                           height: 1.5,
