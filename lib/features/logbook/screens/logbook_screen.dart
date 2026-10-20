@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../navigation/providers/navigation_provider.dart';
@@ -10,6 +11,7 @@ class LogbookScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final logProvider = context.watch<LogbookProvider>();
     final navProvider = context.watch<NavigationProvider>();
     final activeLog = logProvider.activeLog;
@@ -25,7 +27,7 @@ class LogbookScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('JOURNAL DE BORD', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(l10n.logbookScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
