@@ -6,7 +6,7 @@ on:
       - work/v6-live-marine-weather-tides
       - feature/v6-mediterranean-ui
 concurrency:
-  group: kipmarine-validation-${{ github.ref_name }}
+  group: kipmarine-validation-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
