@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 
 import '../../../core/theme/theme_controller.dart';
+import '../../../core/theme/locale_controller.dart';
 import '../../../core/constants/app_colors.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -12,10 +14,12 @@ class SettingsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final controller = context.watch<ThemeController>();
+    final localeController = context.watch<LocaleController>();
+    final l10n = AppLocalizations.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Personnaliser KipMarine')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
@@ -71,7 +75,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 9),
                     Text(
-                      'Choisissez l’apparence qui vous accompagne en mer.',
+                      l10n.settingsHeroSubtitle,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.82),
                         height: 1.45,
@@ -82,9 +86,49 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.language_rounded, color: colors.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.language,
+                    style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                DropdownButton<String>(
+                  value: localeController.locale?.languageCode ?? 'system',
+                  underline: const SizedBox.shrink(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    localeController.setLocale(
+                      value == 'system' ? null : Locale(value),
+                    );
+                  },
+                  items: [
+                    DropdownMenuItem(value: 'system', child: Text(l10n.languageAutomatic)),
+                    DropdownMenuItem(value: 'fr', child: Text(l10n.languageFrench)),
+                    DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
+                    DropdownMenuItem(value: 'es', child: Text(l10n.languageSpanish)),
+                    DropdownMenuItem(value: 'it', child: Text(l10n.languageItalian)),
+                    DropdownMenuItem(value: 'de', child: Text(l10n.languageGerman)),
+                  ],
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 26),
           Text(
-            'APPARENCE',
+            l10n.appearance,
             style: theme.textTheme.labelLarge?.copyWith(
               color: colors.primary,
               fontWeight: FontWeight.w900,
@@ -93,7 +137,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Le changement est appliqué immédiatement.',
+            l10n.appearanceImmediate,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colors.onSurfaceVariant,
             ),
@@ -101,8 +145,8 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _ThemeChoice(
             icon: Icons.brightness_auto_rounded,
-            title: 'Automatique',
-            subtitle: 'Suit les réglages de votre téléphone',
+            title: l10n.themeSystem,
+            subtitle: l10n.themeSystemSubtitle,
             selected: controller.themeMode == ThemeMode.system,
             onTap: () => controller.setThemeMode(ThemeMode.system),
             accent: AppColors.primaryTeal,
@@ -110,8 +154,8 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _ThemeChoice(
             icon: Icons.light_mode_rounded,
-            title: 'Clair · lagon',
-            subtitle: 'Fond lumineux, turquoise et bleu profond',
+            title: l10n.themeLight,
+            subtitle: l10n.themeLightSubtitle,
             selected: controller.themeMode == ThemeMode.light,
             onTap: () => controller.setThemeMode(ThemeMode.light),
             accent: AppColors.primaryTeal,
@@ -119,8 +163,8 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _ThemeChoice(
             icon: Icons.dark_mode_rounded,
-            title: 'Sombre · Méditerranée',
-            subtitle: 'Bleu nuit, mer profonde et accent turquoise',
+            title: l10n.themeDark,
+            subtitle: l10n.themeDarkSubtitle,
             selected: controller.themeMode == ThemeMode.dark,
             onTap: () => controller.setThemeMode(ThemeMode.dark),
             accent: AppColors.darkAccent,
@@ -154,14 +198,14 @@ class SettingsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Une identité, deux ambiances',
+                        l10n.identityTitle,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        'La palette KipMarine conserve ses repères : '
+                        l10n.identityDescription
                         'turquoise lagon, bleu marin et touches corail '
                         'pour les actions importantes.',
                         style: theme.textTheme.bodySmall?.copyWith(
