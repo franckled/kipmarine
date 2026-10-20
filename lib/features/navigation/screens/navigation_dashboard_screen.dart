@@ -253,13 +253,6 @@ class _NavigationDashboardScreenState
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.zero,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
                     ),
                     child: Stack(
                       children: [
