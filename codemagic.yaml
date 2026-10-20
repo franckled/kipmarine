@@ -21,6 +21,8 @@ workflows:
     scripts:
       - name: Resolve Flutter dependencies
         script: flutter pub get
+      - name: Generate iOS and Android launcher icons
+        script: dart run flutter_launcher_icons
       - name: Static analysis
         script: flutter analyze
       - name: Unit tests
@@ -54,6 +56,8 @@ workflows:
     scripts:
       - name: Résoudre les dépendances Flutter
         script: flutter pub get
+      - name: Générer les icônes iOS et Android
+        script: dart run flutter_launcher_icons
       - name: Analyse statique
         script: flutter analyze
       - name: Tests unitaires
