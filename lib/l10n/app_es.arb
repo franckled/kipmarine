@@ -23,5 +23,9 @@
   "languageEnglish": "Inglés",
   "languageSpanish": "Español",
   "languageItalian": "Italiano",
-  "languageGerman": "Alemán"
+  "languageGerman": "Alemán",
+  "weatherScreenTitle": "Meteorología marina",
+  "tidesScreenTitle": "Mareas y nivel del mar",
+  "vhfScreenTitle": "Canales VHF",
+  "logbookScreenTitle": "Diario de navegación"
 }
