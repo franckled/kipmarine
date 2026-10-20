@@ -42,7 +42,7 @@ workflows:
     # Ce workflow est volontairement manuel : il ne publie rien à chaque push.
     # L'intégration App Store Connect est utilisée pour la publication.
     integrations:
-      app_store_connect: KipMarineAppStoreConnect
+      app_store_connect: CodeMagic
 
     environment:
       flutter: stable
