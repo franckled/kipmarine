@@ -12,9 +12,12 @@ class AlarmService {
   bool _vibrationActive = false;
   bool _starting = false;
   bool _disposed = false;
+  String? _lastAudioError;
   int _generation = 0;
 
   bool get isPlaying => _starting || _audioActive || _vibrationActive;
+  String? get lastAudioError => _lastAudioError;
+  bool get isAudioActive => _audioActive;
 
   Future<void> triggerAlarm() async {
     if (_disposed || isPlaying) return;
@@ -37,12 +40,16 @@ class AlarmService {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
       await _audioPlayer.setVolume(1.0);
       if (_disposed || generation != _generation) return;
-      await _audioPlayer.play(BytesSource(_createAlarmWave()));
+      await _audioPlayer.play(
+        BytesSource(_createAlarmWave(), mimeType: 'audio/wav'),
+      );
       if (!_disposed && generation == _generation) {
         _audioActive = true;
+        _lastAudioError = null;
       }
     } catch (error) {
       _audioActive = false;
+      _lastAudioError = error.toString();
       debugPrint('KipMarine audible alarm failed: $error');
     }
 
