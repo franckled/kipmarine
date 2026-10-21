@@ -1,12 +1,12 @@
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
 
-/// Sound and vibration output for the anchor-drift alarm.
-///
-/// Platform failures are handled independently: a vibration failure must not
-/// prevent the sound from starting, and vice versa.
+/// Foreground audible/haptic alarm. Lock-screen alerts are issued separately
+/// through MarineAlertService so the alert does not depend on this Dart timer.
 class AlarmService {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  Timer? _soundTimer;
   bool _audioActive = false;
   bool _vibrationActive = false;
   bool _starting = false;
@@ -15,84 +15,53 @@ class AlarmService {
 
   bool get isPlaying => _starting || _audioActive || _vibrationActive;
 
-  /// Starts the looping alarm. The caller may retry on a later GPS update if
-  /// neither audio nor vibration can be started.
   Future<void> triggerAlarm() async {
     if (_disposed || isPlaying) return;
-
     final generation = ++_generation;
     _starting = true;
 
+    // Start the audible loop immediately; this uses the native system alert
+    // sound and does not rely on an asset file that may be absent from a build.
+    _audioActive = true;
+    unawaited(SystemSound.play(SystemSoundType.alert).catchError((_) {}));
+    _soundTimer?.cancel();
+    _soundTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (!_disposed && generation == _generation) {
+        unawaited(SystemSound.play(SystemSoundType.alert).catchError((_) {}));
+      }
+    });
+
     try {
-      try {
-        final hasVibrator = await Vibration.hasVibrator();
-        if (generation != _generation) return;
-        if (hasVibrator == true) {
-          await Vibration.vibrate(
-            pattern: [500, 1000, 500, 1000],
-            repeat: 0,
-          );
-          if (generation != _generation) {
-            try {
-              await Vibration.cancel();
-            } catch (_) {}
-            return;
-          }
+      final hasVibrator = await Vibration.hasVibrator();
+      if (generation != _generation || _disposed) return;
+      if (hasVibrator == true) {
+        await Vibration.vibrate(pattern: [500, 500, 500, 1000], repeat: 0);
+        if (generation == _generation && !_disposed) {
           _vibrationActive = true;
         }
-      } catch (_) {
-        _vibrationActive = false;
       }
-
-      if (generation != _generation || _disposed) return;
-
-      try {
-        await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-        if (generation != _generation || _disposed) return;
-        await _audioPlayer.play(AssetSource('sounds/anchor_alarm.wav'));
-        if (generation != _generation || _disposed) {
-          try {
-            await _audioPlayer.stop();
-          } catch (_) {}
-          return;
-        }
-        _audioActive = true;
-      } catch (_) {
-        _audioActive = false;
-      }
+    } catch (_) {
+      _vibrationActive = false;
     } finally {
       if (generation == _generation) _starting = false;
     }
   }
 
-  /// Stops all alarm outputs, even if one platform channel fails.
   Future<void> stopAlarm() async {
     ++_generation;
     _starting = false;
     _audioActive = false;
     _vibrationActive = false;
-
+    _soundTimer?.cancel();
+    _soundTimer = null;
     try {
       await Vibration.cancel();
-    } catch (_) {
-      // Audio must still be stopped if vibration is unavailable.
-    }
-
-    try {
-      await _audioPlayer.stop();
-    } catch (_) {
-      // The player may not be initialized on this platform.
-    }
+    } catch (_) {}
   }
 
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
     await stopAlarm();
-    try {
-      await _audioPlayer.dispose();
-    } catch (_) {
-      // No further action is possible during teardown.
-    }
   }
 }
