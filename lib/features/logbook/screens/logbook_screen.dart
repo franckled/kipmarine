@@ -393,6 +393,7 @@ class LogbookScreen extends StatelessWidget {
   }
 
   static Future<void> _showStartDialog(BuildContext context, LogbookProvider provider) async {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController(
       text: 'Navigation ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
     );
@@ -400,12 +401,12 @@ class LogbookScreen extends StatelessWidget {
     final start = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Nouvelle navigation'),
+        title: Text(l10n.logbookNewNavigation),
         content: TextField(
           controller: controller,
           textCapitalization: TextCapitalization.sentences,
           decoration: const InputDecoration(
-            labelText: 'Nom de la sortie',
+            labelText: l10n.logbookTripName,
             border: OutlineInputBorder(),
           ),
         ),
@@ -417,7 +418,7 @@ class LogbookScreen extends StatelessWidget {
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: colors.primary, foregroundColor: colors.onPrimary),
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Démarrer'),
+            child: Text(l10n.logbookStart),
           ),
         ],
       ),
