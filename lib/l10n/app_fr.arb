@@ -120,5 +120,41 @@
         "type": "String"
       }
     }
-  }
+  },
+  "logbookRecording": "TRACE GPS EN COURS",
+  "logbookYourJournal": "VOTRE JOURNAL MARIN",
+  "logbookNavigationInProgress": "Navigation en cours",
+  "logbookIntro": "Gardez une trace de vos observations, escales et événements en mer.",
+  "logbookStopSaveTrack": "ARRÊTER ET SAUVEGARDER LA TRACE GPS",
+  "logbookStartTrack": "DÉMARRER UNE TRACE GPS",
+  "logbookNotesTitle": "NOTES DU JOURNAL",
+  "logbookEmptyNotes": "Aucune note pour le moment. Ajoutez une observation ou un événement ; l’heure et la position GPS seront enregistrées si disponibles.",
+  "logbookGpsUnavailable": "Position GPS indisponible à cette entrée",
+  "logbookDeleteNoteTooltip": "Supprimer la note",
+  "logbookTracksTitle": "TRACES GPS ENREGISTRÉES",
+  "logbookEmptyTracks": "Aucune trace GPS enregistrée. Démarrez une trace avant votre prochaine navigation.",
+  "logbookExportGpx": "Exporter en GPX",
+  "logbookDeleteTrack": "Supprimer la trace",
+  "logbookEntryHint": "Ex. : mouillage effectué, météo, observation…",
+  "logbookGpsAttached": "Position GPS jointe à la note",
+  "logbookNoGpsSaved": "Note enregistrée sans position GPS",
+  "logbookNewNavigation": "Nouvelle navigation",
+  "logbookTripName": "Nom de la sortie",
+  "logbookStart": "Démarrer",
+  "logbookDeleteNoteConfirm": "Supprimer cette note ?",
+  "logbookDeleteTrackConfirm": "Supprimer cette trace ?",
+  "logbookPermanentAction": "Cette action est définitive.",
+  "logbookDeleteTrackMessage": "La trace GPS et ses points seront supprimés.",
+  "logbookDelete": "Supprimer",
+  "@logbookDistanceAverage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "logbookDistanceAverage": "Distance : {distance} NM  •  Vitesse moyenne : {speed} kn"
 }
