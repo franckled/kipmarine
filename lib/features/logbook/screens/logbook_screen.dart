@@ -332,11 +332,12 @@ class LogbookScreen extends StatelessWidget {
     dynamic gps,
   ) async {
     final controller = TextEditingController();
+    final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
     final saved = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Nouvelle entrée'),
+        title: Text(l10n.logbookNewEntry),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +349,7 @@ class LogbookScreen extends StatelessWidget {
               maxLines: 6,
               textCapitalization: TextCapitalization.sentences,
               decoration: const InputDecoration(
-                hintText: 'Ex. : mouillage effectué, météo, observation…',
+                hintText: l10n.logbookEntryHint,
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
@@ -364,7 +365,7 @@ class LogbookScreen extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    gps != null ? 'Position GPS jointe à la note' : 'Note enregistrée sans position GPS',
+                    gps != null ? l10n.logbookGpsAttached : l10n.logbookNoGpsSaved,
                     style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
                   ),
                 ),
@@ -375,11 +376,11 @@ class LogbookScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Annuler'),
+            child: Text(l10n.logbookCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Enregistrer'),
+            child: Text(l10n.logbookSave),
           ),
         ],
       ),
