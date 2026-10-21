@@ -25,6 +25,8 @@ class AnchorWatchProvider extends ChangeNotifier {
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
   bool get isLoading => _isLoading;
   bool get isSoundTestActive => _isSoundTestActive;
+  bool get isAlarmSoundPlaying => _alarmService.isAudioActive;
+  String? get alarmSoundError => _alarmService.lastAudioError;
 
   AnchorWatchProvider() {
     _restoreConfig();
