@@ -1,12 +1,18 @@
+import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
 
 /// Continuous audible/haptic alert for anchor drift and man overboard.
 /// The siren is generated in memory: it does not depend on a missing asset.
 class AlarmService {
+  static const MethodChannel _iosAlarmChannel =
+      MethodChannel('com.kipmarine/anchor_audio');
+
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _audioActive = false;
   bool _vibrationActive = false;
@@ -14,35 +20,53 @@ class AlarmService {
   bool _disposed = false;
   String? _lastAudioError;
   int _generation = 0;
+  DateTime? _lastAudioAttemptAt;
 
   bool get isPlaying => _starting || _audioActive || _vibrationActive;
   String? get lastAudioError => _lastAudioError;
   bool get isAudioActive => _audioActive;
 
   Future<void> triggerAlarm() async {
-    if (_disposed || isPlaying) return;
+    if (_disposed || _starting || _audioActive) return;
+
+    // If audio failed, avoid retrying on every GPS fix while still allowing
+    // recovery after a transient iOS audio-session error.
+    final now = DateTime.now();
+    if (_lastAudioError != null &&
+        _lastAudioAttemptAt != null &&
+        now.difference(_lastAudioAttemptAt!) < const Duration(seconds: 5)) {
+      return;
+    }
+    _lastAudioAttemptAt = now;
+
     final generation = ++_generation;
     _starting = true;
 
     try {
-      await _audioPlayer.setAudioContext(
-        AudioContext(
-          iOS: AudioContextIOS(category: AVAudioSessionCategory.playback),
-          android: AudioContextAndroid(
-            isSpeakerphoneOn: true,
-            stayAwake: true,
-            contentType: AndroidContentType.sonification,
-            usageType: AndroidUsageType.alarm,
-            audioFocus: AndroidAudioFocus.gainTransient,
+      if (Platform.isIOS) {
+        // Native AVAudioPlayer + AVAudioSession(.playback) is more reliable
+        // for a continuous alert when the iPhone is locked.
+        await _iosAlarmChannel.invokeMethod<void>('startAlarm');
+      } else {
+        await _audioPlayer.setAudioContext(
+          AudioContext(
+            android: AudioContextAndroid(
+              isSpeakerphoneOn: true,
+              stayAwake: true,
+              contentType: AndroidContentType.sonification,
+              usageType: AndroidUsageType.alarm,
+              audioFocus: AndroidAudioFocus.gainTransient,
+            ),
           ),
-        ),
-      );
-      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer.setVolume(1.0);
-      if (_disposed || generation != _generation) return;
-      await _audioPlayer.play(
-        BytesSource(_createAlarmWave(), mimeType: 'audio/wav'),
-      );
+        );
+        await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+        await _audioPlayer.setVolume(1.0);
+        if (_disposed || generation != _generation) return;
+        await _audioPlayer.play(
+          BytesSource(_createAlarmWave(), mimeType: 'audio/wav'),
+        );
+      }
+
       if (!_disposed && generation == _generation) {
         _audioActive = true;
         _lastAudioError = null;
@@ -54,12 +78,14 @@ class AlarmService {
     }
 
     try {
-      final hasVibrator = await Vibration.hasVibrator();
-      if (generation != _generation || _disposed) return;
-      if (hasVibrator == true) {
-        await Vibration.vibrate(pattern: [500, 500, 500, 1000], repeat: 0);
-        if (generation == _generation && !_disposed) {
-          _vibrationActive = true;
+      if (!_vibrationActive) {
+        final hasVibrator = await Vibration.hasVibrator();
+        if (generation != _generation || _disposed) return;
+        if (hasVibrator == true) {
+          await Vibration.vibrate(pattern: [500, 500, 500, 1000], repeat: 0);
+          if (generation == _generation && !_disposed) {
+            _vibrationActive = true;
+          }
         }
       }
     } catch (error) {
@@ -118,6 +144,15 @@ class AlarmService {
     _starting = false;
     _audioActive = false;
     _vibrationActive = false;
+    _lastAudioAttemptAt = null;
+    _lastAudioError = null;
+    if (Platform.isIOS) {
+      try {
+        await _iosAlarmChannel.invokeMethod<void>('stopAlarm');
+      } catch (error) {
+        debugPrint('KipMarine native alarm stop failed: $error');
+      }
+    }
     try {
       await _audioPlayer.stop();
     } catch (_) {}
