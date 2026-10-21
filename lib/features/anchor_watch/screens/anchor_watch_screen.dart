@@ -69,13 +69,19 @@ class AnchorWatchScreen extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Acquitter l’alarme jusqu’au retour dans le cercle',
-                        icon: const Icon(
-                          Icons.volume_off,
+                        tooltip: anchorProvider.isAlarmSilenced
+                            ? 'Réactiver le son de l’alarme'
+                            : 'Couper le son jusqu’au retour dans le cercle',
+                        icon: Icon(
+                          anchorProvider.isAlarmSilenced
+                              ? Icons.volume_up_rounded
+                              : Icons.volume_off_rounded,
                           color: Colors.white,
                           size: 30,
                         ),
-                        onPressed: anchorProvider.silenceAlarm,
+                        onPressed: anchorProvider.isAlarmSilenced
+                            ? anchorProvider.retriggerAlarmSound
+                            : anchorProvider.silenceAlarm,
                       ),
                     ],
                   ),
