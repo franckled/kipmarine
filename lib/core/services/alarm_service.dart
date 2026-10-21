@@ -12,6 +12,9 @@ class AlarmService {
   static const MethodChannel _iosAlarmChannel =
       MethodChannel('com.kipmarine/anchor_audio');
 
+  // Each alarm owner (anchor watch or MOB) has an id, so cancelling one
+  // alarm cannot silence another alarm still requiring audio.
+  late final String _alarmClientId = 'alarm-${identityHashCode(this)}';
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _audioActive = false;
   bool _vibrationActive = false;
@@ -45,7 +48,10 @@ class AlarmService {
       if (Platform.isIOS) {
         // Native AVAudioPlayer + AVAudioSession(.playback) is more reliable
         // for a continuous alert when the iPhone is locked.
-        await _iosAlarmChannel.invokeMethod<void>('startAlarm');
+        await _iosAlarmChannel.invokeMethod<void>(
+          'startAlarm',
+          <String, String>{'clientId': _alarmClientId},
+        );
       } else {
         await _audioPlayer.setAudioContext(
           AudioContext(
@@ -147,7 +153,10 @@ class AlarmService {
     _lastAudioError = null;
     if (Platform.isIOS) {
       try {
-        await _iosAlarmChannel.invokeMethod<void>('stopAlarm');
+        await _iosAlarmChannel.invokeMethod<void>(
+          'stopAlarm',
+          <String, String>{'clientId': _alarmClientId},
+        );
       } catch (error) {
         debugPrint('KipMarine native alarm stop failed: $error');
       }
