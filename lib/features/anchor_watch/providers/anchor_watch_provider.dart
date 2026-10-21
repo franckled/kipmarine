@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/marine_units.dart';
 import '../../../core/services/alarm_service.dart';
+import '../../../core/services/anchor_notification_service.dart';
 import '../../navigation/models/navigation_data.dart';
 import '../models/anchor_config.dart';
 
@@ -81,6 +82,7 @@ class AnchorWatchProvider extends ChangeNotifier {
   /// Enregistre la position actuelle comme point de mouillage.
   void dropAnchor(NavigationData currentPosition) {
     _alarmSilencedUntilSafe = false;
+    unawaited(AnchorNotificationService.instance.initialize());
     _config = AnchorConfig(
       anchorLatitude: currentPosition.latitude,
       anchorLongitude: currentPosition.longitude,
@@ -127,6 +129,10 @@ class AnchorWatchProvider extends ChangeNotifier {
     );
 
     if (isOut) {
+      // Show a lock-screen notification on the transition into a drift alert.
+      if (!wasOut) {
+        unawaited(AnchorNotificationService.instance.showAnchorDriftAlert());
+      }
       // Un acquittement reste valable jusqu'au retour dans le cercle.
       if (!_alarmSilencedUntilSafe &&
           (!wasOut || !_alarmService.isPlaying)) {
@@ -134,6 +140,9 @@ class AnchorWatchProvider extends ChangeNotifier {
       }
     } else {
       _alarmSilencedUntilSafe = false;
+      if (wasOut) {
+        unawaited(AnchorNotificationService.instance.clearAnchorDriftAlert());
+      }
       if (_alarmService.isPlaying) {
         unawaited(_alarmService.stopAlarm());
       }
