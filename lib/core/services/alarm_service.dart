@@ -110,7 +110,8 @@ class AlarmService {
               envelope *
               32767)
           .round()
-          .clamp(-32768, 32767);
+          .clamp(-32768, 32767)
+          .toInt();
       header.setInt16(44 + i * bytesPerSample, sample, Endian.little);
     }
     return bytes;
