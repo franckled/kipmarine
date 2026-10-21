@@ -21,7 +21,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Object? _error;
   bool _loading = false, _searching = false, _manual = false, _gpsAutoLoaded = false;
   double? _latitude, _longitude;
-  String _locationLabel = AppLocalizations.of(context).weatherLoadGps;
+  String _locationLabel = 'Position GPS';
 
   @override
   void dispose() {
@@ -108,12 +108,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (gps != null && _latitude == null && !_gpsAutoLoaded) {
       _gpsAutoLoaded = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true);
+        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherGpsPosition, resolveGpsPlace: true);
       });
     }
     return Scaffold(
       appBar: AppBar(title: Text(l10n.weatherScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [IconButton(tooltip: l10n.weatherUseGps, onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
+        actions: [IconButton(tooltip: l10n.weatherUseGps, onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.primary, Color.lerp(colors.primary, colors.surface, .35)!]), borderRadius: BorderRadius.circular(24)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -137,7 +137,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLatitude, hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLongitude, hintText: '8.738')))]),
           const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = l10n.weatherInvalidInput); return; } _load(lat, lon, l10n.weatherSelectedCoordinates); }, child: const Text(l10n.weatherShowArea)),
         ],
-        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text(l10n.weatherLoadGps))),
+        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text(l10n.weatherLoadGps))),
         const SizedBox(height: 12),
         if (_loading) const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator())),
         if (_error != null) _Notice(text: _error.toString(), isError: true),
