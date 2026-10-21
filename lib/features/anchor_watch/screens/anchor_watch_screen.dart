@@ -18,6 +18,15 @@ class AnchorWatchScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
+    // Reevaluate the anchor alarm whenever the live GPS provider rebuilds this screen.
+    if (currentPosition != null && config != null && config.isActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          context.read<AnchorWatchProvider>().updatePosition(currentPosition);
+        }
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
