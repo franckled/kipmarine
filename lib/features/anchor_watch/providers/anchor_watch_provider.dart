@@ -24,6 +24,7 @@ class AnchorWatchProvider extends ChangeNotifier {
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
+  bool get isAlarmSilenced => _alarmSilencedUntilSafe;
   bool get isLoading => _isLoading;
   bool get isSoundTestActive => _isSoundTestActive;
   bool get isAlarmSoundPlaying => _alarmService.isAudioActive;
