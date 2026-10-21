@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/marine_units.dart';
+import '../../../core/services/alarm_service.dart';
+import '../../../core/services/marine_alert_service.dart';
 import '../../navigation/models/navigation_data.dart';
 
 class MobProvider extends ChangeNotifier {
+  final AlarmService _alarmService = AlarmService();
   NavigationData? _mobPosition;
   DateTime? _mobTimestamp;
   Timer? _timer;
@@ -18,6 +21,9 @@ class MobProvider extends ChangeNotifier {
 
   /// Déclenche l'alerte Homme à la Mer à la position GPS actuelle
   void triggerMob(NavigationData currentData) {
+    unawaited(MarineAlertService.instance.requestPermissions());
+    unawaited(MarineAlertService.instance.showMob());
+    unawaited(_alarmService.triggerAlarm());
     _mobPosition = currentData;
     _mobTimestamp = DateTime.now();
     _elapsedTime = Duration.zero;
@@ -70,6 +76,8 @@ class MobProvider extends ChangeNotifier {
 
   /// Annule le point MOB
   void cancelMob() {
+    unawaited(_alarmService.stopAlarm());
+    unawaited(MarineAlertService.instance.clear(7102));
     _isActive = false;
     _mobPosition = null;
     _mobTimestamp = null;
@@ -80,6 +88,7 @@ class MobProvider extends ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
+    unawaited(_alarmService.dispose());
     super.dispose();
   }
 }
