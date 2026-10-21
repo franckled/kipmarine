@@ -105,7 +105,7 @@ class _TidesScreenState extends State<TidesScreen> {
         TextField(controller: _search, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: l10n.tidesSearchLabel, hintText: l10n.tidesSearchHint, prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
         if (_searching) const LinearProgressIndicator(),
         if (_places.isNotEmpty) ..._places.map((p) { final name = (p['name'] ?? l10n.tidesNoPlace).toString(); final admin = [p['admin1'], p['country']].where((v) => v != null && v.toString().isNotEmpty).join(', '); final lat = (p['latitude'] as num?)?.toDouble(); final lon = (p['longitude'] as num?)?.toDouble(); return ListTile(leading: const Icon(Icons.location_on_outlined), title: Text(name), subtitle: Text(admin), onTap: lat == null || lon == null ? null : () => _load(lat, lon, admin.isEmpty ? name : name + ', ' + admin)); }),
-        if (gps != null) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, l10n.tidesGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text(l10n.tidesUseGps))),
+        if (gps != null) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, l10n.tidesGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: Text(l10n.tidesUseGps))),
         const SizedBox(height: 10),
         Container(padding: const EdgeInsets.all(18), decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(20), border: Border.all(color: theme.dividerColor)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [Icon(Icons.waves_rounded, color: colors.primary, size: 28), const SizedBox(width: 10), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(l10n.tidesModelledLevel, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)), Text(_place, style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12)), if (_lat != null && _lon != null) Text('${_lat!.toStringAsFixed(4)}°, ${_lon!.toStringAsFixed(4)}°', style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11))]))]),
@@ -128,7 +128,7 @@ class _TidesScreenState extends State<TidesScreen> {
         ])),
         const SizedBox(height: 16),
         Container(padding: const EdgeInsets.all(14), decoration: BoxDecoration(color: colors.errorContainer.withValues(alpha: .45), borderRadius: BorderRadius.circular(14)), child: Text(l10n.tidesImportantLimit, style: TextStyle(color: colors.onErrorContainer, height: 1.45, fontSize: 12))),
-        const SizedBox(height: 8), const Text(l10n.tidesAttribution, textAlign: TextAlign.center, style: TextStyle(fontSize: 11)),
+        const SizedBox(height: 8), Text(l10n.tidesAttribution, textAlign: TextAlign.center, style: TextStyle(fontSize: 11)),
       ]));
   }
   bool _isMaximum(List<_SeaPoint> points, _SeaPoint point) { final i = points.indexOf(point); return i > 0 && i < points.length - 1 && points[i].level >= points[i - 1].level && points[i].level > points[i + 1].level; }
