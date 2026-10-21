@@ -113,6 +113,10 @@ class AnchorWatchProvider extends ChangeNotifier {
 
     final isOut = distance > config.radiusMeters;
     final wasOut = config.isAlarmTriggered;
+    // Avoid rebuild loops when the screen rechecks an unchanged GPS fix.
+    if (wasOut == isOut && (distance - config.currentDistance).abs() < 0.5) {
+      return;
+    }
     _config = config.copyWith(
       currentDistance: distance,
       isAlarmTriggered: isOut,
