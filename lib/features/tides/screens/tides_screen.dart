@@ -31,6 +31,7 @@ class _TidesScreenState extends State<TidesScreen> {
     String label, {
     bool resolveGpsPlace = false,
   }) async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _loading = true;
       _error = null;
