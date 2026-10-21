@@ -18,11 +18,13 @@ class AnchorWatchProvider extends ChangeNotifier {
   double _targetRadiusMeters = 35.0;
   bool _alarmSilencedUntilSafe = false;
   bool _isLoading = true;
+  bool _isSoundTestActive = false;
 
   AnchorConfig? get config => _config;
   double get targetRadiusMeters => _targetRadiusMeters;
   bool get isAlarmTriggered => _config?.isAlarmTriggered ?? false;
   bool get isLoading => _isLoading;
+  bool get isSoundTestActive => _isSoundTestActive;
 
   AnchorWatchProvider() {
     _restoreConfig();
@@ -140,9 +142,26 @@ class AnchorWatchProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Lance une alerte sonore manuelle pour tester le haut-parleur du téléphone.
+  Future<void> testAlarmSound() async {
+    if (_config?.isAlarmTriggered == true) return;
+    await _alarmService.stopAlarm();
+    _isSoundTestActive = true;
+    notifyListeners();
+    await _alarmService.triggerAlarm();
+  }
+
+  /// Arrête le test sonore sans acquitter une éventuelle vraie dérive.
+  Future<void> stopAlarmSoundTest() async {
+    _isSoundTestActive = false;
+    await _alarmService.stopAlarm();
+    notifyListeners();
+  }
+
   /// Coupe l'alarme jusqu'au retour dans le rayon de sécurité.
   Future<void> silenceAlarm() async {
     _alarmSilencedUntilSafe = true;
+    _isSoundTestActive = false;
     await _alarmService.stopAlarm();
     notifyListeners();
   }
