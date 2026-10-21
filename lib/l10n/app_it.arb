@@ -120,5 +120,41 @@
         "type": "String"
       }
     }
-  }
+  },
+  "logbookRecording": "TRACCIA GPS IN CORSO",
+  "logbookYourJournal": "IL TUO GIORNALE DI BORDO",
+  "logbookNavigationInProgress": "Navigazione in corso",
+  "logbookIntro": "Registra osservazioni, scali ed eventi in mare.",
+  "logbookStopSaveTrack": "FERMA E SALVA LA TRACCIA",
+  "logbookStartTrack": "AVVIA UNA TRACCIA GPS",
+  "logbookNotesTitle": "NOTE DEL GIORNALE",
+  "logbookEmptyNotes": "Nessuna nota al momento. Aggiungi un’osservazione o un evento; ora e posizione GPS saranno salvate se disponibili.",
+  "logbookGpsUnavailable": "Posizione GPS non disponibile per questa voce",
+  "logbookDeleteNoteTooltip": "Elimina nota",
+  "logbookTracksTitle": "TRACCE GPS SALVATE",
+  "logbookEmptyTracks": "Nessuna traccia GPS salvata. Avvia una traccia prima della prossima navigazione.",
+  "logbookExportGpx": "Esporta in GPX",
+  "logbookDeleteTrack": "Elimina traccia",
+  "logbookEntryHint": "Es.: ancoraggio effettuato, meteo, osservazione…",
+  "logbookGpsAttached": "Posizione GPS allegata alla nota",
+  "logbookNoGpsSaved": "Nota salvata senza posizione GPS",
+  "logbookNewNavigation": "Nuova navigazione",
+  "logbookTripName": "Nome dell’uscita",
+  "logbookStart": "Avvia",
+  "logbookDeleteNoteConfirm": "Eliminare questa nota?",
+  "logbookDeleteTrackConfirm": "Eliminare questa traccia?",
+  "logbookPermanentAction": "Questa azione è definitiva.",
+  "logbookDeleteTrackMessage": "La traccia GPS e i suoi punti saranno eliminati.",
+  "logbookDelete": "Elimina",
+  "@logbookDistanceAverage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "logbookDistanceAverage": "Distanza: {distance} NM • Velocità media: {speed} kn"
 }
