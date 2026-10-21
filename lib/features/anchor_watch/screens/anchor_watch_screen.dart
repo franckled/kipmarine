@@ -183,7 +183,33 @@ class AnchorWatchScreen extends StatelessWidget {
                           : 'TESTER LE SON DE L’ALARME',
                 ),
               ),
-              if (!anchorProvider.isAlarmTriggered)
+              if (anchorProvider.alarmSoundError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, bottom: 6),
+                  child: Text(
+                    'Erreur audio : ${anchorProvider.alarmSoundError}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 11,
+                    ),
+                  ),
+                )
+              else if (anchorProvider.isSoundTestActive)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, bottom: 6),
+                  child: Text(
+                    anchorProvider.isAlarmSoundPlaying
+                        ? 'Lecture audio démarrée. Si tu n’entends rien, augmente le volume et désactive le Bluetooth pour tester.'
+                        : 'Test en cours, mais le lecteur audio ne confirme pas encore la lecture.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                )
+              else if (!anchorProvider.isAlarmTriggered)
                 Padding(
                   padding: const EdgeInsets.only(top: 4, bottom: 8),
                   child: Text(
