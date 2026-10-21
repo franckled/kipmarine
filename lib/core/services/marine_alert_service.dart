@@ -94,6 +94,16 @@ class MarineAlertService {
     );
     try {
       await _plugin.show(id, title, body, details);
+      // Keep a safety alert audible at intervals if the app is backgrounded
+      // or the screen is locked. The repeated request is cancelled on recovery
+      // or explicit acknowledgement.
+      await _plugin.periodicallyShow(
+        id + 100,
+        title,
+        body,
+        RepeatInterval.everyMinute,
+        details,
+      );
     } catch (error) {
       debugPrint('KipMarine alert notification failed: $error');
     }
@@ -102,6 +112,7 @@ class MarineAlertService {
   Future<void> clear(int id) async {
     try {
       await _plugin.cancel(id);
+      await _plugin.cancel(id + 100);
     } catch (_) {}
   }
 }
