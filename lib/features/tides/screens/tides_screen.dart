@@ -89,7 +89,6 @@ class _TidesScreenState extends State<TidesScreen> {
   String _time(DateTime value) => value.toLocal().hour.toString().padLeft(2, '0') + ':' + value.toLocal().minute.toString().padLeft(2, '0');
   @override Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    String translated(String key) => switch (key) { 'tidesChooseArea' => l10n.tidesChooseArea, 'tidesSearchLabel' => l10n.tidesSearchLabel, 'tidesSearchHint' => l10n.tidesSearchHint, 'tidesNoPlace' => l10n.tidesNoPlace, 'tidesNoResults' => l10n.tidesNoResults, 'tidesGpsPosition' => l10n.tidesGpsPosition, 'tidesGpsSearching' => l10n.tidesGpsSearching, 'tidesGpsUnavailable' => l10n.tidesGpsUnavailable, 'tidesGpsNameUnavailable' => l10n.tidesGpsNameUnavailable, 'tidesUseGps' => l10n.tidesUseGps, 'tidesModelledLevel' => l10n.tidesModelledLevel, 'tidesChoosePlacePrompt' => l10n.tidesChoosePlacePrompt, 'tidesNoSeries' => l10n.tidesNoSeries, 'tidesModelLevelLegend' => l10n.tidesModelLevelLegend, 'tidesModelLocalMax' => l10n.tidesModelLocalMax, 'tidesModelLocalMin' => l10n.tidesModelLocalMin, 'tidesExtremaTitle' => l10n.tidesExtremaTitle, 'tidesLocalMax' => l10n.tidesLocalMax, 'tidesLocalMin' => l10n.tidesLocalMin, 'tidesImportantLimit' => l10n.tidesImportantLimit, 'tidesAttribution' => l10n.tidesAttribution, _ => key };
     final theme = Theme.of(context); final colors = theme.colorScheme;
     final gps = context.watch<NavigationProvider>().currentData;
     if (gps != null && _lat == null && !_gpsAutoLoaded) {
