@@ -6,6 +6,7 @@ import UIKit
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   private var anchorAlarmPlayer: AVAudioPlayer?
+  private var activeAlarmClientIDs = Set<String>()
 
   override func application(
     _ application: UIApplication,
@@ -29,14 +30,24 @@ import UIKit
 
       switch call.method {
       case "startAlarm":
+        guard let arguments = call.arguments as? [String: String],
+              let clientID = arguments["clientId"] else {
+          result(FlutterError(code: "MISSING_CLIENT_ID", message: "Identifiant d’alarme manquant.", details: nil))
+          return
+        }
         do {
-          try self.startAnchorAlarm()
+          try self.startAnchorAlarm(clientID: clientID)
           result(nil)
         } catch {
           result(FlutterError(code: "AUDIO_START_FAILED", message: error.localizedDescription, details: nil))
         }
       case "stopAlarm":
-        self.stopAnchorAlarm()
+        guard let arguments = call.arguments as? [String: String],
+              let clientID = arguments["clientId"] else {
+          result(FlutterError(code: "MISSING_CLIENT_ID", message: "Identifiant d’alarme manquant.", details: nil))
+          return
+        }
+        self.stopAnchorAlarm(clientID: clientID)
         result(nil)
       default:
         result(FlutterMethodNotImplemented)
@@ -44,8 +55,9 @@ import UIKit
     }
   }
 
-  private func startAnchorAlarm() throws {
+  private func startAnchorAlarm(clientID: String) throws {
     if let player = anchorAlarmPlayer, player.isPlaying {
+      activeAlarmClientIDs.insert(clientID)
       return
     }
 
@@ -67,9 +79,14 @@ import UIKit
       )
     }
     anchorAlarmPlayer = player
+    activeAlarmClientIDs.insert(clientID)
   }
 
-  private func stopAnchorAlarm() {
+  private func stopAnchorAlarm(clientID: String) {
+    // Do not stop the shared native player while another alarm source is active.
+    guard activeAlarmClientIDs.remove(clientID) != nil else { return }
+    guard activeAlarmClientIDs.isEmpty else { return }
+
     anchorAlarmPlayer?.stop()
     anchorAlarmPlayer = nil
     do {
