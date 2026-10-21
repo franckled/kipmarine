@@ -136,7 +136,7 @@ class AnchorWatchProvider extends ChangeNotifier {
       }
       // Un acquittement reste valable jusqu'au retour dans le cercle.
       if (!_alarmSilencedUntilSafe &&
-          (!wasOut || !_alarmService.isPlaying)) {
+          (!wasOut || !_alarmService.isAudioActive)) {
         unawaited(_alarmService.triggerAlarm());
       }
     } else {
