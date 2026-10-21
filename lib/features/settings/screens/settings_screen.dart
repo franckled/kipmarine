@@ -96,31 +96,35 @@ class SettingsScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.language_rounded, color: colors.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.language,
-                    style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-                  ),
+                Tooltip(
+                  message: l10n.language,
+                  child: const Icon(Icons.translate_rounded, color: AppColors.primaryTeal),
                 ),
-                const SizedBox(width: 8),
+                const Spacer(),
                 DropdownButton<String>(
                   value: localeController.locale?.languageCode ?? 'system',
                   underline: const SizedBox.shrink(),
+                  borderRadius: BorderRadius.circular(14),
+                  icon: const Icon(Icons.arrow_drop_down_rounded),
+                  selectedItemBuilder: (context) => const [
+                    Center(child: Text('🌐', style: TextStyle(fontSize: 25))),
+                    Center(child: Text('🇫🇷', style: TextStyle(fontSize: 25))),
+                    Center(child: Text('🇬🇧', style: TextStyle(fontSize: 25))),
+                    Center(child: Text('🇪🇸', style: TextStyle(fontSize: 25))),
+                    Center(child: Text('🇮🇹', style: TextStyle(fontSize: 25))),
+                    Center(child: Text('🇩🇪', style: TextStyle(fontSize: 25))),
+                  ],
                   onChanged: (value) {
                     if (value == null) return;
-                    localeController.setLocale(
-                      value == 'system' ? null : Locale(value),
-                    );
+                    localeController.setLocale(value == 'system' ? null : Locale(value));
                   },
                   items: [
-                    DropdownMenuItem(value: 'system', child: Text(l10n.languageAutomatic)),
-                    DropdownMenuItem(value: 'fr', child: Text(l10n.languageFrench)),
-                    DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
-                    DropdownMenuItem(value: 'es', child: Text(l10n.languageSpanish)),
-                    DropdownMenuItem(value: 'it', child: Text(l10n.languageItalian)),
-                    DropdownMenuItem(value: 'de', child: Text(l10n.languageGerman)),
+                    DropdownMenuItem(value: 'system', child: Text('🌐  ${l10n.languageAutomatic}')),
+                    DropdownMenuItem(value: 'fr', child: Text('🇫🇷  ${l10n.languageFrench}')),
+                    DropdownMenuItem(value: 'en', child: Text('🇬🇧  ${l10n.languageEnglish}')),
+                    DropdownMenuItem(value: 'es', child: Text('🇪🇸  ${l10n.languageSpanish}')),
+                    DropdownMenuItem(value: 'it', child: Text('🇮🇹  ${l10n.languageItalian}')),
+                    DropdownMenuItem(value: 'de', child: Text('🇩🇪  ${l10n.languageGerman}')),
                   ],
                 ),
               ],
