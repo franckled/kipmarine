@@ -17,7 +17,7 @@ class _TidesScreenState extends State<TidesScreen> {
   @override void dispose() { _service.dispose(); _search.dispose(); super.dispose(); }
   @override void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialised) { _initialised = true; final gps = context.read<NavigationProvider>().currentData; if (gps != null) { _lat = gps.latitude; _lon = gps.longitude; _load(gps.latitude, gps.longitude, l10n.tidesGpsPosition, resolveGpsPlace: true); } }
+    if (!_initialised) { _initialised = true; final gps = context.read<NavigationProvider>().currentData; if (gps != null) { _lat = gps.latitude; _lon = gps.longitude; _load(gps.latitude, gps.longitude, AppLocalizations.of(context).tidesGpsPosition, resolveGpsPlace: true); } }
   }
   Future<void> _searchPlaces() async {
     if (_search.text.trim().length < 2) return;
