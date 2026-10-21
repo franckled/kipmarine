@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#061b49"/>
+      <stop offset=".48" stop-color="#0752a8"/>
+      <stop offset="1" stop-color="#12bde8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="76%" cy="48%" r="55%">
+      <stop offset="0" stop-color="#49ddff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#0a2b65" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sail" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".75" stop-color="#eaf7ff"/>
+      <stop offset="1" stop-color="#a8d9ff"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0ebde9"/>
+      <stop offset=".45" stop-color="#0757a7"/>
+      <stop offset="1" stop-color="#03173d"/>
+    </linearGradient>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#a9d8f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sky)"/>
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+  <g fill="none" stroke="#45d8ff" stroke-linecap="round">
+    <circle cx="565" cy="362" r="300" stroke-width="10" opacity=".82"/>
+    <circle cx="565" cy="362" r="266" stroke-width="4" opacity=".4"/>
+    <path d="M565 54v36 M565 634v36 M257 362h36 M837 362h36
+      M347 144l22 28 M761 552l25 25 M347 580l25-27 M761 172l25-28
+      M435 79l9 34 M693 611l10 31 M300 250l33 13 M797 466l34 13
+      M300 474l33-13 M797 258l34-13 M436 644l9-34 M693 113l10-34" stroke-width="7" opacity=".9"/>
+  </g>
+  <path d="M235 520l330-310 74 177 254-66-190 180 140 35-207 27-174-10z" fill="#43cfff" opacity=".22"/>
+  <path d="M565 98l46 220 218 44-218 23-46 215-42-215-217-23 217-44z" fill="#28c5f5" opacity=".68"/>
+  <path d="M565 180l28 151 153 31-153 21-28 153-25-153-153-21 153-31z" fill="#e9fbff" opacity=".78"/>
+  <g>
+    <path d="M648 538l95-57 67 5 67-31 61 19 86 54v40H635z" fill="#06193e"/>
+    <path d="M794 548l15-27 20-15 17 13 23-29 22 12 23-22 25 18 21-12 31 20 17 42z" fill="#082451"/>
+    <path d="M872 525l11-75 23 0 11 75z" fill="#ffffff"/>
+    <path d="M879 471h31l-4 13h-23z" fill="#0a4b91"/>
+    <rect x="878" y="443" width="28" height="12" rx="2" fill="#f6fbff"/>
+    <path d="M872 442l17-19 18 19z" fill="#f3fbff"/>
+    <rect x="882" y="432" width="9" height="10" fill="#0b2b5b"/>
+    <path d="M903 447l121-31v42l-115-9z" fill="#bdf5ff" opacity=".28"/>
+  </g>
+  <path d="M0 590 Q120 558 239 588T482 583T732 590T1024 574V1024H0Z" fill="url(#water)"/>
+  <path d="M0 638Q112 596 226 638T452 637T681 641T908 638T1024 624" fill="none" stroke="#35d8fa" stroke-width="16"/>
+  <path d="M0 697Q150 650 285 699T560 694T825 691T1024 680" fill="none" stroke="#d6fbff" stroke-width="13"/>
+  <path d="M0 747Q130 713 270 749T545 745T826 745T1024 732" fill="none" stroke="#0bd0f3" stroke-width="18"/>
+  <path d="M0 798Q150 753 310 795T620 791T900 794T1024 786" fill="none" stroke="#0b316c" stroke-width="34"/>
+  <g stroke="#082451" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M428 152V640" fill="none" stroke-width="12"/>
+    <path d="M420 192L205 557Q312 540 414 526z" fill="url(#sail)" stroke-width="7"/>
+    <path d="M441 177L610 573Q530 550 437 535z" fill="url(#sail)" stroke-width="7"/>
+    <path d="M430 230L429 522" fill="none" stroke="#d1efff" stroke-width="5"/>
+    <path d="M110 625Q320 641 500 616L692 621Q657 674 560 684L185 664Q136 653 110 625z" fill="url(#hull)" stroke-width="9"/>
+    <path d="M145 628Q353 643 650 627" fill="none" stroke="#0b2e69" stroke-width="10"/>
+    <path d="M230 604l31-25h73l-22 28z" fill="#ffffff" stroke-width="5"/>
+    <path d="M328 604l27-25h65l-20 25z" fill="#ffffff" stroke-width="5"/>
+    <path d="M450 615l18-20h58l-16 20z" fill="#ffffff" stroke-width="5"/>
+  </g>
+  <path d="M0 860Q160 820 320 856T650 854T1024 846V1024H0Z" fill="#04183c" opacity=".8"/>
+  <path d="M0 839Q164 804 321 839T650 837T1024 831" fill="none" stroke="#35d9fb" stroke-width="8" opacity=".7"/>
+  <text x="512" y="966" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="126" font-weight="900" letter-spacing="-3">
+    <tspan fill="#ffffff">Kip</tspan><tspan fill="#3ee1ff">Marine</tspan>
+  </text>
+</svg>
