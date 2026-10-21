@@ -91,5 +91,34 @@
   "weatherSelectedCoordinates": "Ausgewählte Koordinaten",
   "weatherGpsPosition": "GPS-Position",
   "logbookAddEntry": "EINTRAG HINZUFÜGEN",
-  "logbookNewEntry": "Neuer Eintrag"
+  "logbookNewEntry": "Neuer Eintrag",
+  "tidesChooseArea": "GEBIET AUSWÄHLEN",
+  "tidesSearchLabel": "Stadt, Hafen oder Ort weltweit",
+  "tidesSearchHint": "Z. B. Bastia, Rotterdam, Auckland",
+  "tidesNoPlace": "Ort",
+  "tidesNoResults": "Keine Orte gefunden.",
+  "tidesGpsPosition": "GPS-Position",
+  "tidesGpsSearching": "GPS-Standort wird gesucht…",
+  "tidesGpsUnavailable": "GPS-Position · Ort nicht verfügbar",
+  "tidesGpsNameUnavailable": "GPS-Position · Name nicht verfügbar",
+  "tidesUseGps": "Meinen GPS-Standort verwenden",
+  "tidesModelledLevel": "Modellierter Meeresspiegel",
+  "tidesChoosePlacePrompt": "Wähle einen Ort, um das Meeresmodell zu laden.",
+  "tidesNoSeries": "Das Modell liefert für diesen Punkt keine nutzbare Meeresspiegel-Zeitreihe.",
+  "tidesModelLevelLegend": "Modellierter Meeresspiegel",
+  "tidesModelLocalMax": "Lokales Modellmaximum",
+  "tidesModelLocalMin": "Lokales Modellminimum",
+  "tidesExtremaTitle": "Erkannte lokale Extremwerte",
+  "tidesLocalMax": "Lokales Maximum",
+  "tidesLocalMin": "Lokales Minimum",
+  "tidesImportantLimit": "Wichtige Einschränkung: Diese Kurve verwendet sea_level_height_msl, eine Ausgabe des Open-Meteo-Meeresmodells, keine offizielle hydrographische Vorhersage von Hoch- und Niedrigwasser. Die Extremwerte sind nur Modellmaxima/-minima; offizielle Tidezeiten, Koeffizienten oder Höhen werden nicht angegeben. Nicht zur Berechnung von Tiefgang, Grundberührungsrisiko oder Hafeneinfahrt verwenden.",
+  "tidesAttribution": "Open-Meteo-Meeresmodell · open-meteo.com",
+  "tidesError": "Fehler: {error}",
+  "@tidesError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }
