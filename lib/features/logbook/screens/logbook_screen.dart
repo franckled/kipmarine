@@ -67,7 +67,7 @@ class LogbookScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          logProvider.isRecording ? 'TRACE GPS EN COURS' : 'VOTRE JOURNAL MARIN',
+                          logProvider.isRecording ? l10n.logbookRecording : l10n.logbookYourJournal,
                           style: TextStyle(
                             color: colors.onSurface,
                             fontWeight: FontWeight.bold,
@@ -92,8 +92,8 @@ class LogbookScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     logProvider.isRecording
-                        ? (activeLog?.title ?? 'Navigation en cours')
-                        : 'Gardez une trace de vos observations, escales et événements en mer.',
+                        ? (activeLog?.title ?? l10n.logbookNavigationInProgress)
+                        : l10n.logbookIntro,
                     style: TextStyle(fontSize: 15, color: colors.onSurface),
                   ),
                   if (logProvider.isRecording) ...[
@@ -128,7 +128,7 @@ class LogbookScreen extends StatelessWidget {
                           foregroundColor: colors.onPrimary,
                         ),
                         icon: const Icon(Icons.play_arrow),
-                        label: const Text('DÉMARRER UNE TRACE GPS'),
+                        label: const Text(l10n.logbookStartTrack),
                         onPressed: () => _showStartDialog(context, logProvider),
                       ),
                     ),
@@ -145,12 +145,12 @@ class LogbookScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 icon: const Icon(Icons.add_comment_outlined),
-                label: const Text('AJOUTER UNE ENTRÉE', style: TextStyle(fontWeight: FontWeight.bold)),
+                label: const Text(l10n.logbookAddEntry, style: TextStyle(fontWeight: FontWeight.bold)),
                 onPressed: () => _showJournalEntryDialog(context, logProvider, gps),
               ),
             ),
             const SizedBox(height: 24),
-            _sectionTitle(context, 'NOTES DU JOURNAL', Icons.edit_note),
+            _sectionTitle(context, l10n.logbookNotesTitle, Icons.edit_note),
             const SizedBox(height: 10),
             if (logProvider.notes.isEmpty)
               _emptyState(
