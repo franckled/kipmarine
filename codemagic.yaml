@@ -24,6 +24,10 @@ workflows:
     scripts:
       - name: Resolve Flutter dependencies
         script: flutter pub get
+      - name: Install SVG icon renderer
+        script: npm install --no-save --no-package-lock @resvg/resvg-js
+      - name: Render KipMarine app icon
+        script: node tooling/render_icon.cjs
       - name: Generate iOS and Android launcher icons
         script: dart run flutter_launcher_icons
       - name: Static analysis
@@ -58,6 +62,10 @@ workflows:
     scripts:
       - name: Résoudre les dépendances Flutter
         script: flutter pub get
+      - name: Install SVG icon renderer
+        script: npm install --no-save --no-package-lock @resvg/resvg-js
+      - name: Render KipMarine app icon
+        script: node tooling/render_icon.cjs
       - name: Générer les icônes iOS et Android
         script: dart run flutter_launcher_icons
       - name: Analyse statique
