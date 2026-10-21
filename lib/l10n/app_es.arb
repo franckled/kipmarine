@@ -91,5 +91,34 @@
   "weatherSelectedCoordinates": "Coordenadas seleccionadas",
   "weatherGpsPosition": "Posición GPS",
   "logbookAddEntry": "AÑADIR UNA ENTRADA",
-  "logbookNewEntry": "Nueva entrada"
+  "logbookNewEntry": "Nueva entrada",
+  "tidesChooseArea": "ELEGIR UNA ZONA",
+  "tidesSearchLabel": "Ciudad, puerto o lugar del mundo",
+  "tidesSearchHint": "Ej. Bastia, Róterdam, Auckland",
+  "tidesNoPlace": "Lugar",
+  "tidesNoResults": "No se encontraron lugares.",
+  "tidesGpsPosition": "Posición GPS",
+  "tidesGpsSearching": "Buscando ubicación GPS…",
+  "tidesGpsUnavailable": "Posición GPS · lugar no disponible",
+  "tidesGpsNameUnavailable": "Posición GPS · nombre no disponible",
+  "tidesUseGps": "Usar mi ubicación GPS",
+  "tidesModelledLevel": "Nivel del mar modelizado",
+  "tidesChoosePlacePrompt": "Elige un lugar para cargar el modelo marino.",
+  "tidesNoSeries": "El modelo no proporciona una serie utilizable del nivel del mar para este punto.",
+  "tidesModelLevelLegend": "Nivel del mar del modelo",
+  "tidesModelLocalMax": "Máximo local del modelo",
+  "tidesModelLocalMin": "Mínimo local del modelo",
+  "tidesExtremaTitle": "Extremos locales detectados",
+  "tidesLocalMax": "Máximo local",
+  "tidesLocalMin": "Mínimo local",
+  "tidesImportantLimit": "Limitación importante: esta curva utiliza sea_level_height_msl, una salida del modelo marino de Open-Meteo, no una predicción hidrográfica oficial de pleamares y bajamares. Los extremos son solo máximos y mínimos del modelo; no se ofrecen horarios, coeficientes ni alturas oficiales de marea. No la uses para calcular calado, riesgo de varada ni entrada a puerto.",
+  "tidesAttribution": "Modelo marino Open-Meteo · open-meteo.com",
+  "tidesError": "Error: {error}",
+  "@tidesError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }
