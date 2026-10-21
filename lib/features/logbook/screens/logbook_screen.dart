@@ -99,7 +99,7 @@ class LogbookScreen extends StatelessWidget {
                   if (logProvider.isRecording) ...[
                     const SizedBox(height: 8),
                     Text(
-                      'Distance : ${activeLog?.totalDistanceNM.toStringAsFixed(2)} NM  •  Vitesse moyenne : ${activeLog?.averageSpeedKnots.toStringAsFixed(1)} kn',
+                      '${l10n.logbookDistanceAverage(activeLog?.totalDistanceNM.toStringAsFixed(2) ?? '0', activeLog?.averageSpeedKnots.toStringAsFixed(1) ?? '0')}',
                       style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
                     ),
                   ],
@@ -156,7 +156,7 @@ class LogbookScreen extends StatelessWidget {
               _emptyState(
                 context,
                 icon: Icons.menu_book_outlined,
-                message: 'Aucune note pour le moment. Ajoutez une observation ou un événement ; l’heure et la position GPS seront enregistrées si disponibles.',
+                message: l10n.logbookEmptyNotes,
               )
             else
               ...logProvider.notes.map((note) {
@@ -210,7 +210,7 @@ class LogbookScreen extends StatelessWidget {
                                     child: Text(
                                       hasPosition
                                           ? '${note.latitude!.toStringAsFixed(5)}, ${note.longitude!.toStringAsFixed(5)}'
-                                          : 'Position GPS indisponible à cette entrée',
+                                          : l10n.logbookGpsUnavailable,
                                       style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
                                     ),
                                   ),
@@ -220,7 +220,7 @@ class LogbookScreen extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          tooltip: 'Supprimer la note',
+                          tooltip: l10n.logbookDeleteNoteTooltip,
                           icon: Icon(Icons.delete_outline, color: colors.error),
                           onPressed: () => _confirmDeleteNote(context, logProvider, note.id),
                         ),
@@ -230,13 +230,13 @@ class LogbookScreen extends StatelessWidget {
                 );
               }),
             const SizedBox(height: 14),
-            _sectionTitle(context, 'TRACES GPS ENREGISTRÉES', Icons.route),
+            _sectionTitle(context, l10n.logbookTracksTitle, Icons.route),
             const SizedBox(height: 10),
             if (logProvider.logs.isEmpty)
               _emptyState(
                 context,
                 icon: Icons.route_outlined,
-                message: 'Aucune trace GPS enregistrée. Démarrez une trace avant votre prochaine navigation.',
+                message: l10n.logbookEmptyTracks,
               )
             else
               ...logProvider.logs.map((log) => Card(
@@ -265,12 +265,12 @@ class LogbookScreen extends StatelessWidget {
                         spacing: 0,
                         children: [
                           IconButton(
-                            tooltip: 'Exporter en GPX',
+                            tooltip: l10n.logbookExportGpx,
                             icon: Icon(Icons.ios_share, color: colors.primary),
                             onPressed: () => GpxService.exportAndShare(log),
                           ),
                           IconButton(
-                            tooltip: 'Supprimer la trace',
+                            tooltip: l10n.logbookDeleteTrack,
                             icon: Icon(Icons.delete_outline, color: colors.error),
                             onPressed: () => _confirmDeleteTrack(context, logProvider, log.id),
                           ),
