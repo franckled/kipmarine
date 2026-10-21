@@ -164,19 +164,23 @@ class AnchorWatchScreen extends StatelessWidget {
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: anchorProvider.isAlarmTriggered
-                    ? null
+                    ? anchorProvider.retriggerAlarmSound
                     : anchorProvider.isSoundTestActive
                         ? anchorProvider.stopAlarmSoundTest
                         : anchorProvider.testAlarmSound,
                 icon: Icon(
-                  anchorProvider.isSoundTestActive
-                      ? Icons.stop_circle_outlined
-                      : Icons.volume_up_rounded,
+                  anchorProvider.isAlarmTriggered
+                      ? Icons.volume_up_rounded
+                      : anchorProvider.isSoundTestActive
+                          ? Icons.stop_circle_outlined
+                          : Icons.volume_up_rounded,
                 ),
                 label: Text(
-                  anchorProvider.isSoundTestActive
-                      ? 'ARRÊTER LE TEST SONORE'
-                      : 'TESTER LE SON DE L’ALARME',
+                  anchorProvider.isAlarmTriggered
+                      ? 'RELANCER LE SON DE L’ALARME'
+                      : anchorProvider.isSoundTestActive
+                          ? 'ARRÊTER LE TEST SONORE'
+                          : 'TESTER LE SON DE L’ALARME',
                 ),
               ),
               if (!anchorProvider.isAlarmTriggered)
