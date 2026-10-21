@@ -89,5 +89,7 @@
   "weatherDisclaimer": "Datos de Open-Meteo: las previsiones se basan en modelos y pueden ser imprecisas cerca de la costa. No sustituyen los boletines oficiales ni los instrumentos de a bordo.",
   "weatherAttribution": "Datos meteorológicos: Open-Meteo · open-meteo.com",
   "weatherSelectedCoordinates": "Coordenadas seleccionadas",
-  "weatherGpsPosition": "Posición GPS"
+  "weatherGpsPosition": "Posición GPS",
+  "logbookAddEntry": "AÑADIR UNA ENTRADA",
+  "logbookNewEntry": "Nueva entrada"
 }
