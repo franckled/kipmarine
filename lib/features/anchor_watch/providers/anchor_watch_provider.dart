@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/marine_units.dart';
 import '../../../core/services/alarm_service.dart';
+import '../../../core/services/marine_alert_service.dart';
 import '../../navigation/models/navigation_data.dart';
 import '../models/anchor_config.dart';
 
@@ -76,6 +77,7 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   /// Enregistre la position actuelle comme point de mouillage.
   void dropAnchor(NavigationData currentPosition) {
+    unawaited(MarineAlertService.instance.requestPermissions());
     _alarmSilencedUntilSafe = false;
     _config = AnchorConfig(
       anchorLatitude: currentPosition.latitude,
@@ -119,6 +121,7 @@ class AnchorWatchProvider extends ChangeNotifier {
     );
 
     if (isOut) {
+      if (!wasOut) unawaited(MarineAlertService.instance.showAnchorDrift());
       // Un acquittement reste valable jusqu'au retour dans le cercle.
       if (!_alarmSilencedUntilSafe &&
           (!wasOut || !_alarmService.isPlaying)) {
