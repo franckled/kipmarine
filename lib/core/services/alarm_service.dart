@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -12,7 +11,6 @@ import 'package:vibration/vibration.dart';
 /// asset being accidentally omitted from the iOS bundle.
 class AlarmService {
   final AudioPlayer _player = AudioPlayer();
-  Timer? _soundTimer;
   bool _audioActive = false;
   bool _vibrationActive = false;
   bool _starting = false;
@@ -122,8 +120,6 @@ class AlarmService {
     _starting = false;
     _audioActive = false;
     _vibrationActive = false;
-    _soundTimer?.cancel();
-    _soundTimer = null;
     try {
       await _player.stop();
     } catch (_) {}
