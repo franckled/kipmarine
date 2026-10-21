@@ -88,6 +88,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: colors.surface,
@@ -98,34 +99,74 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 Tooltip(
                   message: l10n.language,
-                  child: const Icon(Icons.translate_rounded, color: AppColors.primaryTeal),
+                  child: const Icon(
+                    Icons.translate_rounded,
+                    color: AppColors.primaryTeal,
+                  ),
                 ),
-                const Spacer(),
-                DropdownButton<String>(
-                  value: localeController.locale?.languageCode ?? 'system',
-                  underline: const SizedBox.shrink(),
-                  borderRadius: BorderRadius.circular(14),
-                  icon: const Icon(Icons.arrow_drop_down_rounded),
-                  selectedItemBuilder: (context) => const [
-                    Center(child: Text('🌐', style: TextStyle(fontSize: 25))),
-                    Center(child: Text('🇫🇷', style: TextStyle(fontSize: 25))),
-                    Center(child: Text('🇬🇧', style: TextStyle(fontSize: 25))),
-                    Center(child: Text('🇪🇸', style: TextStyle(fontSize: 25))),
-                    Center(child: Text('🇮🇹', style: TextStyle(fontSize: 25))),
-                    Center(child: Text('🇩🇪', style: TextStyle(fontSize: 25))),
-                  ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    localeController.setLocale(value == 'system' ? null : Locale(value));
-                  },
-                  items: [
-                    DropdownMenuItem(value: 'system', child: Text('🌐  ${l10n.languageAutomatic}')),
-                    DropdownMenuItem(value: 'fr', child: Text('🇫🇷  ${l10n.languageFrench}')),
-                    DropdownMenuItem(value: 'en', child: Text('🇬🇧  ${l10n.languageEnglish}')),
-                    DropdownMenuItem(value: 'es', child: Text('🇪🇸  ${l10n.languageSpanish}')),
-                    DropdownMenuItem(value: 'it', child: Text('🇮🇹  ${l10n.languageItalian}')),
-                    DropdownMenuItem(value: 'de', child: Text('🇩🇪  ${l10n.languageGerman}')),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.language,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: localeController.locale?.languageCode ?? 'system',
+                    underline: const SizedBox.shrink(),
+                    borderRadius: BorderRadius.circular(14),
+                    icon: const Icon(Icons.arrow_drop_down_rounded),
+                    selectedItemBuilder: (context) => [
+                      Text(l10n.languageAutomatic, overflow: TextOverflow.ellipsis),
+                      Text('🇫🇷  ${l10n.languageFrench}', overflow: TextOverflow.ellipsis),
+                      Text('🇬🇧  ${l10n.languageEnglish}', overflow: TextOverflow.ellipsis),
+                      Text('🇪🇸  ${l10n.languageSpanish}', overflow: TextOverflow.ellipsis),
+                      Text('🇮🇹  ${l10n.languageItalian}', overflow: TextOverflow.ellipsis),
+                      Text('🇩🇪  ${l10n.languageGerman}', overflow: TextOverflow.ellipsis),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      localeController.setLocale(
+                        value == 'system' ? null : Locale(value),
+                      );
+                    },
+                    items: [
+                      DropdownMenuItem(
+                        value: 'system',
+                        child: Text(
+                          '🌐  ${l10n.languageAutomatic}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'fr',
+                        child: Text('🇫🇷  ${l10n.languageFrench}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'en',
+                        child: Text('🇬🇧  ${l10n.languageEnglish}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'es',
+                        child: Text('🇪🇸  ${l10n.languageSpanish}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'it',
+                        child: Text('🇮🇹  ${l10n.languageItalian}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                      DropdownMenuItem(
+                        value: 'de',
+                        child: Text('🇩🇪  ${l10n.languageGerman}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
