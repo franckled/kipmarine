@@ -118,7 +118,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.primary, Color.lerp(colors.primary, colors.surface, .35)!]), borderRadius: BorderRadius.circular(24)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Icon(Icons.waves_rounded, color: Colors.white, size: 34), const SizedBox(height: 10),
-            const Text(l10n.weatherWorld, style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w900)),
+            Text(l10n.weatherWorld, style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w900)),
             const SizedBox(height: 6), Text(_locationLabel, style: const TextStyle(color: Colors.white)),
             if (_latitude != null && _longitude != null) Text(_latitude!.toStringAsFixed(4) + '°, ' + _longitude!.toStringAsFixed(4) + '°', style: const TextStyle(color: Colors.white70)),
           ])),
@@ -134,10 +134,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
         const SizedBox(height: 8),
         OutlinedButton.icon(onPressed: () => setState(() => _manual = !_manual), icon: const Icon(Icons.pin_drop_outlined), label: Text(_manual ? l10n.weatherHideCoordinates : l10n.weatherEnterCoordinates)) ,
         if (_manual) ...[
-          const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLatitude, hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLongitude, hintText: '8.738')))]),
-          const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = l10n.weatherInvalidInput); return; } _load(lat, lon, l10n.weatherSelectedCoordinates); }, child: const Text(l10n.weatherShowArea)),
+          const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: InputDecoration(labelText: l10n.weatherLatitude, hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: InputDecoration(labelText: l10n.weatherLongitude, hintText: '8.738')))]),
+          const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = l10n.weatherInvalidInput); return; } _load(lat, lon, l10n.weatherSelectedCoordinates); }, child: Text(l10n.weatherShowArea)),
         ],
-        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text(l10n.weatherLoadGps))),
+        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherGpsPosition, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: Text(l10n.weatherLoadGps))),
         const SizedBox(height: 12),
         if (_loading) const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator())),
         if (_error != null) _Notice(text: _error.toString(), isError: true),
