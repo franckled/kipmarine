@@ -413,7 +413,7 @@ class LogbookScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Annuler'),
+            child: Text(l10n.logbookCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: colors.primary, foregroundColor: colors.onPrimary),
@@ -432,14 +432,15 @@ class LogbookScreen extends StatelessWidget {
     LogbookProvider provider,
     String id,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Supprimer cette note ?'),
-        content: const Text('Cette action est définitive.'),
+        title: Text(l10n.logbookDeleteNoteConfirm),
+        content: Text(l10n.logbookPermanentAction),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
-          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Supprimer')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.logbookDelete)),
         ],
       ),
     );
