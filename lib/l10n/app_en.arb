@@ -120,5 +120,41 @@
         "type": "String"
       }
     }
-  }
+  },
+  "logbookRecording": "GPS TRACK RECORDING",
+  "logbookYourJournal": "YOUR LOGBOOK",
+  "logbookNavigationInProgress": "Navigation in progress",
+  "logbookIntro": "Keep track of your observations, stops and events at sea.",
+  "logbookStopSaveTrack": "STOP AND SAVE TRACK",
+  "logbookStartTrack": "START GPS TRACK",
+  "logbookNotesTitle": "LOGBOOK NOTES",
+  "logbookEmptyNotes": "No notes yet. Add an observation or event; the time and GPS position will be saved when available.",
+  "logbookGpsUnavailable": "GPS position unavailable for this entry",
+  "logbookDeleteNoteTooltip": "Delete note",
+  "logbookTracksTitle": "SAVED GPS TRACKS",
+  "logbookEmptyTracks": "No GPS tracks saved. Start a track before your next voyage.",
+  "logbookExportGpx": "Export as GPX",
+  "logbookDeleteTrack": "Delete track",
+  "logbookEntryHint": "E.g. anchored, weather, observation…",
+  "logbookGpsAttached": "GPS position attached to note",
+  "logbookNoGpsSaved": "Note saved without GPS position",
+  "logbookNewNavigation": "New voyage",
+  "logbookTripName": "Trip name",
+  "logbookStart": "Start",
+  "logbookDeleteNoteConfirm": "Delete this note?",
+  "logbookDeleteTrackConfirm": "Delete this track?",
+  "logbookPermanentAction": "This action cannot be undone.",
+  "logbookDeleteTrackMessage": "The GPS track and its points will be deleted.",
+  "logbookDelete": "Delete",
+  "@logbookDistanceAverage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "logbookDistanceAverage": "Distance: {distance} NM • Average speed: {speed} kn"
 }
