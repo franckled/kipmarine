@@ -91,5 +91,34 @@
   "weatherSelectedCoordinates": "Selected coordinates",
   "weatherGpsPosition": "GPS position",
   "logbookAddEntry": "ADD AN ENTRY",
-  "logbookNewEntry": "New entry"
+  "logbookNewEntry": "New entry",
+  "tidesChooseArea": "CHOOSE AN AREA",
+  "tidesSearchLabel": "City, port or place worldwide",
+  "tidesSearchHint": "E.g. Bastia, Rotterdam, Auckland",
+  "tidesNoPlace": "Place",
+  "tidesNoResults": "No places found.",
+  "tidesGpsPosition": "GPS position",
+  "tidesGpsSearching": "Finding GPS location…",
+  "tidesGpsUnavailable": "GPS position · place unavailable",
+  "tidesGpsNameUnavailable": "GPS position · name unavailable",
+  "tidesUseGps": "Use my GPS location",
+  "tidesModelledLevel": "Modelled sea level",
+  "tidesChoosePlacePrompt": "Choose a place to load the marine model.",
+  "tidesNoSeries": "The model provides no usable sea-level series for this point.",
+  "tidesModelLevelLegend": "Modelled sea level",
+  "tidesModelLocalMax": "Local model maximum",
+  "tidesModelLocalMin": "Local model minimum",
+  "tidesExtremaTitle": "Detected local extrema",
+  "tidesLocalMax": "Local maximum",
+  "tidesLocalMin": "Local minimum",
+  "tidesImportantLimit": "Important limitation: this curve uses sea_level_height_msl, an Open-Meteo marine-model output, not an official hydrographic prediction of high and low tides. The extrema are only model maxima/minima; no official tide time, coefficient or height is claimed. Do not use it to calculate draft, grounding risk or port entry.",
+  "tidesAttribution": "Open-Meteo marine model · open-meteo.com",
+  "tidesError": "Error: {error}",
+  "@tidesError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }
