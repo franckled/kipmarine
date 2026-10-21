@@ -21,7 +21,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Object? _error;
   bool _loading = false, _searching = false, _manual = false, _gpsAutoLoaded = false;
   double? _latitude, _longitude;
-  String _locationLabel = 'Position GPS';
+  String _locationLabel = AppLocalizations.of(context).weatherLoadGps;
 
   @override
   void dispose() {
@@ -37,7 +37,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       final places = await _service.searchPlaces(query);
       if (!mounted) return;
       setState(() { _places = places; _searching = false; });
-      if (places.isEmpty) setState(() => _error = 'Aucun lieu trouvé. Essaie un nom de ville ou de port plus précis.');
+      if (places.isEmpty) setState(() => _error = AppLocalizations.of(context).weatherNoResults);
     } catch (e) { if (mounted) setState(() { _error = e; _searching = false; }); }
   }
 
@@ -49,7 +49,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   }) async {
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
       setState(() => _error =
-          'Coordonnées invalides : latitude −90 à 90°, longitude −180 à 180°.');
+          AppLocalizations.of(context).weatherInvalidCoordinates);
       return;
     }
 
@@ -60,7 +60,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       _marine = null;
       _latitude = lat;
       _longitude = lon;
-      _locationLabel = resolveGpsPlace ? 'Recherche du lieu GPS…' : label;
+      _locationLabel = resolveGpsPlace ? AppLocalizations.of(context).weatherGpsSearching : label;
       _places = [];
     });
 
@@ -75,7 +75,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       if (!mounted) return;
 
       final resolvedLabel = resolveGpsPlace
-          ? (values[2] as String? ?? 'Position GPS · lieu indisponible')
+          ? (values[2] as String? ?? AppLocalizations.of(context).weatherGpsUnavailable)
           : label;
       setState(() {
         _weather = values[0] as Map<String, dynamic>;
@@ -88,7 +88,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         setState(() {
           _error = e;
           _loading = false;
-          if (resolveGpsPlace) _locationLabel = 'Position GPS · nom indisponible';
+          if (resolveGpsPlace) _locationLabel = AppLocalizations.of(context).weatherGpsNameUnavailable;
         });
       }
     }
@@ -108,53 +108,53 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (gps != null && _latitude == null && !_gpsAutoLoaded) {
       _gpsAutoLoaded = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true);
+        if (mounted && _latitude == null) _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true);
       });
     }
     return Scaffold(
       appBar: AppBar(title: Text(l10n.weatherScreenTitle, style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [IconButton(tooltip: 'Utiliser ma position GPS', onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
+        actions: [IconButton(tooltip: l10n.weatherUseGps, onPressed: gps == null ? null : () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true), icon: const Icon(Icons.my_location_rounded))]),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         Container(padding: const EdgeInsets.all(22), decoration: BoxDecoration(gradient: LinearGradient(colors: [colors.primary, Color.lerp(colors.primary, colors.surface, .35)!]), borderRadius: BorderRadius.circular(24)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Icon(Icons.waves_rounded, color: Colors.white, size: 34), const SizedBox(height: 10),
-            const Text('Météo partout dans le monde', style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w900)),
+            const Text(l10n.weatherWorld, style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.w900)),
             const SizedBox(height: 6), Text(_locationLabel, style: const TextStyle(color: Colors.white)),
             if (_latitude != null && _longitude != null) Text(_latitude!.toStringAsFixed(4) + '°, ' + _longitude!.toStringAsFixed(4) + '°', style: const TextStyle(color: Colors.white70)),
           ])),
         const SizedBox(height: 16),
-        TextField(controller: _placeController, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: 'Ville, port ou lieu', hintText: 'Ex. Ajaccio, Lisbonne, Sydney', prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
+        TextField(controller: _placeController, textInputAction: TextInputAction.search, onSubmitted: (_) => _searchPlaces(), decoration: InputDecoration(labelText: l10n.weatherSearchLabel, hintText: l10n.weatherSearchHint, prefixIcon: const Icon(Icons.search), suffixIcon: IconButton(onPressed: _searchPlaces, icon: const Icon(Icons.arrow_forward_rounded)), border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)))),
         if (_searching) const LinearProgressIndicator(),
         if (_places.isNotEmpty) ...[const SizedBox(height: 8), ..._places.map((place) {
-          final name = (place['name'] ?? 'Lieu').toString();
+          final name = (place['name'] ?? l10n.weatherNoPlace).toString();
           final admin = [place['admin1'], place['country']].where((v) => v != null && v.toString().isNotEmpty).join(', ');
           final lat = (place['latitude'] as num?)?.toDouble(); final lon = (place['longitude'] as num?)?.toDouble();
           return ListTile(leading: const Icon(Icons.location_on_outlined), title: Text(name), subtitle: Text(admin), onTap: lat == null || lon == null ? null : () => _load(lat, lon, admin.isEmpty ? name : name + ', ' + admin));
         })],
         const SizedBox(height: 8),
-        OutlinedButton.icon(onPressed: () => setState(() => _manual = !_manual), icon: const Icon(Icons.pin_drop_outlined), label: Text(_manual ? 'Masquer les coordonnées' : 'Saisir des coordonnées GPS')) ,
+        OutlinedButton.icon(onPressed: () => setState(() => _manual = !_manual), icon: const Icon(Icons.pin_drop_outlined), label: Text(_manual ? l10n.weatherHideCoordinates : l10n.weatherEnterCoordinates)) ,
         if (_manual) ...[
-          const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: 'Latitude', hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: 'Longitude', hintText: '8.738')))]),
-          const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = 'Saisis une latitude et une longitude valides.'); return; } _load(lat, lon, 'Coordonnées choisies'); }, child: const Text('Afficher cette zone')),
+          const SizedBox(height: 8), Row(children: [Expanded(child: TextField(controller: _latController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLatitude, hintText: '41.918')),), const SizedBox(width: 10), Expanded(child: TextField(controller: _lonController, keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true), decoration: const InputDecoration(labelText: l10n.weatherLongitude, hintText: '8.738')))]),
+          const SizedBox(height: 8), FilledButton(onPressed: () { final lat = double.tryParse(_latController.text.trim().replaceAll(',', '.')); final lon = double.tryParse(_lonController.text.trim().replaceAll(',', '.')); if (lat == null || lon == null) { setState(() => _error = l10n.weatherInvalidInput); return; } _load(lat, lon, l10n.weatherSelectedCoordinates); }, child: const Text(l10n.weatherShowArea)),
         ],
-        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, 'Position GPS', resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text('Charger ma position actuelle'))),
+        if (_latitude == null && gps != null) Padding(padding: const EdgeInsets.only(top: 8), child: OutlinedButton.icon(onPressed: () => _load(gps.latitude, gps.longitude, AppLocalizations.of(context).weatherLoadGps, resolveGpsPlace: true), icon: const Icon(Icons.my_location), label: const Text(l10n.weatherLoadGps))),
         const SizedBox(height: 12),
         if (_loading) const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator())),
         if (_error != null) _Notice(text: _error.toString(), isError: true),
         if (!_loading && _weather != null && _marine != null) ...[
-          const SizedBox(height: 10), Text('MÉTÉO', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 10),
+          const SizedBox(height: 10), Text(l10n.weatherSection, style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 10),
           GridView.count(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 1.45, children: [
-            _MetricCard(icon: Icons.thermostat, label: 'Température', value: _value(_weather, 'current', 'temperature_2m', suffix: ' °C')),
-            _MetricCard(icon: Icons.air, label: 'Vent', value: _value(_weather, 'current', 'wind_speed_10m', suffix: ' km/h')),
-            _MetricCard(icon: Icons.speed, label: 'Rafales', value: _value(_weather, 'current', 'wind_gusts_10m', suffix: ' km/h')),
-            _MetricCard(icon: Icons.water, label: 'Hauteur des vagues', value: _value(_marine, 'current', 'wave_height', suffix: ' m')),
-            _MetricCard(icon: Icons.explore, label: 'Direction des vagues', value: _value(_marine, 'current', 'wave_direction', suffix: '°')),
-            _MetricCard(icon: Icons.waves, label: 'Période des vagues', value: _value(_marine, 'current', 'wave_period', suffix: ' s')),
-            _MetricCard(icon: Icons.water_drop, label: 'Température de mer', value: _value(_marine, 'current', 'sea_surface_temperature', suffix: ' °C')),
-            _MetricCard(icon: Icons.cloud, label: 'Humidité', value: _value(_weather, 'current', 'relative_humidity_2m', suffix: ' %')),
+            _MetricCard(icon: Icons.thermostat, label: l10n.weatherTemperature, value: _value(_weather, 'current', 'temperature_2m', suffix: ' °C')),
+            _MetricCard(icon: Icons.air, label: l10n.weatherWind, value: _value(_weather, 'current', 'wind_speed_10m', suffix: ' km/h')),
+            _MetricCard(icon: Icons.speed, label: l10n.weatherGusts, value: _value(_weather, 'current', 'wind_gusts_10m', suffix: ' km/h')),
+            _MetricCard(icon: Icons.water, label: l10n.weatherWaveHeight, value: _value(_marine, 'current', 'wave_height', suffix: ' m')),
+            _MetricCard(icon: Icons.explore, label: l10n.weatherWaveDirection, value: _value(_marine, 'current', 'wave_direction', suffix: '°')),
+            _MetricCard(icon: Icons.waves, label: l10n.weatherWavePeriod, value: _value(_marine, 'current', 'wave_period', suffix: ' s')),
+            _MetricCard(icon: Icons.water_drop, label: l10n.weatherSeaTemperature, value: _value(_marine, 'current', 'sea_surface_temperature', suffix: ' °C')),
+            _MetricCard(icon: Icons.cloud, label: l10n.weatherHumidity, value: _value(_weather, 'current', 'relative_humidity_2m', suffix: ' %')),
           ]), const SizedBox(height: 16),
-          const _Notice(text: 'Données Open-Meteo : les prévisions sont issues de modèles et peuvent être imprécises près des côtes. Elles ne remplacent pas les bulletins officiels ni les instruments de bord.'),
-          const SizedBox(height: 6), const Text('Données météo : Open-Meteo · open-meteo.com', textAlign: TextAlign.center, style: TextStyle(fontSize: 11)),
+          _Notice(text: l10n.weatherDisclaimer),
+          const SizedBox(height: 6), Text(l10n.weatherAttribution, textAlign: TextAlign.center, style: TextStyle(fontSize: 11)),
         ],
       ]),
     );
