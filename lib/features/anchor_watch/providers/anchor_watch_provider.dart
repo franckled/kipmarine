@@ -145,6 +145,7 @@ class AnchorWatchProvider extends ChangeNotifier {
   Future<void> silenceAlarm() async {
     _alarmSilencedUntilSafe = true;
     await _alarmService.stopAlarm();
+    await MarineAlertService.instance.clear(7101);
     notifyListeners();
   }
 
