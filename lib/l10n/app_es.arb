@@ -120,5 +120,41 @@
         "type": "String"
       }
     }
-  }
+  },
+  "logbookRecording": "GRABACIÓN GPS EN CURSO",
+  "logbookYourJournal": "TU DIARIO DE NAVEGACIÓN",
+  "logbookNavigationInProgress": "Navegación en curso",
+  "logbookIntro": "Registra tus observaciones, escalas y acontecimientos en el mar.",
+  "logbookStopSaveTrack": "DETENER Y GUARDAR LA RUTA",
+  "logbookStartTrack": "INICIAR UNA RUTA GPS",
+  "logbookNotesTitle": "NOTAS DEL DIARIO",
+  "logbookEmptyNotes": "Todavía no hay notas. Añade una observación o un evento; se guardarán la hora y la posición GPS si están disponibles.",
+  "logbookGpsUnavailable": "Posición GPS no disponible para esta entrada",
+  "logbookDeleteNoteTooltip": "Eliminar nota",
+  "logbookTracksTitle": "RUTAS GPS GUARDADAS",
+  "logbookEmptyTracks": "No hay rutas GPS guardadas. Inicia una ruta antes de tu próxima navegación.",
+  "logbookExportGpx": "Exportar como GPX",
+  "logbookDeleteTrack": "Eliminar ruta",
+  "logbookEntryHint": "Ej.: fondeo realizado, tiempo, observación…",
+  "logbookGpsAttached": "Posición GPS adjunta a la nota",
+  "logbookNoGpsSaved": "Nota guardada sin posición GPS",
+  "logbookNewNavigation": "Nueva navegación",
+  "logbookTripName": "Nombre de la salida",
+  "logbookStart": "Iniciar",
+  "logbookDeleteNoteConfirm": "¿Eliminar esta nota?",
+  "logbookDeleteTrackConfirm": "¿Eliminar esta ruta?",
+  "logbookPermanentAction": "Esta acción es irreversible.",
+  "logbookDeleteTrackMessage": "Se eliminarán la ruta GPS y sus puntos.",
+  "logbookDelete": "Eliminar",
+  "@logbookDistanceAverage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "logbookDistanceAverage": "Distancia: {distance} NM • Velocidad media: {speed} kn"
 }
