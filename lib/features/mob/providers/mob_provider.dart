@@ -21,8 +21,7 @@ class MobProvider extends ChangeNotifier {
 
   /// Déclenche l'alerte Homme à la Mer à la position GPS actuelle
   void triggerMob(NavigationData currentData) {
-    unawaited(MarineAlertService.instance.requestPermissions());
-    unawaited(MarineAlertService.instance.showMob());
+    unawaited(_activateMobAlert());
     unawaited(_alarmService.triggerAlarm());
     _mobPosition = currentData;
     _mobTimestamp = DateTime.now();
@@ -38,6 +37,11 @@ class MobProvider extends ChangeNotifier {
     });
 
     notifyListeners();
+  }
+
+  Future<void> _activateMobAlert() async {
+    await MarineAlertService.instance.requestPermissions();
+    await MarineAlertService.instance.showMob();
   }
 
   /// Calcule la distance en mètres entre le bateau et le point MOB
