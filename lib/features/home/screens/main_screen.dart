@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kipmarine/l10n/generated/app_localizations.dart';
+import '../../anchor_watch/providers/anchor_watch_provider.dart';
+import '../../anchor_watch/screens/anchor_watch_screen.dart';
 import '../../navigation/screens/navigation_dashboard_screen.dart';
 import '../../weather/screens/weather_screen.dart';
 import '../../checklists/screens/checklist_screen.dart';
@@ -25,16 +28,73 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final anchorProvider = context.watch<AnchorWatchProvider>();
+    final anchorConfig = anchorProvider.config;
+    final anchorActive = anchorConfig?.isActive ?? false;
+    final anchorAlarm = anchorProvider.isAlarmTriggered;
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-          IndexedStack(
-            index: _currentIndex,
-            children: _screens,
-          ),
+          IndexedStack(index: _currentIndex, children: _screens),
 
-          // Barre Pilule Flottante Style Emergent
+          // Persistent status on the app shell: the anchor alarm is not hidden
+          // just because the user navigates away from the dashboard.
+          if (anchorActive)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 8,
+              left: 16,
+              right: 16,
+              child: SafeArea(
+                bottom: false,
+                child: Material(
+                  color: anchorAlarm ? const Color(0xFFB42318) : colors.surface,
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const AnchorWatchScreen(),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            anchorAlarm ? Icons.warning_amber_rounded : Icons.anchor_rounded,
+                            color: anchorAlarm ? Colors.white : colors.primary,
+                            size: 25,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              anchorAlarm
+                                  ? 'ALERTE MOUILLAGE — DÉRIVE DÉTECTÉE'
+                                  : 'SURVEILLANCE DU MOUILLAGE ACTIVE',
+                              style: TextStyle(
+                                color: anchorAlarm ? Colors.white : colors.onSurface,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: anchorAlarm ? Colors.white : colors.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // Floating navigation bar.
           Positioned(
             left: 16,
             right: 16,
@@ -43,7 +103,7 @@ class _MainScreenState extends State<MainScreen> {
               height: 68,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.97),
+                color: colors.surface.withValues(alpha: 0.97),
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(color: Theme.of(context).dividerColor, width: 1),
                 boxShadow: [
@@ -122,9 +182,7 @@ class _NavItem extends StatelessWidget {
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? colors.primary.withValues(alpha: 0.12)
-                : Colors.transparent,
+            color: isSelected ? colors.primary.withValues(alpha: 0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -132,9 +190,7 @@ class _NavItem extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: isSelected
-                    ? colors.primary
-                    : colors.onSurfaceVariant,
+                color: isSelected ? colors.primary : colors.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(height: 2),
@@ -142,11 +198,8 @@ class _NavItem extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected
-                      ? colors.primary
-                      : colors.onSurfaceVariant,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? colors.primary : colors.onSurfaceVariant,
                 ),
               ),
             ],
