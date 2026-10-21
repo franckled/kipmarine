@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kipmarine/l10n/generated/app_localizations.dart';
 
 class ChecklistScreen extends StatefulWidget {
   const ChecklistScreen({super.key});
@@ -13,58 +14,36 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
   final List<Map<String, dynamic>> _checklistCategories = [
     {
-      'title': 'Navigation côtière (< 6 milles)',
-      'items': [
-        'Équipement individuel de flottabilité (gilet 100 N par personne)',
-        'Moyen de repérage lumineux (lampe torche ou flash étanche)',
-        'Dispositif d’assèchement manuel (écope ou pompe de cale)',
-        'Moyen de remorquage (bout de remorque adapté)',
-        'Ligne de mouillage avec ancre adaptée',
-        'Annuaire des marées et document officiel de synthèse',
-        '3 feux de détresse rouges à main',
-        'Coupe-circuit de sécurité (si moteur hors-bord)',
-      ],
+      'titleKey': 'checklistCoastalTitle',
+      'itemKeys': ['checklistItem1', 'checklistItem2', 'checklistItem3', 'checklistItem4', 'checklistItem5', 'checklistItem6', 'checklistItem7', 'checklistItem8'],
     },
     {
-      'title': 'Navigation semi-hauturière (6 à 60 milles)',
-      'items': [
-        'Tout le matériel côtier complet',
-        'Gilets de sauvetage 150 N avec harnais et sous-cutale',
-        '3 fusées à parachute et 2 fumigènes flottants',
-        'Radeau de survie hauturier (ISO 9650-1)',
-        'VHF fixe certifiée avec fonction ASN (DSC)',
-        'Carte marine officielle papier ou électronique (GPS)',
-        'Compas magnétique étalonné',
-        'Trousse de secours médicale conforme',
-      ],
+      'titleKey': 'checklistSemiTitle',
+      'itemKeys': ['checklistItem9', 'checklistItem10', 'checklistItem11', 'checklistItem12', 'checklistItem13', 'checklistItem14', 'checklistItem15', 'checklistItem16'],
     },
     {
-      'title': 'Navigation hauturière (> 60 milles)',
-      'items': [
-        'Tout le matériel semi-hauturier complet',
-        'Balise de détresse satellite EPIRB 406 MHz',
-        'VHF portable étanche supplémentaire',
-        'Lignes de vie installées sur le pont',
-        'Récepteur météo marine ou modem satellite / GRIB',
-        'Gilets 275 N gonflables automatiques',
-      ],
+      'titleKey': 'checklistOffshoreTitle',
+      'itemKeys': ['checklistItem17', 'checklistItem18', 'checklistItem19', 'checklistItem20', 'checklistItem21', 'checklistItem22'],
     },
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    String translated(String key) => switch (key) { 'checklistTitle' => l10n.checklistTitle, 'checklistCoastal' => l10n.checklistCoastal, 'checklistSemi' => l10n.checklistSemi, 'checklistOffshore' => l10n.checklistOffshore, 'checklistCoastalTitle' => l10n.checklistCoastalTitle, 'checklistSemiTitle' => l10n.checklistSemiTitle, 'checklistOffshoreTitle' => l10n.checklistOffshoreTitle, 'checklistVerified' => l10n.checklistVerified, 'checklistBeforeDeparture' => l10n.checklistBeforeDeparture, 'checklistDisclaimer' => l10n.checklistDisclaimer, 'checklistItem1' => l10n.checklistItem1, 'checklistItem2' => l10n.checklistItem2, 'checklistItem3' => l10n.checklistItem3, 'checklistItem4' => l10n.checklistItem4, 'checklistItem5' => l10n.checklistItem5, 'checklistItem6' => l10n.checklistItem6, 'checklistItem7' => l10n.checklistItem7, 'checklistItem8' => l10n.checklistItem8, 'checklistItem9' => l10n.checklistItem9, 'checklistItem10' => l10n.checklistItem10, 'checklistItem11' => l10n.checklistItem11, 'checklistItem12' => l10n.checklistItem12, 'checklistItem13' => l10n.checklistItem13, 'checklistItem14' => l10n.checklistItem14, 'checklistItem15' => l10n.checklistItem15, 'checklistItem16' => l10n.checklistItem16, 'checklistItem17' => l10n.checklistItem17, 'checklistItem18' => l10n.checklistItem18, 'checklistItem19' => l10n.checklistItem19, 'checklistItem20' => l10n.checklistItem20, 'checklistItem21' => l10n.checklistItem21, 'checklistItem22' => l10n.checklistItem22, _ => key };
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
     final currentCat = _checklistCategories[_categoryIndex];
-    final List<String> items = currentCat['items'];
+    final List<String> itemKeys = List<String>.from(currentCat['itemKeys'] as List);
+    final List<String> items = itemKeys.map(translated).toList();
     final checkedCount = items
         .where((item) => _checkedItems['${_categoryIndex}_$item'] == true)
         .length;
     final progress = items.isEmpty ? 0.0 : checkedCount / items.length;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Check-lists sécurité')),
+      appBar: AppBar(title: Text(l10n.checklistTitle)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
@@ -80,17 +59,17 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 child: Row(
                   children: [
                     _TabButton(
-                      label: 'Côtier',
+                      label: l10n.checklistCoastal,
                       isSelected: _categoryIndex == 0,
                       onTap: () => setState(() => _categoryIndex = 0),
                     ),
                     _TabButton(
-                      label: 'Semi-haut.',
+                      label: l10n.checklistSemi,
                       isSelected: _categoryIndex == 1,
                       onTap: () => setState(() => _categoryIndex = 1),
                     ),
                     _TabButton(
-                      label: 'Hauturier',
+                      label: l10n.checklistOffshore,
                       isSelected: _categoryIndex == 2,
                       onTap: () => setState(() => _categoryIndex = 2),
                     ),
@@ -121,7 +100,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         const SizedBox(width: 9),
                         Expanded(
                           child: Text(
-                            currentCat['title'] as String,
+                            translated(currentCat['titleKey'] as String),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -147,7 +126,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 5, bottom: 3),
                           child: Text(
-                            '/ ${items.length} vérifiés',
+                            '/ ${items.length} ${l10n.checklistVerified}',
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.78),
                               fontWeight: FontWeight.w600,
@@ -185,7 +164,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
               Row(
                 children: [
                   Text(
-                    'À vérifier avant le départ',
+                    l10n.checklistBeforeDeparture,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
