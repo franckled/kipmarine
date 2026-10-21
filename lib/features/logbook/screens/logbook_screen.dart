@@ -128,7 +128,7 @@ class LogbookScreen extends StatelessWidget {
                           foregroundColor: colors.onPrimary,
                         ),
                         icon: const Icon(Icons.play_arrow),
-                        label: const Text(l10n.logbookStartTrack),
+                        label: Text(l10n.logbookStartTrack),
                         onPressed: () => _showStartDialog(context, logProvider),
                       ),
                     ),
@@ -145,7 +145,7 @@ class LogbookScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 icon: const Icon(Icons.add_comment_outlined),
-                label: const Text(l10n.logbookAddEntry, style: TextStyle(fontWeight: FontWeight.bold)),
+                label: Text(l10n.logbookAddEntry, style: TextStyle(fontWeight: FontWeight.bold)),
                 onPressed: () => _showJournalEntryDialog(context, logProvider, gps),
               ),
             ),
@@ -348,7 +348,7 @@ class LogbookScreen extends StatelessWidget {
               minLines: 3,
               maxLines: 6,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: l10n.logbookEntryHint,
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
@@ -405,7 +405,7 @@ class LogbookScreen extends StatelessWidget {
         content: TextField(
           controller: controller,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: l10n.logbookTripName,
             border: OutlineInputBorder(),
           ),
@@ -460,7 +460,7 @@ class LogbookScreen extends StatelessWidget {
         content: Text(l10n.logbookDeleteTrackMessage),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
-          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Supprimer')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.logbookDelete)),
         ],
       ),
     );
