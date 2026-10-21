@@ -114,7 +114,7 @@ class LogbookScreen extends StatelessWidget {
                           foregroundColor: Colors.white,
                         ),
                         icon: const Icon(Icons.stop),
-                        label: const Text('ARRÊTER ET SAUVEGARDER LA TRACE'),
+                        label: Text(l10n.logbookStopSaveTrack),
                         onPressed: () => logProvider.stopTrack(),
                       ),
                     )
@@ -459,7 +459,7 @@ class LogbookScreen extends StatelessWidget {
         title: Text(l10n.logbookDeleteTrackConfirm),
         content: Text(l10n.logbookDeleteTrackMessage),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.logbookCancel)),
           FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.logbookDelete)),
         ],
       ),
