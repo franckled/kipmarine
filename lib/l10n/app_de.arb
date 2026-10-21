@@ -120,5 +120,41 @@
         "type": "String"
       }
     }
-  }
+  },
+  "logbookRecording": "GPS-TRACK WIRD AUFGEZEICHNET",
+  "logbookYourJournal": "IHR LOGBUCH",
+  "logbookNavigationInProgress": "Navigation läuft",
+  "logbookIntro": "Halte Beobachtungen, Zwischenstopps und Ereignisse auf See fest.",
+  "logbookStopSaveTrack": "TRACK STOPPEN UND SPEICHERN",
+  "logbookStartTrack": "GPS-TRACK STARTEN",
+  "logbookNotesTitle": "LOGBUCHNOTIZEN",
+  "logbookEmptyNotes": "Noch keine Notizen. Füge eine Beobachtung oder ein Ereignis hinzu; Uhrzeit und GPS-Position werden gespeichert, sofern verfügbar.",
+  "logbookGpsUnavailable": "GPS-Position für diesen Eintrag nicht verfügbar",
+  "logbookDeleteNoteTooltip": "Notiz löschen",
+  "logbookTracksTitle": "GESPEICHERTE GPS-TRACKS",
+  "logbookEmptyTracks": "Keine GPS-Tracks gespeichert. Starte vor der nächsten Fahrt eine Aufzeichnung.",
+  "logbookExportGpx": "Als GPX exportieren",
+  "logbookDeleteTrack": "Track löschen",
+  "logbookEntryHint": "Z. B. Ankern, Wetter, Beobachtung …",
+  "logbookGpsAttached": "GPS-Position zur Notiz hinzugefügt",
+  "logbookNoGpsSaved": "Notiz ohne GPS-Position gespeichert",
+  "logbookNewNavigation": "Neue Fahrt",
+  "logbookTripName": "Name der Fahrt",
+  "logbookStart": "Starten",
+  "logbookDeleteNoteConfirm": "Diese Notiz löschen?",
+  "logbookDeleteTrackConfirm": "Diesen Track löschen?",
+  "logbookPermanentAction": "Diese Aktion kann nicht rückgängig gemacht werden.",
+  "logbookDeleteTrackMessage": "Der GPS-Track und seine Punkte werden gelöscht.",
+  "logbookDelete": "Löschen",
+  "@logbookDistanceAverage": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "logbookDistanceAverage": "Distanz: {distance} NM • Durchschnittsgeschwindigkeit: {speed} kn"
 }
