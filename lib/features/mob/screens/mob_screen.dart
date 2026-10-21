@@ -70,6 +70,40 @@ class MobScreen extends StatelessWidget {
                 ],
               ),
 
+              const SizedBox(height: 18),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: AppColors.mobOrange,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.mobOrange.withValues(alpha: 0.28),
+                      blurRadius: 14,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.warning_rounded, color: Colors.white, size: 30),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'ALERTE HOMME À LA MER ACTIVE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 15,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
               const Spacer(),
 
               Center(
