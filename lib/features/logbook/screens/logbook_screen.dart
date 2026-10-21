@@ -439,7 +439,7 @@ class LogbookScreen extends StatelessWidget {
         title: Text(l10n.logbookDeleteNoteConfirm),
         content: Text(l10n.logbookPermanentAction),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(l10n.logbookCancel)),
           FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(l10n.logbookDelete)),
         ],
       ),
@@ -452,11 +452,12 @@ class LogbookScreen extends StatelessWidget {
     LogbookProvider provider,
     String id,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Supprimer cette trace ?'),
-        content: const Text('La trace GPS et ses points seront supprimés.'),
+        title: Text(l10n.logbookDeleteTrackConfirm),
+        content: Text(l10n.logbookDeleteTrackMessage),
         actions: [
           TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Annuler')),
           FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Supprimer')),
