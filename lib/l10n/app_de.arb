@@ -88,5 +88,6 @@
   "weatherHumidity": "Luftfeuchtigkeit",
   "weatherDisclaimer": "Open-Meteo-Daten: Vorhersagen basieren auf Modellen und können küstennah ungenau sein. Sie ersetzen weder amtliche Meldungen noch Bordinstrumente.",
   "weatherAttribution": "Wetterdaten: Open-Meteo · open-meteo.com",
-  "weatherSelectedCoordinates": "Ausgewählte Koordinaten"
+  "weatherSelectedCoordinates": "Ausgewählte Koordinaten",
+  "weatherGpsPosition": "GPS-Position"
 }
