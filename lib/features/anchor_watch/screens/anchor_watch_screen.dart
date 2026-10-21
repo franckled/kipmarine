@@ -225,30 +225,30 @@ class AnchorWatchScreen extends StatelessWidget {
                       final permission = await Geolocator.checkPermission();
                       if (!context.mounted) return;
                       if (permission != LocationPermission.always) {
-                        final continueWithoutBackground = await showDialog<bool>(
+                        final openSettings = await showDialog<bool>(
                           context: context,
                           builder: (dialogContext) => AlertDialog(
-                            title: const Text('Autoriser le suivi en arrière-plan'),
+                            title: const Text('Localisation « Toujours » obligatoire'),
                             content: const Text(
-                              'La localisation « Toujours » est nécessaire pour que KipMarine puisse continuer à surveiller le mouillage lorsque l’application n’est plus à l’écran. '
-                              'Dans les réglages du téléphone, autorise la localisation en permanence et active les notifications si elles sont proposées. '
-                              'Si tu continues sans cette autorisation, l’alarme en arrière-plan n’est pas garantie.',
+                              'Pour surveiller le mouillage écran verrouillé, KipMarine doit pouvoir recevoir les positions GPS en arrière-plan. '
+                              'Choisis « Toujours » dans les réglages de localisation et autorise les notifications. '
+                              'Le mouillage ne sera pas activé tant que cette autorisation manque.',
                             ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(dialogContext, false),
-                                child: const Text('Annuler'),
+                                child: const Text('Pas maintenant'),
                               ),
                               FilledButton(
                                 onPressed: () => Navigator.pop(dialogContext, true),
-                                child: const Text('Continuer'),
+                                child: const Text('Ouvrir les réglages'),
                               ),
                             ],
                           ),
                         );
-                        if (continueWithoutBackground != true || !context.mounted) {
-                          return;
-                        }
+                        if (openSettings != true || !context.mounted) return;
+                        await Geolocator.openAppSettings();
+                        return;
                       }
                       anchorProvider.dropAnchor(currentPosition);
                     } else {
