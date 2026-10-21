@@ -95,6 +95,7 @@ class AnchorWatchProvider extends ChangeNotifier {
   Future<void> raiseAnchor() async {
     _alarmSilencedUntilSafe = false;
     await _alarmService.stopAlarm();
+    await MarineAlertService.instance.clear(7101);
     _config = null;
     await _persistConfig();
     notifyListeners();
@@ -129,6 +130,7 @@ class AnchorWatchProvider extends ChangeNotifier {
       }
     } else {
       _alarmSilencedUntilSafe = false;
+      unawaited(MarineAlertService.instance.clear(7101));
       if (_alarmService.isPlaying) {
         unawaited(_alarmService.stopAlarm());
       }
