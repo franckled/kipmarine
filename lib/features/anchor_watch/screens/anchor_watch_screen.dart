@@ -161,7 +161,36 @@ class AnchorWatchScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: anchorProvider.isAlarmTriggered
+                    ? null
+                    : anchorProvider.isSoundTestActive
+                        ? anchorProvider.stopAlarmSoundTest
+                        : anchorProvider.testAlarmSound,
+                icon: Icon(
+                  anchorProvider.isSoundTestActive
+                      ? Icons.stop_circle_outlined
+                      : Icons.volume_up_rounded,
+                ),
+                label: Text(
+                  anchorProvider.isSoundTestActive
+                      ? 'ARRÊTER LE TEST SONORE'
+                      : 'TESTER LE SON DE L’ALARME',
+                ),
+              ),
+              if (!anchorProvider.isAlarmTriggered)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4, bottom: 8),
+                  child: Text(
+                    'Lance un son continu jusqu’à l’arrêt manuel. Vérifie le volume et le mode silencieux du téléphone.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
               if (!isMouille) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
