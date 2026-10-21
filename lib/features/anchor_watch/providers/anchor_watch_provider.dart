@@ -144,11 +144,19 @@ class AnchorWatchProvider extends ChangeNotifier {
 
   /// Lance une alerte sonore manuelle pour tester le haut-parleur du téléphone.
   Future<void> testAlarmSound() async {
-    if (_config?.isAlarmTriggered == true) return;
     await _alarmService.stopAlarm();
     _isSoundTestActive = true;
     notifyListeners();
     await _alarmService.triggerAlarm();
+  }
+
+  /// Relance explicitement le son lorsqu'une dérive est déjà signalée.
+  Future<void> retriggerAlarmSound() async {
+    _alarmSilencedUntilSafe = false;
+    await _alarmService.stopAlarm();
+    _isSoundTestActive = false;
+    await _alarmService.triggerAlarm();
+    notifyListeners();
   }
 
   /// Arrête le test sonore sans acquitter une éventuelle vraie dérive.
