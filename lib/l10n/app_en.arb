@@ -89,5 +89,7 @@
   "weatherDisclaimer": "Open-Meteo data: forecasts are model-based and may be inaccurate near coasts. They do not replace official bulletins or onboard instruments.",
   "weatherAttribution": "Weather data: Open-Meteo · open-meteo.com",
   "weatherSelectedCoordinates": "Selected coordinates",
-  "weatherGpsPosition": "GPS position"
+  "weatherGpsPosition": "GPS position",
+  "logbookAddEntry": "ADD AN ENTRY",
+  "logbookNewEntry": "New entry"
 }
