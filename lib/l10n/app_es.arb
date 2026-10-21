@@ -156,5 +156,7 @@
       }
     }
   },
-  "logbookDistanceAverage": "Distancia: {distance} NM • Velocidad media: {speed} kn"
+  "logbookDistanceAverage": "Distancia: {distance} NM • Velocidad media: {speed} kn",
+  "logbookCancel": "Cancelar",
+  "logbookSave": "Guardar"
 }
