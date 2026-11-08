@@ -92,6 +92,45 @@ workflows:
           fi
           echo "Build iOS App Store Connect : $BUILD_NUMBER"
           flutter build ipa --release --build-name=1.0.0 --build-number="$BUILD_NUMBER" --export-options-plist=/Users/builder/export_options.plist
+      - name: Vérifier la signature App Store avant l'envoi à Apple
+        script: |
+          # Bloque l'envoi si l'IPA n'est pas signé avec un certificat de
+          # distribution (cause du rejet Apple ITMS-90035 du build 249).
+          set -euo pipefail
+          IPA=$(ls build/ios/ipa/*.ipa | head -n 1)
+          CHECK_DIR=$(mktemp -d)
+          unzip -q "$IPA" -d "$CHECK_DIR"
+          APP="$CHECK_DIR/Payload/Runner.app"
+
+          echo "--- Méthode d'export demandée ---"
+          /usr/libexec/PlistBuddy -c "Print :method" /Users/builder/export_options.plist || true
+
+          echo "--- Certificat utilisé ---"
+          AUTHORITY=$(codesign -dvv "$APP" 2>&1 | grep '^Authority=' | head -n 1)
+          echo "$AUTHORITY"
+
+          echo "--- Profil intégré ---"
+          security cms -D -i "$APP/embedded.mobileprovision" > "$CHECK_DIR/profile.plist"
+          /usr/libexec/PlistBuddy -c "Print :Name" "$CHECK_DIR/profile.plist"
+
+          codesign --verify --deep --strict --verbose=2 "$APP"
+
+          if ! echo "$AUTHORITY" | grep -Eq 'Apple Distribution|iPhone Distribution'; then
+            echo "ERREUR : l'app n'est pas signée avec un certificat de distribution."
+            echo "Dans Codemagic > Teams > Code signing identities, ajoute un certificat"
+            echo "« Apple Distribution » ou laisse Codemagic en générer un depuis l'intégration."
+            exit 1
+          fi
+          if /usr/libexec/PlistBuddy -c "Print :ProvisionedDevices" "$CHECK_DIR/profile.plist" >/dev/null 2>&1; then
+            echo "ERREUR : profil Development/Ad Hoc détecté (liste d'appareils présente)."
+            echo "Il faut un profil de type App Store pour com.kipmarine.app."
+            exit 1
+          fi
+          if [ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$CHECK_DIR/profile.plist" 2>/dev/null || echo false)" = "true" ]; then
+            echo "ERREUR : get-task-allow est activé, ce qui indique une signature de développement."
+            exit 1
+          fi
+          echo "Signature App Store valide : envoi à App Store Connect autorisé."
     artifacts:
       - build/ios/ipa/*.ipa
       - build/ios/archive/*.xcarchive
