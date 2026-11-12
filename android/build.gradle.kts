@@ -15,6 +15,17 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+// Certains plugins (ex. vibration) compilent encore avec un SDK Android plus
+// ancien que celui exigé par leurs dépendances AndroidX : on les aligne.
+subprojects {
+    afterEvaluate {
+        (extensions.findByName("android") as? com.android.build.api.dsl.LibraryExtension)?.apply {
+            if ((compileSdk ?: 0) < 36) {
+                compileSdk = 36
+            }
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
 }
