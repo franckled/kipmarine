@@ -10,9 +10,6 @@ on:
         description: "Branche de l'application à compiler"
         required: true
         default: feature/v6-multilingual
-  push:
-    branches:
-      - claude/android-build
 
 concurrency:
   group: kipmarine-android-${{ github.ref }}
