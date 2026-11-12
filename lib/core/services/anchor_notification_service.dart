@@ -25,6 +25,10 @@ class AnchorNotificationService {
 
     try {
       await _plugin.initialize(settings);
+      // Android 13+ : sans cette demande, l'alerte de dérive reste muette.
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      await android?.requestNotificationsPermission();
       final ios = _plugin.resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>();
       await ios?.requestPermissions(alert: true, sound: true, badge: false);
