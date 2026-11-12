@@ -34,3 +34,12 @@ ios/Runner/GeneratedPluginRegistrant.*
 *.p8
 *.cer
 *.certSigningRequest
+
+# Android : fichiers générés et signature
+android/.gradle/
+android/gradlew
+android/gradlew.bat
+android/gradle/wrapper/gradle-wrapper.jar
+android/key.properties
+*.jks
+*.keystore
