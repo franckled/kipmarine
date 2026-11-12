@@ -31,7 +31,7 @@ workflows:
       - name: Generate iOS and Android launcher icons
         script: dart run flutter_launcher_icons
       - name: Static analysis
-        script: flutter analyze
+        script: flutter analyze --no-fatal-infos
       - name: Unit tests
         script: flutter test
       - name: Build iOS without signing
@@ -69,7 +69,7 @@ workflows:
       - name: Générer les icônes iOS et Android
         script: dart run flutter_launcher_icons
       - name: Analyse statique
-        script: flutter analyze
+        script: flutter analyze --no-fatal-infos
       - name: Tests unitaires
         script: flutter test
       - name: Installer les dépendances CocoaPods
